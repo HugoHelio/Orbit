@@ -35,7 +35,7 @@ Les 20 fonctionnalités sont réparties en 5 catégories : Player, Alien, Gamepl
 
 ## 2. Les problèmes de design (insights de playtest)
 
-Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Lou, Sam ou Nova).
+Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Max, Sam ou Nova).
 
 ### Prototype (`1-Conception/SP-C15`)
 1. **Manque de défi :** trop facile, trop court (13 s en moyenne pour finir le niveau). « Si j'appuie sans arrêt sur espace, je tue tous les aliens. » « Les aliens restants restent au milieu et ne vont pas sur les côtés. »
@@ -75,3 +75,26 @@ Classes principales (Alpha) : `Player`, `Projectile`, `Invader`, `InvaderProject
 - Gestion des risques (`SP-PP16`) et du budget (`SP-PP17` à `SP-PP19`) : pour des cartes événements.
 - Plan de test (`SP-PR11`) et rapport de tests (`SP-PR15`) : pour le rôle de SCAN.
 - Rétrospectives (`SP-C16`, `SP-PP27`, `SP-PR16`) : pour le débrief.
+
+## 5. Ce qu'on reprend du PPT de design « PROD-GAME-Mastery v5 » (459 diapositives)
+
+*Lu le 26 novembre 2026. Le fichier lui-même n'est **pas** copié dans le dépôt public : il contient notamment les codes de déverrouillage de SpacePlan.*
+
+| Élément du PPT | Diapositives | Réutilisation dans Helioso Orbit |
+|---|---|---|
+| **Palette** : jaune #FFB701, vert #21FF60, rouge #FF1F00, bleu #00A9F0, cyan #1CD4ED, orange #FF6A1F ; inspirations Esther Mahlangu, Yayoi Kusama | 15 à 22 | Palette de base des deux planches de style ; continuité visuelle avec SpacePlan |
+| **Logo et sprites pixel** (invader, vaisseau) | 20, 117, 316-317 | Planche A (rétro néon) ; icônes des agents |
+| **Icônes de pilotage** : Budget, Temps, Qualité, Équipe, Périmètre (GPS, Galaxy, Clockwork, Compass) | 15 à 17 | Pictogrammes des pistes du plateau (crédits, temps, note) |
+| **Frise des phases et des versions** (Proto, PoC, α, β, avec « première version publiable », « fonctionnalités complètes ») | 27-29, 62-66, 87-93 | Piste du temps du plateau et choix de la version de SpacePlan jouée à chaque release |
+| **K6**, le personnage guide de SpacePlan | 55-56, 155, 436 | Piste : un guide pour l'animateur ou le mode solo (à ne pas confondre avec Vera) |
+| **Cartes insights « retro gaming »** (besoins : compétence, autonomie, relation ; motivations : se défouler, se divertir, accomplir ; profil 30 ans et plus) et **persona « Retro Gamer »** | 70-77 | Enrichir les profils de Max, Sam et Nova ; matière pour le cycle 0 (le pitch) |
+| **Fiche mandat (ID card)** : projet, studio, équipe, budget, mesures de succès, pitch | 79-82 | Modèle de la **fiche mission de Vera** remise au cycle 0 |
+| **Kanban, Gantt, block plan, burndown** avec les rôles P / A / D | 102-123, 211-245, 352-384 | Visuels du plateau numérique ; **burndown** affiché au débrief |
+| **Débriefs de playtest** (bulles « Challenge », analyse des boîtes de collision avec options A, B, C) | 125-131, 313-315, 321 | Cartes Feedback et futures cartes « problème de design » à arbitrer |
+| **Gestion des risques** (top 5, impact × probabilité, risques personnels : « Luke a un examen de maths au jour 4 ») | 247-258, 394 | Module Événements : des risques humains, pas seulement techniques |
+| **Budget et coûts du staff** par phase | 259-291, 422-426 | Module « budget » pour plus tard (au-delà des crédits IA) |
+| **Format de rétrospective** : ce qui a marché, ce qui n'a pas marché, ce qu'on peut améliorer, engagements | 133, 322-326, 395, 428 | **Modèle de la mini-rétro et du débrief** |
+| **Arbre de compétences PM et badges** Planning, Process, Business, Delivery (niveaux 1 à 5) | 31-36, 46 | Piste pour la **grille d'évaluation** demandée par les enseignants (question ouverte 3 du GDD) |
+| **Écran de résultats** (temps, budget, score qualité) et **checklists de fin de phase** | 134, 325, 396, 420, 435 | Feuille de score et écran final du leaderboard |
+| **Dev master class** : définition du « terminé », gestion du changement | 385-391 | Contenu du kit enseignants (brique D) |
+| **Références concurrentes** : Aeqlia, Zensimu, English Attack | 8 | À ajouter aux benchmarks (Zensimu en priorité : simulations de management) |

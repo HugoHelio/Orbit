@@ -1,6 +1,6 @@
 # Plan de sprints, décembre 2026 – juin 2027
 
-*Document vivant : mis à jour à chaque fin de sprint. Version 3, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`.*
+*Document vivant : mis à jour à chaque fin de sprint. Version 4, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`.*
 
 ## Cadre
 
@@ -55,6 +55,16 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 | **S12** | 7 – 20 juin | **Bilan go / no-go** | Bilan des 6 mois ; plan de l'été | Point avec chaque établissement en discussion |
 
 *Les vacances scolaires et de fin d'année peuvent décaler un sprint. On ajuste lors des revues.*
+
+## Backlog (à placer dans les sprints)
+
+| Élément | Quand | Statut |
+|---|---|---|
+| Kit papier v1 (plateau, cartes, fiches de rôle, livret), généré depuis les documents | S2, en avance | Fait (26 nov.) ; partie test à organiser |
+| **Retouche des portraits en pixel art** (Vera, Max, Sam, Nova, et la réserve Bill) pour qu'ils soient uniques et issus de nos propres générations d'IA | Avant toute diffusion publique (S4, vidéo de démo) | À faire |
+| Feuille de score gamifiée du jeu numérique : score global, XP, niveau du studio, badges | S3 (prototype web) | Idée notée dans le GDD |
+| Rendre jouables seules les versions de SpacePlan (`game/spaceplan-builds/`) | S3 | À faire |
+| Relecture de la licence par un juriste | Avant la première vente | À faire |
 
 ## Critères de décision, fin juin 2027
 

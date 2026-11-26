@@ -11,6 +11,7 @@ node_modules/
 dist/
 build/
 .cache/
+prototype-papier/html/
 
 # Fichiers système et éditeurs
 .DS_Store

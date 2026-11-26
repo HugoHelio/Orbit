@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | 0.7 — 26 novembre 2026 |
-| **Statut** | Conception, avant prototype papier |
+| **Version** | 0.10 — 26 novembre 2026 |
+| **Statut** | Règles validées par simulation ; kit papier prêt pour un brouillon de test (`prototype-papier/`) |
 | **Plateau de travail** | Whiteboard « Helioso Orbit — plateau de l'orbite d'itération » : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn (sauvegarde : `docs/whiteboard/plateau-orbite.json`) |
-| **Documents liés** | `docs/jeu/cartes-orbit-studio.md` (toutes les cartes), `docs/jeu/direction-artistique.md` (palette, thèmes, typographie), `docs/jeu/reprise-spaceplan.md` (ce qu'on reprend de SpacePlan), `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
+| **Documents liés** | `docs/jeu/regles-une-page.md` (les règles pour les joueurs), `docs/jeu/simulation-equilibrage.md` (la simulation), `docs/jeu/cartes-orbit-studio.md` (toutes les cartes), `docs/jeu/direction-artistique.md` (palette, thèmes, typographie), `docs/jeu/reprise-spaceplan.md` (ce qu'on reprend de SpacePlan), `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
 
 **Journal des versions**
 - **0.1** — Premier plan : équipe, benchmarks, cycle, session de 3 h.
@@ -17,6 +17,9 @@
 - **0.5** — Ton et personnages du narratif validés ; cartes en français, conçues pour être traduites en anglais.
 - **0.6** — **Règles de base** simplifiées pour le premier prototype (section 0) ; les 20 fonctionnalités de SpacePlan ; un seul paquet de défauts ; premier jet complet des cartes.
 - **0.7** — Direction artistique : palette HLC v2.0, deux thèmes (clair et sombre « Tech »), kit papier en style flat.
+- **0.8** — Règle du **premier jouable** (0 joueur tant que les 5 Must ne sont pas livrés) ; priorités non imprimées sur les cartes ; cycle 0 libre et sans défaut ; **score = joueurs × note**.
+- **0.9** — Portraits en pixel art pour Vera, Max, Sam, Nova, PIX et SCAN ; fiches de rôle A5 à la place des cartes personnage ; jetons simplifiés (9 PA, 15 blocs, 3 marqueurs) ; plateau réorganisé ; idée d'une feuille de score gamifiée pour le numérique.
+- **0.10** — Huit précisions de règles et quatre réglages issus de la **simulation** (2 000 parties par stratégie) : un humain produit 1 bloc par cycle au maximum, PIX jusqu'à 5 blocs au cycle 0, plus de bonus « release sans défaut », note entre 1 et 5. Règles sur une page.
 
 *Tous les chiffres sont des valeurs de départ, à régler pendant les tests.*
 
@@ -28,14 +31,17 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 
 | Élément | Règles de base | Modules pour plus tard |
 |---|---|---|
-| **Fonctionnalités** | Les **20 fonctionnalités de SpacePlan** (master feature list). Les 5 *Must* forment le premier jouable (cycle 0). Taille : *Low* = 1 bloc, *Medium* = 2, *High* = 3 | Dépendances entre fonctionnalités ; demandes de joueurs (classement, combat de boss…) |
+| **Fonctionnalités** | Les **20 fonctionnalités de SpacePlan** (master feature list). Taille : *Low* = 1 bloc, *Medium* = 2, *High* = 3. **La priorité n'est pas imprimée** : les équipes retrouvent les 5 *Must* à partir du message de Vera | Dépendances entre fonctionnalités ; demandes de joueurs (classement, combat de boss…) |
+| **Premier jouable** | **Tant que les 5 *Must* ne sont pas tous livrés sans bug, le jeu a 0 joueur.** Les étoiles des autres fonctionnalités livrées attendent et comptent dès que le premier jouable est atteint. Un bug révélé plus tard sur un *Must* recasse le jouable | — |
 | **Valeur** | *Must* = 2 étoiles, *Should* = 3, *Could* = 2. **Une étoile livrée = 25 joueurs** | Fun variable par carte |
-| **Équipe** | Chef de projet, designer, programmeur : **3 PA chacun par cycle**. 20 crédits IA pour la partie | 4e rôle |
-| **Agents** | **PIX** (jusqu'à 3 blocs par cycle) et **SCAN** (jusqu'à 4 tests par cycle), 1 crédit par action | ARTY |
+| **Équipe** | Chef de projet, designer, programmeur : **3 PA chacun par cycle**, et une **fiche de rôle** A5 chacun. **Un humain produit au plus 1 bloc par cycle** (1 PA). 20 crédits IA pour la partie | 4e rôle |
+| **Matériel** | **9 jetons PA** (posés sur la station où l'on agit), **15 jetons bloc** (posés sur les carrés des cartes Fonctionnalité), **3 marqueurs** (crédits, note, cycle) | — |
+| **Agents** | **PIX** (jusqu'à 3 blocs par cycle, 5 au cycle 0 ; un brief couvre une fonctionnalité entière ; les blocs en trop attendent) et **SCAN** (jusqu'à 4 tests par cycle), 1 crédit par action | ARTY |
 | **Défauts** | **Un seul paquet de 20 cartes** : 12 Aucun, 5 Bug, 3 Pas fun. Brief simple = 1 carte ; brief détaillé = **2 cartes, on garde la meilleure**. SCAN trouve les Bug, seul le playtest du designer trouve les Pas fun | Crash, dette technique, faille de sécurité ; renvoi à PIX |
-| **Feedback** | 24 cartes tirées des **vrais playtests de SpacePlan**, signées Lou, Sam ou Nova ; 1 carte pour 100 joueurs ; à trier par le chef de projet | Agent de tri |
+| **Feedback** | 24 cartes tirées des **vrais playtests de SpacePlan**, signées Max, Sam ou Nova ; 1 carte à chaque nouveau palier de 100 joueurs ; à trier par le chef de projet. Une idée sur une fonctionnalité déjà sortie demande 1 bloc d'amélioration | Agent de tri |
 | **Événements** | Un par cycle, ordre fixe (E1 à E4), sans choix de résolution | Résolutions et bonus |
-| **Score** | **Joueurs + note × 100** (note sur 5, départ à 3) | Bonus d'étapes et d'événements, pénalités |
+| **Cycle 0** | Libre : les équipes choisissent quoi produire, **sans carte Défaut ni coût en crédits**, sans événement ni feedback ; PIX produit jusqu'à 5 blocs | — |
+| **Score** | **Joueurs × note.** Joueurs = étoiles en ligne × 25, recalculés à chaque release. Note sur 5, départ à 3, **entre 1 et 5** : −0,5 par bug publié et si le feedback attend trop, +0,5 par bug de joueur corrigé. 0 joueur = 0 point | Bonus d'étapes et d'événements, pénalités |
 | **Release** | L'équipe joue vraiment à son jeu : la version de SpacePlan qui correspond à ce qu'elle a livré (voir section 12) | Activation fine fonctionnalité par fonctionnalité |
 
 ---
@@ -50,12 +56,13 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 
 **La grande leçon :** avec des agents IA, le goulot d'étranglement passe de la **production** à la **décision et à la vérification**. Les agents produisent beaucoup et vite. L'équipe humaine devient la ressource rare : elle écrit les briefs, relit, juge si c'est fun, trie les retours, arbitre.
 
-**Les 5 leçons secondaires, à faire émerger au débrief :**
+**Les 6 leçons secondaires, à faire émerger au débrief :**
 1. **La qualité du brief fait la qualité de l'agent.** Un brief bâclé coûte plus cher plus tard.
 2. **Un agent testeur trouve les bugs, pas l'ennui.** Le jugement « est-ce que c'est fun ? » reste humain.
 3. **Ajouter des agents n'accélère pas toujours.** Plus de production = plus de relecture = plus d'embouteillage (une loi de Brooks version IA).
 4. **Livrer petit et souvent** bat livrer gros et tard. Mais plus le jeu a de joueurs, plus il y a de feedback à trier : le succès crée sa propre charge.
 5. **Ce qui n'est pas vérifié finit en dette** : bugs cachés, dette technique, failles de sécurité.
+6. **Le nécessaire avant le séduisant.** Tant que le jeu n'est pas jouable, il n'a pas de joueurs : les fonctionnalités qui rapportent le plus ne servent à rien sans les essentielles.
 
 ### Les piliers de design
 
@@ -121,15 +128,31 @@ Trois amis viennent de fonder **Orbital Studio** dans un petit local. Leur proje
 - **ARTY, l'agent artiste** (débloqué au cycle 2). Il produit des visuels superbes, mais pas toujours dans le même style.
 
 **La communauté (trois joueurs types, sur les cartes feedback)**
-- **Lou, la joueuse acharnée** : elle veut de la difficulté et repère chaque bug.
+- **Max, le joueur acharné** : il veut de la difficulté et repère chaque bug.
 - **Sam, le joueur occasionnel** : il veut comprendre en 10 secondes et s'amuser tout de suite.
 - **Nova, la streameuse** : elle a beaucoup d'abonnés. Un bon retour de sa part rapporte des joueurs, un crash en direct en fait perdre beaucoup.
+
+### Les portraits *(décidé le 26 nov. 2026)*
+
+Les personnages non joueurs ont un portrait en pixel art (fichiers dans `assets/personnages/`). Les rôles des joueurs n'en ont pas : ce sont les joueurs eux-mêmes.
+
+| Personnage | Portrait | Origine |
+|---|---|---|
+| **Vera** | Jessica | Portraits de HLC (SpacePlan), générés par IA |
+| **Max** | Ben | idem |
+| **Sam** | Luke | idem |
+| **Nova** | Kira | idem |
+| **PIX** | Robot K6, orange, avec des lunettes de geek et `</>` sur le ventre | Redessiné à partir de K6, créé par Hugo pour SpacePlan : droits acquis |
+| **SCAN** | Robot K6, cyan, avec des lunettes de vision nocturne à trois lentilles et un code-barres | idem |
+| *En réserve* | Bill | Pour un futur personnage (l'investisseur de l'événement E3 ?) |
+
+**À faire avant la diffusion :** une passe de retouche sur les portraits humains (PIX et SCAN viennent de K6, qui nous appartient), pour qu'ils soient uniques et issus de nos propres générations (voir le backlog dans `docs/pilotage/plan-sprints-2027.md`).
 
 ### Les temps forts du récit, cycle par cycle
 
 | Acte | Cycle | Message de Vera (début du cycle) | Ce qui se joue |
 |---|---|---|---|
-| **1. Le pitch** | 0 | « Montrez-moi un premier jouable. Trois fonctionnalités, pas plus. » | Choisir l'essentiel |
+| **1. Le pitch** | 0 | « Avant de signer, je veux un premier jouable : un vaisseau qui apparaît, qui bouge et qui tire, des aliens en face, un missile qui les touche, et une partie qu'on peut perdre et recommencer. » | Retrouver les 5 *Must* parmi les 20 cartes : sans eux, 0 joueur |
 | **2. L'accès anticipé** | 1 | « Les premiers joueurs arrivent. Écoutez-les. » | Le premier feedback, la première release |
 | | 2 | « Bonne nouvelle : vous pouvez recruter ARTY. À vous de voir. » | Faut-il un agent de plus ? |
 | | 3 | « Changement de plan : je veux un mode 2 joueurs pour le festival. » (ou une crise technique) | La crise |
@@ -154,7 +177,7 @@ Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la
 - *Carte défaut « Crash » :* « PIX : "C'est impossible, j'ai tout vérifié." »
 - *Carte défaut « Pas fun » :* « Sam : "J'ai rien compris, j'ai fermé le jeu." »
 - *Carte défaut « Faille de sécurité » :* « Une clé d'API traîne dans le code publié. Quelqu'un l'a déjà trouvée. »
-- *Carte feedback :* « Lou : "Le boss est trop facile. Vous l'avez testé ?" »
+- *Carte feedback :* « Max : "Le boss est trop facile. Vous l'avez testé ?" »
 
 ---
 
@@ -264,6 +287,8 @@ Toutes les équipes jouent le même scénario en parallèle, **sans interaction 
 
 ### Le score
 
+*En règles de base (section 0) : **score = joueurs × note**, et les joueurs sont recalculés à chaque release (ils ne s'additionnent pas). Le barème complet ci-dessous (version 0.3) sera revu quand on ajoutera les modules.*
+
 **Score = Joueurs + (Note × 100) + Bonus d'étapes − Pénalités**
 
 | Élément | Points |
@@ -277,6 +302,14 @@ Toutes les équipes jouent le même scénario en parallèle, **sans interaction 
 | **Pénalité : faille de sécurité publiée** | −150 |
 | **Pénalité : dette technique non traitée à la fin** | −20 par carte |
 
+### La feuille de score du jeu numérique (idée, à concevoir au N1)
+
+Sur papier, la feuille de score reste simple. **Dans le jeu numérique, elle doit devenir un vrai moment de jeu**, moderne et gamifié :
+- un **score global** bien visible, avec son évolution cycle par cycle ;
+- de l'**XP** gagnée par les bonnes pratiques (un brief détaillé, une relecture, un feedback trié, une release sans défaut), qui fait monter le **niveau du studio** ;
+- des **badges** liés aux leçons du jeu (par exemple « Premier jouable au cycle 0 », « Zéro bug au festival », « Inbox zéro » pour le feedback), en lien avec les badges et l'arbre de compétences de SpacePlan ;
+- au débrief, un récapitulatif par équipe qui sert de support à la discussion.
+
 **Point de vigilance (à surveiller pendant les tests) :** une équipe ne doit pas pouvoir gagner en déléguant tout aux agents sans rien relire, ni en ignorant le feedback. Le barème doit rendre ces stratégies perdantes. Le leaderboard reste à affiner après les premières parties.
 
 ---
@@ -286,7 +319,7 @@ Toutes les équipes jouent le même scénario en parallèle, **sans interaction 
 - **Le plateau A2 de l'orbite d'itération**, un par équipe, avec les trois zones de files d'attente marquées.
 - **12 cartes fonctionnalités**, chacune avec une valeur **Fun** (1 à 5) et une **taille** en blocs (1 à 4). Par exemple : vaisseau qui se déplace, tir, vague d'ennemis, collisions et score, écran titre, sons, bonus, boss, niveaux 2 et 3, classement en ligne, mode 2 joueurs, options d'accessibilité.
 - **Des cartes défaut**, tirées face cachée pour chaque bloc produit par un agent : *aucun défaut*, *bug mineur*, *crash*, *pas fun*, *dette technique* (le prochain bloc lié coûte +1), *faille de sécurité* (rare, catastrophique si elle part en release). Deux paquets : briefs simples (risque élevé) et briefs détaillés (risque faible).
-- **Environ 30 cartes feedback** signées Lou, Sam ou Nova : idée de fonctionnalité, signalement de bug, plainte « pas fun », compliment.
+- **Environ 30 cartes feedback** signées Max, Sam ou Nova : idée de fonctionnalité, signalement de bug, plainte « pas fun », compliment.
 - **8 cartes événements**, avec une tension qui monte, chacune avec sa meilleure résolution et son bonus.
 - **Des figurines** pour les 3 humains et les 3 agents.
 - **Des jetons** : points d'action et crédits IA.
@@ -300,7 +333,7 @@ Toutes les équipes jouent le même scénario en parallèle, **sans interaction 
 |---|---|---|
 | **0:00 – 0:15** | Accueil et récit | Message de Vera, objectif du festival, constitution des studios concurrents |
 | **0:15 – 0:30** | Règles et matériel | Rôles, plateau de l'orbite, cartes, exemple d'un tour |
-| **0:30 – 0:50** | **Acte 1 : cycle 0, le pitch** | Vision du jeu, choix des 3 fonctionnalités du premier jouable. Cycle guidé, sans défauts ni événements |
+| **0:30 – 0:50** | **Acte 1 : cycle 0, le pitch** | Message de Vera ; les équipes retrouvent les 5 *Must* parmi les 20 cartes et les produisent. Sans défauts, sans crédits, sans événement |
 | **0:50 – 1:20** | **Cycle 1** (30 min) | Premiers joueurs, premier feedback. Premier leaderboard |
 | **1:20 – 1:45** | **Cycle 2** (25 min) | ARTY peut être recruté. Événement : mise à jour du modèle de PIX (+1 bloc, mais ses défauts changent) |
 | **1:45 – 1:55** | Pause | |
@@ -378,7 +411,7 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 
 **Les critères de réussite du test papier :**
 - Au moins 2 joueurs sur 3 veulent rejouer.
-- Au débrief, les joueurs formulent **eux-mêmes** au moins 3 des 5 leçons.
+- Au débrief, les joueurs formulent **eux-mêmes** au moins 3 des 6 leçons.
 - Un cycle tient en moins de 30 minutes.
 - L'équipe qui relit et trie le plus n'est pas pénalisée au leaderboard.
 
@@ -400,13 +433,24 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 26 nov. 2026 | Nom : **Helioso Orbit** (gamme de jeux) ; ce scénario s'appelle « Orbit : Studio » ; le studio fictif des joueurs s'appelle **Orbital Studio** |
 | 26 nov. 2026 | Dépôt GitHub public sous licence Helioso ; chapitre 1 gratuit, la suite débloquée par un code de licence ; contenus premium hors du dépôt à partir du N2 |
 | 26 nov. 2026 | Adresse du jeu en ligne : **orbit.helioso.com** |
-| 26 nov. 2026 | Ton léger avec de l'humour ; personnages PIX, SCAN, ARTY, Vera, Lou, Sam et Nova validés |
+| 26 nov. 2026 | Ton léger avec de l'humour ; personnages PIX, SCAN, ARTY, Vera, Max, Sam et Nova validés |
 | 26 nov. 2026 | Textes en français pour le pilote, écrits pour être traduits en anglais ; une clé par texte et une version par langue dans le jeu numérique |
 | 26 nov. 2026 | Règles de base simplifiées pour le premier prototype (section 0) ; modules ajoutés un par un ensuite |
 | 26 nov. 2026 | Les 20 fonctionnalités de la master feature list de SpacePlan (les 2 « demandes de joueurs », classement et combat de boss, viendront plus tard) |
 | 26 nov. 2026 | Les insights de playtest de SpacePlan deviennent les cartes Feedback |
 | 26 nov. 2026 | Le code du mini-jeu SpacePlan est repris dans le dépôt public `Orbit`, sous licence Helioso |
 | 26 nov. 2026 | Direction artistique : palette HLC v2.0 ; style flat pour le papier ; deux thèmes numériques, clair par défaut et sombre « Tech » ; le pilotage est un soleil, les stations des planètes |
+| 26 nov. 2026 | **Premier jouable :** 0 joueur tant que les 5 *Must* ne sont pas livrés sans bug. La priorité n'est pas imprimée sur les cartes et les fonctionnalités sont renumérotées par catégorie : la priorisation devient le premier exercice du jeu |
+| 26 nov. 2026 | Cycle 0 libre (et non plus guidé), sans carte Défaut ni coût en crédits |
+| 26 nov. 2026 | **Score = joueurs × note** (note sur 5, départ à 3) : un jeu sans joueurs vaut 0 point, et la note pèse proportionnellement à l'audience |
+| 26 nov. 2026 | Portraits en pixel art : Vera (Jessica), Max (Ben ; anciennement Lou, renommé pour fonctionner aussi en anglais), Sam (Luke), Nova (Kira) ; PIX et SCAN redessinés à partir du robot K6. Passe de retouche prévue avant diffusion |
+| 26 nov. 2026 | Les cartes personnage disparaissent : chaque joueur reçoit une **fiche de rôle** A5 (mission, actions, rappels). Les règles des agents sont sur le plateau |
+| 26 nov. 2026 | Jetons simplifiés : 9 PA, 15 blocs, 3 marqueurs (plus de jetons crédit) |
+| 26 nov. 2026 | Plateau : pilotage en simple disque ambre (sans rayons) ; carte Événement de Vera en haut à droite ; pioche Défauts en bas à droite, à côté de SCAN |
+| 26 nov. 2026 | Version numérique : feuille de score gamifiée (score global, XP, niveau du studio, badges) |
+| 26 nov. 2026 | Précisions de règles : un brief par fonctionnalité ; blocs de PIX en trop reportés ; joueurs recalculés à chaque release ; 1 carte Feedback par nouveau palier de 100 joueurs ; pas de bonus sans publication ; bloc d'amélioration pour une idée sur une fonctionnalité sortie ; pioche Défauts remélangée |
+| 26 nov. 2026 | **Réglages issus de la simulation** (`docs/jeu/simulation-equilibrage.md`) : un humain produit 1 bloc par cycle au maximum ; PIX jusqu'à 5 blocs au cycle 0 ; plus de bonus « release sans défaut » ; la note reste entre 1 et 5. Classement obtenu : équilibré > prudent > sans vérifier mais à l'écoute > sans vérifier ni écouter > mauvaises priorités |
+| 26 nov. 2026 | Kit papier v1 généré automatiquement à partir de `docs/jeu/cartes-orbit-studio.md` (`prototype-papier/outil/generer_kit.py`) |
 
 ---
 

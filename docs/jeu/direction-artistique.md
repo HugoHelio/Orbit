@@ -10,7 +10,7 @@
   - **Sombre « Tech »** : pour les écrans, les salles obscures, et les étudiants qui le préfèrent.
   - Chaque joueur ou l'animateur peut basculer de l'un à l'autre à tout moment.
 - **Le kit papier suit le thème clair**, en style **flat** : aplats francs, contours épais bleu nuit, formes géométriques.
-- **Le centre du plateau est un soleil** (le pilotage, l'équipe humaine) et les stations sont des planètes en orbite : *hélios*, Helioso.
+- **Le centre du plateau est un soleil**, dessiné comme un simple disque ambre (le pilotage, l'équipe humaine), et les stations sont des planètes en orbite : *hélios*, Helioso.
 
 ## 2. La palette
 
@@ -62,11 +62,20 @@ Corps de texte imprimé : 11 pt minimum sur les cartes.
 | Défaut | Rouge corail |
 | Feedback | Ambre |
 | Événement | Bleu nuit (texte blanc) |
-| Référence (rôles, agents) | Gris sauge (rôles) ou cyan (agents) |
+| Fiche de rôle (A5, une par joueur) | Sarcelle pour l'étiquette, jetons PA en ambre |
+| Message de Vera | Sarcelle, avec son portrait |
 
 ## 6. Le papier (kit prototype)
 
 - Fond blanc, plateau sur `#EEF3F3`, contours **3 px bleu nuit `#0D2329`**, coins arrondis.
 - Frises géométriques en bordure du plateau (clin d'œil aux références Esther Mahlangu de SpacePlan).
-- Files d'attente : jetons ambre ; pilotage : soleil ambre au centre.
+- Files d'attente : cases ambre ; pilotage : **grand disque ambre au centre, sans rayons** (plus lisible, moins chargé).
 - Impression économique : peu d'aplats sombres, sauf le bandeau des cartes Événement.
+
+## 7. Les personnages en pixel art
+
+- **Portraits des personnages non joueurs** dans `assets/personnages/` (un fichier `<nom>-portrait.png` par personnage, fond transparent, à afficher dans un cercle) : Vera, Max, Sam, Nova, PIX et SCAN. Le détail est dans le GDD (section 4, « Les portraits »).
+- **Les agents sont des robots de la même famille** (dérivés de K6, la mascotte de SpacePlan), en grille de 19 × 30 pixels : **PIX en ambre**, **SCAN en cyan** (la couleur des agents). Contours bleu nuit `#0D2329`.
+- **Affichage :** toujours en `image-rendering: pixelated`, jamais lissé.
+- **À faire :** une passe de retouche des portraits humains (issus de générations IA de SpacePlan), pour un style homogène et unique.
+
