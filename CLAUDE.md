@@ -23,6 +23,7 @@ Il fait partie de l'activité **Helioso** en préparation (lancement mi/fin 2027
 ## Conventions
 
 - **Langue :** tout en français (documents, textes du jeu, commentaires du code, messages de commit). Les noms de variables et de fichiers de code restent en anglais.
+- **Textes du jeu traduisibles :** aucun texte affiché n'est écrit en dur dans le code. Chaque texte a une clé et une version par langue (`fr` d'abord, `en` ensuite) dans le fichier du scénario.
 - **Une décision de design = une mise à jour du GDD** : modifier la section concernée, ajouter une ligne au journal des décisions et, si besoin, monter la version.
 - **Le dépôt est public** : ne jamais committer de secret (clés d'API, fichiers `.env`, configuration Firebase privée), ni de données personnelles (contacts, prospection), ni de chiffres internes (scénarios de revenus). Ces informations sont dans Google Drive.
 - **Messages de commit** courts et clairs, en français, par exemple : `GDD 0.5 : barème du leaderboard`.

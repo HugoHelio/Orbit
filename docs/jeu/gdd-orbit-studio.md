@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | 0.4 — 26 novembre 2026 |
+| **Version** | 0.5 — 26 novembre 2026 |
 | **Statut** | Conception, avant prototype papier |
 | **Plateau de travail** | Whiteboard « Helioso Orbit — plateau de l'orbite d'itération » : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn (sauvegarde : `docs/whiteboard/plateau-orbite.json`) |
 | **Documents liés** | `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
@@ -14,6 +14,7 @@
 - **0.2** — Hasard + stratégie, compétition et leaderboard, plateau en orbite, architecture multijoueur.
 - **0.3** — Passage au format GDD. Trois goulots sur le plateau, mécanique de tri du feedback, jeu hors ligne obligatoire, premier jet du narratif.
 - **0.4** — Nom du jeu : Helioso Orbit ; scénario « Orbit : Studio » ; le studio fictif s'appelle Orbital Studio. Chapitre gratuit et cadenas par code de licence.
+- **0.5** — Ton et personnages du narratif validés ; cartes en français, conçues pour être traduites en anglais.
 
 *Tous les chiffres sont des valeurs de départ, à régler pendant les tests.*
 
@@ -77,7 +78,7 @@
 
 ---
 
-## 4. Le narratif *(premier jet, à retravailler ensemble)*
+## 4. Le narratif *(ton et personnages validés le 26 nov. 2026)*
 
 ### L'univers et le ton
 
@@ -120,6 +121,12 @@ Trois amis viennent de fonder **Orbital Studio** dans un petit local. Leur proje
 - **Le contrat :** le studio en tête du leaderboard signe avec Nébuleuse Games.
 - **Le sursis :** les studios qui atteignent l'objectif du festival (500 joueurs et une note d'au moins 4) reçoivent une proposition de suivi.
 - **La fermeture :** les autres repartent avec un post-mortem, et c'est très bien, car c'est le meilleur moment pour apprendre.
+
+### La langue des textes
+
+- **Pilote en français.** Tous les textes (cartes, messages de Vera, règles, guide d'animation) sont écrits d'abord en français.
+- **Conçus pour l'anglais dès le départ :** phrases courtes, pas de jeux de mots intraduisibles dans les règles (l'humour reste dans les phrases d'ambiance, qu'on adaptera plutôt que traduire), noms de personnages identiques dans les deux langues.
+- **Dans le jeu numérique :** chaque texte a une clé et une version par langue dans le fichier du scénario (par exemple `fr` et `en`), pour ajouter l'anglais sans toucher au code.
 
 ### Le texte d'ambiance des cartes
 
@@ -361,13 +368,15 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 26 nov. 2026 | Nom : **Helioso Orbit** (gamme de jeux) ; ce scénario s'appelle « Orbit : Studio » ; le studio fictif des joueurs s'appelle **Orbital Studio** |
 | 26 nov. 2026 | Dépôt GitHub public sous licence Helioso ; chapitre 1 gratuit, la suite débloquée par un code de licence ; contenus premium hors du dépôt à partir du N2 |
 | 26 nov. 2026 | Adresse du jeu en ligne : **orbit.helioso.com** |
+| 26 nov. 2026 | Ton léger avec de l'humour ; personnages PIX, SCAN, ARTY, Vera, Lou, Sam et Nova validés |
+| 26 nov. 2026 | Textes en français pour le pilote, écrits pour être traduits en anglais ; une clé par texte et une version par langue dans le jeu numérique |
 
 ---
 
 ## 15. Questions ouvertes
 
-1. **Le ton du narratif :** humour léger (proposé) ou plus sérieux ? Faut-il garder les noms PIX, SCAN, ARTY, Vera, Lou, Sam et Nova ?
-2. **La langue :** tout en français pour le pilote, avec une version anglaise prévue dès la conception des cartes ?
+1. ~~Le ton du narratif~~ **Décidé :** humour léger, personnages validés.
+2. ~~La langue~~ **Décidé :** français pour le pilote, conçu pour l'anglais.
 3. **L'évaluation :** les enseignants voudront-ils noter les étudiants à partir du jeu ? Si oui, il faudra une grille.
 4. **Plus tard :** une interaction entre les équipes, par exemple une audience partagée au festival ?
 5. **Plus tard :** un agent de tri du feedback ?

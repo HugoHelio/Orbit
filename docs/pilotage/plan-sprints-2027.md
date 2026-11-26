@@ -27,13 +27,15 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 | Documents du projet copiés dans le dossier ; whiteboard exporté en JSON | Fait (26 nov.) |
 | `README.md`, `CLAUDE.md` et `.gitignore` | Fait (26 nov.) |
 | Nom du jeu choisi : **Helioso Orbit** | Fait (26 nov.) |
-| Licence Helioso rédigée (`LICENSE.md`) et complétée (adresse, SIREN) | Fait (26 nov.) ; nom, e-mail et ville du tribunal à compléter ; relecture par un juriste à faire |
+| Licence Helioso rédigée et complétée (`LICENSE.md`) | Fait (26 nov.) ; relecture par un juriste à faire avant la première vente |
 | Dossier renommé `Orbit` (avant le premier commit) | Fait (26 nov.) |
 | Vérifier la disponibilité du nom (web, marques) | Fait (26 nov.) : aucun « Helioso Orbit » en ligne ; la marque Helioso a déjà été vérifiée |
 | Adresse du jeu : **orbit.helioso.com** (sous-domaine de helioso.com, déjà détenu) | Décidé (26 nov.) ; à configurer au moment de la mise en ligne |
-| Dépôt Git initialisé et premier commit (VS Code) | À faire |
-| Dépôt publié sur GitHub, **public**, sous le nom `helioso-orbit` | À faire |
-| Ouvrir le dossier dans VS Code avec Claude Code et vérifier qu'il lit `CLAUDE.md` | À faire |
+| Dépôt Git initialisé et premier commit (VS Code) | Fait (26 nov.) |
+| Dépôt publié sur GitHub, **public** : https://github.com/HugoHelio/Orbit | Fait (26 nov.) |
+| Ouvrir le dossier dans VS Code avec Claude Code et vérifier qu'il lit `CLAUDE.md` | Fait (26 nov.) |
+
+**Sprint 0 terminé le 26 novembre 2026.** Reste hors sprint : la relecture juridique de la licence.
 
 ## Les sprints
 

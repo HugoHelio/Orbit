@@ -31,4 +31,6 @@ Les données internes (contacts, contrats, prospection, scénarios de revenus) n
 
 ## Liens
 
+- Dépôt : https://github.com/HugoHelio/Orbit
 - Whiteboard du plateau : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn
+- Le jeu en ligne (à venir) : https://orbit.helioso.com
