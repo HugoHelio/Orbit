@@ -227,13 +227,11 @@ def c_feedback(fb):
         cible = f"<b>{cible}</b> · {NOMS_F[cible]}"
     else:
         cible = "<b>Hors liste</b>" + (" · une idée pour plus tard" if "plus tard" in cible else "")
-    if fb["type"] == "Bug":
-        effet_tri = "<b>Trié :</b> tâche de correction de 1 bloc. Livrée, la note remonte de 0,5."
-    elif fb["cible"].startswith("F"):
-        effet_tri = f"<b>Trié :</b> posez-la sur {fb['cible']}. Livrée au cycle suivant : <b>+{2 if nova else 1} étoile{'s' if nova else ''}</b>."
+    if fb["cible"].startswith("F"):
+        effet_tri = f"<b>Trié :</b> sur {fb['cible']}. Livré : <b>note +{'1' if nova else '0,5'}</b> (1 bloc de travail si {fb['cible']} est déjà sortie)."
     else:
         effet_tri = "<b>Trié :</b> on l'écarte. Savoir dire non, c'est aussi du pilotage."
-    x2 = f'<span style="background:{AMBER};border:.5mm solid {NAVY};border-radius:1mm;padding:.2mm 1.4mm">Compte ×2</span>' if nova else ""
+    x2 = f'<span style="background:{AMBER};border:.5mm solid {NAVY};border-radius:1mm;padding:.2mm 1.4mm">Vaut double</span>' if nova else ""
     return f"""<div class="in"><div class="bande" style="background:{AMBER}"><span>Feedback</span><span>{fb['id']}</span></div>
 <div class="corps"><div style="display:flex;align-items:center;gap:2mm;justify-content:space-between">
 <div style="display:flex;align-items:center;gap:2mm">{img_portrait(fb['qui'].lower(), 11, AMBER if nova else SAGE)}<div class="t" style="font-size:13pt">{fb['qui']}</div></div>
@@ -376,7 +374,7 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
     s.append(T(x - 58, y - 13, "GOULOT PRINCIPAL", 3.2, 800, fill=AMBER_T, ls=.4))
     s.append(T(x - 58, y - 7.5, "Trier le feedback (1 PA pour 2)", 3, 700))
     s.append(slots(x - 58, y - 3, 5, 5, warn_last=True, size=11.5))
-    s.append(T(x - 58, y + 17, "Plus de 4 cartes depuis plus d'un cycle :", 2.7, 600, fill=CORAL))
+    s.append(T(x - 58, y + 17, "Plus de 4 cartes non triées à la release :", 2.7, 600, fill=CORAL))
     s.append(T(x - 58, y + 21, "la note baisse de 0,5.", 2.7, 600, fill=CORAL))
 
     # agents
@@ -391,7 +389,7 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
             out.append(f'<rect x="{x + 27 + i * 11}" y="{y + 22}" width="9" height="9" rx="2" fill="#fff" stroke="{NAVY}" stroke-width=".8" stroke-dasharray="1.6 1.2"/>')
         return "".join(out)
 
-    s.append(agent(358, 170, "PIX", "Codeur · 3 blocs par cycle (5 au cycle 0)", "1 crédit par bloc · 1 carte Défaut cachée", 3))
+    s.append(agent(358, 170, "PIX", "Codeur · jusqu'à 3 blocs par cycle", "1 crédit par bloc · 1 carte Défaut cachée", 3))
     s.append(agent(358, 248, "SCAN", "Testeur · jusqu'à 4 tests par cycle", "1 crédit par test · bugs oui, ennui non", 4))
 
     # pioches et éditeur
@@ -421,18 +419,18 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
         s.append(f'<circle cx="{cx_}" cy="{cy_}" r="4.2" fill="#fff" stroke="{CYAN}" stroke-width="1.1"/>')
         s.append(T(cx_, cy_ + 1.1, str(20 - i), 2.8, 700, "middle", MUTED))
     s.append(T(26, 107, "NOTE DU JEU (SUR 5)", 3.2, 800, ls=.4))
-    notes = [5 - 0.5 * i for i in range(9)]
+    notes = [1 + 0.5 * i for i in range(9)]
     for i, n in enumerate(notes):
         x_ = 26 + i * 10.6
         s.append(f'<rect x="{x_}" y="110" width="9.4" height="9.4" rx="2" fill="{AMBER if n == 3 else "#fff"}" stroke="{NAVY}" stroke-width="{1.4 if n == 3 else .8}"/>')
         s.append(T(x_ + 4.7, 116, f"{n:g}".replace(".", ","), 2.8, 700, "middle"))
-    s.append(T(26, 125, "Départ à 3, entre 1 et 5 · bug publié −0,5 · bug de joueur corrigé +0,5", 2.7, 500, fill=MUTED))
+    s.append(T(26, 125, "Départ sur la case ambre (3) · bug publié −0,5 · feedback livré +0,5", 2.7, 500, fill=MUTED))
     s.append(T(26, 140, "CYCLE", 3.2, 800, ls=.4))
     for i, lab in enumerate(("0", "1", "2", "3", "4", "Fin")):
         x_ = 26 + i * 15
         s.append(f'<rect x="{x_}" y="143" width="13" height="10" rx="2" fill="{TEAL if i == 0 else "#fff"}" stroke="{NAVY}" stroke-width=".8"/>')
         s.append(T(x_ + 6.5, 149.6, lab, 3.4, 800, "middle"))
-    s.append(T(26, 158, "0 : libre, sans défaut, PIX à 5 blocs · 1 à 4 : E1 à E4", 2.7, 500, fill=MUTED))
+    s.append(T(26, 158, "0 : sans défaut, 2 blocs par humain · 1 à 4 : E1 à E4", 2.7, 500, fill=MUTED))
 
     # porte du premier jouable (à côté de la Release)
     s.append(f'<rect x="352" y="392" width="94" height="13" rx="3" fill="{AMBER}" stroke="{NAVY}" stroke-width="1"/>')
@@ -492,16 +490,17 @@ def livret():
     page_fiches = f'<div class="feuille">{fiche(refs[0])}{fiche(refs[1])}</div><div class="feuille">{fiche(refs[2])}{jet_expl}</div>'
 
     lignes = "".join(f"<tr><td class='c'><b>{c}</b></td><td></td><td class='c'>oui · non</td><td></td><td></td><td></td><td></td><td></td></tr>" for c in ("0", "1", "2", "3", "4"))
+    risques = "".join(f"<tr><td class='c'><b>{c}</b></td><td></td><td></td><td class='c'>oui · non</td></tr>" for c in ("0", "1", "2", "3", "4"))
     score = f"""<div class="feuille" style="padding:14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:24pt">Feuille de score</div><div class="lab">Helioso Orbit · Orbit : Studio</div></div>
 <div style="display:flex;gap:6mm;margin:5mm 0">{''.join(f'<div style="flex:1;border:.6mm solid {NAVY};border-radius:2mm;padding:2mm 3mm;height:16mm"><div class="lab">{l}</div></div>' for l in ('Nom du studio', 'Chef(fe) de projet', 'Designer', 'Programmeur(se)'))}</div>
 <table class="tab big"><tr><th>Cycle</th><th>Fonctionnalités livrées</th><th>Premier<br>jouable ?</th><th>Étoiles (total)</th><th>Joueurs<br>(étoiles × 25)</th><th>Note<br>(sur 5)</th><th>Score<br>(joueurs × note)</th><th>Crédits IA<br>restants</th></tr>{lignes}</table>
-<div style="display:flex;gap:6mm;margin-top:7mm;align-items:stretch">
-<div style="flex:1.2;border:.8mm solid {NAVY};border-radius:3mm;padding:4mm;background:{BG}"><div class="lab">Score final</div>
-<div class="t" style="font-size:15pt;margin-top:3mm">Joueurs ______ × note ____ = <span style="display:inline-block;border-bottom:.6mm solid {NAVY};width:28mm"></span></div></div>
-<div style="flex:1;border:.6mm solid {NAVY};border-radius:3mm;padding:4mm"><div class="lab">Notre plus belle décision</div></div></div>
-<div style="border:.6mm solid {NAVY};border-radius:3mm;padding:4mm;margin-top:6mm;height:45mm"><div class="lab">Débrief : où était notre goulot ? Qu'aurions-nous dû déléguer, ou vérifier ?</div></div>
-<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles en ligne × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans premier jouable, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié ne rapporte que la moitié des étoiles (arrondi à l'inférieur) ; une carte Feedback de Nova vaut double.</div></div>"""
+<div class="t" style="font-size:13pt;margin:5mm 0 1mm">Notre risque du cycle</div>
+<div class="txt" style="font-size:8.5pt;margin-bottom:2mm">Au début de chaque cycle, en 30 secondes : quel risque voyons-nous, et que faisons-nous contre ? Après la release : est-il arrivé ?</div>
+<table class="tab risques"><tr><th>Cycle</th><th>Le risque que nous voyons</th><th>Notre parade</th><th>Arrivé ?</th></tr>{risques}</table>
+<div style="border:.8mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;margin-top:5mm;background:{BG};display:flex;justify-content:space-between;align-items:center"><div class="lab">Score final</div>
+<div class="t" style="font-size:14pt">Joueurs ______ × note ____ = <span style="display:inline-block;border-bottom:.6mm solid {NAVY};width:28mm"></span></div></div>
+<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles en ligne × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans premier jouable, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié coûte 1 étoile ; chaque carte Feedback livrée fait monter la note de 0,5 (Nova : 1).</div></div>"""
 
     equipes = "".join(f"<tr><td class='c'><b>{i}</b></td>" + "<td></td>" * 7 + "</tr>" for i in range(1, 9))
     leader = f"""<div class="feuille" style="padding:14mm">
@@ -533,7 +532,7 @@ def livret():
 <tr><td><b>plateau-4xA4.pdf</b></td><td>Le même plateau en 4 morceaux</td><td>A4 paysage, « taille réelle », puis assembler en suivant les repères</td></tr>
 <tr><td><b>cartes-recto.pdf</b></td><td>Fonctionnalités F01–F20 et messages de Vera V0–V5</td><td>A4, recto seul, papier 250 g ou plus</td></tr>
 <tr><td><b>cartes-recto-verso.pdf</b></td><td>Défauts D01–D20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos</td><td>A4, <b>recto verso, retournement bord long</b>, 250 g</td></tr>
-<tr><td><b>livret.pdf</b></td><td>Ce guide, les règles sur une page, les 3 fiches de rôle, l'explication des jetons, la feuille de score, le leaderboard, la planche de jetons</td><td>A4, recto seul ; les fiches de rôle se coupent en deux (A5)</td></tr></table>
+<tr><td><b>livret.pdf</b></td><td>Ce guide, les règles sur une page, les 3 fiches de rôle, l'explication des jetons, la feuille de score avec le risque du cycle, la feuille de débrief, le leaderboard, la planche de jetons</td><td>A4, recto seul ; les fiches de rôle se coupent en deux (A5)</td></tr></table>
 <div class="t" style="font-size:15pt;margin:8mm 0 3mm">Par équipe</div>
 <div class="txt">1 plateau · 3 fiches de rôle (une par joueur) · 20 Fonctionnalités · 20 Défauts · 24 Feedback · 9 jetons PA · 15 jetons bloc · 3 marqueurs · 1 feuille de score.<br>
 <b>Pour l'animateur :</b> les 6 Événements, les 6 messages de Vera et le leaderboard.</div>
@@ -550,6 +549,7 @@ def livret():
 .tab tr:nth-child(even) td{{background:{BG}}}
 .tab .c{{text-align:center;white-space:nowrap}}
 .big td{{height:13mm}} .big th{{height:auto}}
+.risques td{{height:10mm}} .risques td:nth-child(2),.risques td:nth-child(3){{width:42%}}
 """
     import markdown
     texte = (RACINE / "docs/jeu/regles-une-page.md").read_text(encoding="utf-8")
@@ -562,7 +562,26 @@ def livret():
 .regles ul,.regles ol{{padding-left:5mm}} .regles li{{margin:.4mm 0}}
 .regles ol>li{{margin-top:1.2mm}}
 """
-    return page_html("Livret", guide + regles + page_fiches + score + leader + jetons, extra_css=css)
+    rep = [("Éviter", "Ne pas prendre le risque", "Faire produire par un humain : jamais de défaut, mais 1 bloc par cycle"),
+           ("Réduire", "Rendre le risque moins probable", "Brief détaillé : le risque de défaut passe de 40 % à 16 %"),
+           ("Détecter", "Le trouver avant qu'il ne frappe", "SCAN, relecture, playtest, avant la release"),
+           ("Accepter", "Le prendre en connaissance de cause", "Publier sans vérifier, ou garder des crédits en réserve")]
+    lignes_rep = "".join(f"<tr><td><b>{a}</b><br><span class='ph'>{b}</span></td><td>{c}</td><td></td></tr>" for a, b, c in rep)
+    debrief = f"""<div class="feuille" style="padding:14mm">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:24pt">Débrief</div><div class="lab">Helioso Orbit · une feuille par équipe</div></div>
+<div class="txt" style="margin:2mm 0 4mm">Trente minutes après le festival, avec la feuille de score sous les yeux.</div>
+<div class="t" style="font-size:13pt;margin-bottom:2mm">1. Ressenti · 2. Ce qui s'est passé</div>
+<div style="border:.6mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;height:26mm"><div class="lab">Où était notre goulot ? Quelle file d'attente a le plus grossi ?</div></div>
+<div class="t" style="font-size:13pt;margin:5mm 0 1mm">3. Les leçons : nos 4 réponses au risque</div>
+<div class="txt" style="font-size:9pt;margin-bottom:2mm">Face à un risque, on a toujours le choix entre 4 réponses. Classez vos propres décisions de la partie dans la bonne case.</div>
+<table class="tab rep"><tr><th>Réponse</th><th>Dans le jeu</th><th>Nos décisions de la partie</th></tr>{lignes_rep}</table>
+<div style="border:.6mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;margin-top:4mm;height:20mm"><div class="lab">Nos risques du cycle : lesquels sont arrivés ? Lesquels avions-nous vus venir ?</div></div>
+<div class="t" style="font-size:13pt;margin:5mm 0 2mm">4. Transfert au réel</div>
+<div style="border:.6mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;height:22mm"><div class="lab">Dans notre prochain projet, quelle règle allons-nous appliquer ?</div></div></div>"""
+    css += """
+.rep td{height:17mm} .rep td:nth-child(1){width:26%} .rep td:nth-child(2){width:34%}
+"""
+    return page_html("Livret", guide + regles + page_fiches + score + debrief + leader + jetons, extra_css=css)
 
 
 # ---------------------------------------------------------------- assemblage

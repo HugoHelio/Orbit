@@ -1,70 +1,102 @@
-# Simulation d'équilibrage — Orbit : Studio
+# Étude du jeu par simulation — Orbit : Studio
 
-*26 novembre 2026. Script : `prototype-papier/outil/simuler.py` (il lit les cartes dans `docs/jeu/cartes-orbit-studio.md`). 2 000 parties par stratégie et par variante de règles. Relancer : `python prototype-papier/outil/simuler.py`.*
+*Version 2 du 26 novembre 2026. Script : `prototype-papier/outil/simuler.py`, qui lit les cartes dans `docs/jeu/cartes-orbit-studio.md`. 3 000 parties par profil. Relancer : `python prototype-papier/outil/simuler.py` (ou `--rapide`).*
 
-## Ce que simule le script
+## En bref
 
-Les règles de base (GDD 0.9) avec les 8 décisions du 26 novembre : un brief par fonctionnalité, file d'attente de PIX, joueurs recalculés à chaque release, une carte Feedback par palier de 100 joueurs, bloc d'amélioration pour les idées sur une fonctionnalité déjà sortie, pioche Défauts remélangée.
+- **Le jeu récompense les bonnes décisions.** L'équipe experte fait en moyenne 2,2 fois le score des fonceurs. Trop vérifier coûte aussi : les perfectionnistes finissent derrière les élèves sérieux.
+- **Les scores vont de 0 à environ 5 400 points.** Le plafond théorique est de 6 375 points (toutes les étoiles et une note de 5), mais il est hors d'atteinte en 5 cycles.
+- **La chance ne pèse que sur les équipes qui ne vérifient pas.** Elle fait varier le score d'environ ±25 % chez les fonceurs, et de moins de ±5 % chez les experts. Notre principe de design est confirmé : chaque hasard se maîtrise par une décision.
+- **Le temps est le vrai problème.** Sans chronomètre, 5 cycles prennent environ 2 h 07 pour une classe de 6 équipes, alors qu'une session de 3 h n'en laisse qu'environ 1 h 50 pour jouer. **Décision prise : des cycles chronométrés**, 25 minutes pour le cycle 0, puis 20 minutes.
+- **L'étude a trouvé 5 incohérences ou complications.** Les quatre premières sont corrigées, la cinquième est à surveiller pendant la partie test (voir plus bas).
 
-Six équipes-robots jouent chacune une stratégie fixe :
+## Les profils d'équipes simulés
 
-| Stratégie | Priorité | Vérification | Feedback |
-|---|---|---|---|
-| A | Les fonctionnalités à 3 étoiles d'abord | Aucune, tout à PIX | Ignoré |
-| B | Les Must d'abord | Aucune, tout à PIX | Ignoré |
-| C | Les Must d'abord | Équilibrée : SCAN sur les blocs de PIX, playtest | Trié |
-| D | Les Must d'abord | Prudente : briefs détaillés, relecture, SCAN, playtest | Trié |
-| E | Les fonctionnalités à 3 étoiles d'abord | Équilibrée | Trié |
-| F | Les Must d'abord | Aucune | Trié |
+Ces équipes ne suivent pas une stratégie fixe comme les robots de la version 1 :
+- elles **se trompent** : elles identifient mal un Must, ou perdent une action en hésitant ;
+- elles **tentent des choses**, car chaque décision est tirée au hasard selon leur profil ;
+- elles **apprennent** : après un cycle à 0 joueur, elles retrouvent les Must, et après un bug publié, elles utilisent davantage SCAN.
 
-*Limite : les robots ne changent jamais de stratégie en cours de partie. De vrais joueurs à 0 point après le cycle 0 réagiraient. Les chiffres comparent des stratégies, ils ne prédisent pas le score d'une vraie équipe.*
-
-## Avec les règles actuelles (R0)
-
-| Stratégie | Score moyen | Médiane | 10 % pires | Joueurs | Note | Bugs publiés | Crédits restants | Jouable au cycle 0 | Blocs humains / PIX |
-|---|---|---|---|---|---|---|---|---|---|
-| A · Étoiles d'abord, tout à PIX, sans vérifier | 1149 | 625 | 0 | 743 | 1.24 | 3.2 | 7.0 | 0 % | 21 / 16 |
-| B · Must d'abord, tout à PIX, sans vérifier | 350 | 0 | 0 | 1201 | 0.28 | 3.2 | 7.0 | 100 % | 21 / 16 |
-| C · Must d'abord, équilibré (SCAN + tri) | 5590 | 5625 | 5125 | 1140 | 4.90 | 0.0 | 0.8 | 100 % | 15 / 13 |
-| D · Must d'abord, prudent (briefs détaillés, relecture, SCAN, tri) | 4967 | 5000 | 4500 | 999 | 4.97 | 0.0 | 9.0 | 100 % | 15 / 9 |
-| E · Étoiles d'abord, équilibré (SCAN + tri) | 0 | 0 | 0 | 0 | 4.54 | 0.2 | 0.0 | 0 % | 17 / 13 |
-| F · Must d'abord, sans vérifier, mais tri du feedback | 2888 | 2875 | 1200 | 1195 | 2.40 | 2.9 | 8.1 | 100 % | 15 / 15 |
-
-**Ce qui marche :**
-- **Le premier jouable fonctionne** : viser les étoiles d'abord donne 0 joueur au cycle 0 (A et E).
-- **Vérifier et trier le feedback paie** : C fait 5 à 15 fois mieux que A et B.
-- **Trier le feedback compte beaucoup** : F (qui trie, sans vérifier) fait 8 fois mieux que B (qui ne trie pas).
-
-**Les problèmes trouvés :**
-1. **Les humains produisent autant que PIX** (21 blocs contre 16 pour A et B) : avec 1 PA par bloc, un humain fait 3 blocs par cycle, comme PIX. La leçon « les agents produisent plus » disparaît. Le GDD prévoyait au départ qu'un humain produise 1 bloc par cycle.
-2. **La note sature à 5** pour les équipes prudentes (bonus de +0,5 par release sans défaut) : on ne distingue plus une bonne équipe d'une très bonne.
-3. **La note s'effondre vers 0** pour les équipes qui ne vérifient pas : avec score = joueurs × note, B a le plus de joueurs mais un score proche de 0. Le nombre de joueurs ne veut plus rien dire.
-
-## Avec les réglages proposés (R7)
-
-R7 = règles actuelles, plus 4 changements :
-1. **Un humain produit au plus 1 bloc par cycle** (toujours 1 PA).
-2. **Au cycle 0, PIX produit jusqu'à 5 blocs** (sinon les 6 blocs des Must ne tiennent plus au cycle 0).
-3. **Plus de bonus « release sans défaut »** : la note monte seulement quand on corrige un bug signalé par un joueur.
-4. **La note ne descend pas sous 1.**
-
-| Stratégie | Score moyen | Médiane | 10 % pires | Joueurs | Note | Bugs publiés | Crédits restants | Jouable au cycle 0 | Blocs humains / PIX |
-|---|---|---|---|---|---|---|---|---|---|
-| A · Étoiles d'abord, tout à PIX, sans vérifier | 0 | 0 | 0 | 0 | 1.19 | 3.2 | 7.0 | 0 % | 10 / 18 |
-| B · Must d'abord, tout à PIX, sans vérifier | 986 | 1000 | 925 | 985 | 1.00 | 3.2 | 7.0 | 100 % | 10 / 18 |
-| C · Must d'abord, équilibré (SCAN + tri) | 3724 | 3675 | 3150 | 1022 | 3.65 | 0.0 | 2.4 | 100 % | 9 / 14 |
-| D · Must d'abord, prudent (briefs détaillés, relecture, SCAN, tri) | 3206 | 3150 | 2775 | 905 | 3.55 | 0.0 | 13.8 | 100 % | 10 / 8 |
-| E · Étoiles d'abord, équilibré (SCAN + tri) | 0 | 0 | 0 | 0 | 3.00 | 0.0 | 0.4 | 0 % | 10 / 15 |
-| F · Must d'abord, sans vérifier, mais tri du feedback | 2238 | 2150 | 1050 | 1055 | 2.12 | 2.6 | 8.9 | 100 % | 10 / 16 |
-
-**Le classement devient celui qu'on veut enseigner :** équilibré (C) > prudent (D, trop lent : il lui reste 14 crédits) > sans vérifier mais à l'écoute (F) > sans vérifier ni écouter (B) > mauvaises priorités (A, E). PIX produit plus que les humains, le premier jouable reste la première épreuve, et le nombre de joueurs garde son sens.
-
-**À surveiller pendant la partie test :** les bonnes équipes livrent environ 80 % des étoiles possibles. Le choix existe, mais il est encore modéré.
-
-## Variantes testées et écartées
-
-| Variante | Pourquoi elle est écartée |
+| Profil | Comportement |
 |---|---|
-| Les grosses fonctionnalités passent à 4 blocs | Change très peu les résultats |
-| Produire soi-même coûte 2 PA par bloc | Rend le premier jouable impossible au cycle 0 (0 % des parties) |
-| Garder le bonus « release sans défaut » avec les autres réglages | La note des équipes prudentes sature à 5 |
+| Les fonceurs | Tout à PIX, peu de vérification ; ils apprennent un peu après un échec |
+| Les élèves sérieux | Font les choses bien, sans tout optimiser |
+| Les perfectionnistes | Vérifient tout, écrivent des briefs détaillés ; ils sont lents |
+| Le chef de projet débordé | Produit beaucoup, trie peu le feedback |
+| Les artistes | Visent les étoiles et le fun, playtestent tout, vérifient peu le code |
+| L'équipe experte | Les Must d'abord, PIX vérifié par SCAN, feedback trié |
+
+## Les scores (règles simplifiées, version 0.11)
+
+| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Joueurs | Note | Premier jouable au cycle 0 | Bugs publiés | Crédits restants |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Les fonceurs | 1 950 | 875 | 1 800 | 3 412 | 0 | 5 000 | 916 | 2,13 | 6 % | 2,3 | 5,0 |
+| Les élèves sérieux | 4 054 | 3 062 | 4 250 | 4 750 | 0 | 5 375 | 905 | 4,48 | 37 % | 0,6 | 3,2 |
+| Les perfectionnistes | 3 801 | 3 000 | 3 938 | 4 375 | 1 875 | 5 000 | 813 | 4,67 | 72 % | 0,0 | 8,7 |
+| Le chef de projet débordé | 2 028 | 900 | 1 850 | 3 600 | 0 | 5 125 | 929 | 2,19 | 26 % | 1,4 | 1,7 |
+| Les artistes | 3 067 | 1 750 | 3 150 | 4 375 | 0 | 5 250 | 876 | 3,51 | 14 % | 1,3 | 5,8 |
+| L'équipe experte | 4 324 | 3 712 | 4 375 | 4 750 | 1 750 | 5 250 | 895 | 4,83 | 100 % | 0,3 | 3,4 |
+
+**Le score minimum est 0.** Il est rare, car presque toutes les équipes trouvent le premier jouable au cycle 1. **Le meilleur score trouvé est 5 375**, en essayant 20 000 stratégies sans erreur. **Le plafond théorique est de 6 375** (51 étoiles × 25 joueurs × une note de 5) : il faudrait tout produire, sans un seul défaut.
+
+**Le premier jouable au cycle 0 est un vrai filtre.** Une équipe qui se trompe sur un seul des 5 Must fait 0 au cycle 0, puis rattrape son retard au cycle 1. Ces taux dépendent de notre hypothèse sur la lecture du message de Vera. La partie test dira si elle est trop pessimiste.
+
+**Avant simplification**, avec les mêmes profils, le classement était le même mais plus serré : 3 433 pour l'équipe experte contre 1 877 pour les fonceurs, soit 1,8 fois plus au lieu de 2,2. Écouter les joueurs rapportait aussi moins. La simplification rend donc les règles plus simples et les leçons plus nettes.
+
+## La chance
+
+Pour mesurer la chance, on compare les 10 % de parties où l'équipe a tiré le moins de cartes Défaut défavorables avec les 10 % où elle en a tiré le plus. Dans le premier groupe, environ 15 % des cartes sont défavorables ; dans le second, environ 55 %.
+
+| Profil | Score avec de la chance | Score avec de la malchance | Écart |
+|---|---|---|---|
+| Les fonceurs | 2 713 | 1 715 | **−37 %** |
+| Les artistes | 3 520 | 2 811 | −20 % |
+| Le chef de projet débordé | 2 307 | 1 835 | −20 % |
+| Les élèves sérieux | 4 264 | 3 777 | −11 % |
+| L'équipe experte | 4 424 | 4 172 | −6 % |
+| Les perfectionnistes | 3 716 | 3 656 | **−2 %** |
+
+**À dire au débrief :** la malchance n'excuse pas un mauvais score. Les équipes qui vérifient ne la subissent presque pas. Ce n'est pas le hasard qui fait perdre, c'est l'absence de vérification.
+
+## Le temps
+
+**Hypothèses de durée** (débutants, sur papier, à caler pendant la partie test) :
+- environ 2 minutes pour le message de Vera, 4 minutes de planification, 2 minutes de mini-rétro ;
+- de 0,3 à 1,5 minute par action ;
+- 2 à 5 minutes pour la release et le comptage ;
+- 8 minutes de découverte en plus au cycle 0.
+
+| | Cycle 0 | Cycle 1 | Cycle 2 | Cycle 3 | Cycle 4 | Total |
+|---|---|---|---|---|---|---|
+| Une équipe (moyenne des profils) | 30 min | 22 min | 22 min | 21 min | 21 min | **1 h 57** |
+| Une classe de 6 équipes (on attend la plus lente) | 32 min | 25 min | 25 min | 23 min | 23 min | **2 h 07** (2 h 10 dans 10 % des cas) |
+
+**Le temps disponible :** une session de 3 h moins l'accueil (15 min), le débrief (30 min) et la pause (10 min) laisse environ **1 h 55 de jeu**. Si les règles sont expliquées en jouant le cycle 0, sans séquence de 15 minutes à part, c'est même **2 h 10**.
+
+**Décision :** des **cycles chronométrés, 25 minutes au cycle 0 puis 20 minutes**, soit 1 h 45 de jeu. À la sonnerie, on passe à la release avec ce qui est prêt. Le chronomètre fait aussi partie du jeu : c'est la pression de la deadline. Il reste de la marge pour jouer à SpacePlan, mais seulement au cycle 0 et au festival.
+
+## Les incohérences trouvées
+
+| # | Ce qui n'allait pas | Ce qu'on a fait |
+|---|---|---|
+| 1 | **La note ne pouvait presque que baisser.** Seules 2 cartes Feedback (des Bug sur F06) la faisaient monter, donc elle n'avait pas de sens positif. | **Simplifié :** toute carte Feedback livrée fait monter la note (+0,5, ou +1 pour Nova). Le travail sur les fonctionnalités donne les joueurs, l'écoute des joueurs donne la note. |
+| 2 | **Une carte Bug portait sur une fonctionnalité qui n'est peut-être pas sortie** (FB12, sur F15). | Avec la règle unique du feedback, la carte attend la sortie de la fonctionnalité. Plus de cas particulier. |
+| 3 | **E1 apportait des retours de joueurs même à un jeu sans joueurs.** | E1 ne fait piocher que si le jeu a des joueurs. |
+| 4 | **Des calculs inutiles.** La moitié des étoiles arrondie à l'inférieur donnait 1 étoile pour les fonctionnalités à 2 comme à 3 étoiles, et il fallait suivre l'âge de chaque carte dans la file. | Un Pas fun coûte 1 étoile. La pénalité de file se compte à la release : plus de 4 cartes non triées, −0,5. |
+| 5 | **Toutes les équipes ont à peu près le même nombre de joueurs** (800 à 930) : les différences viennent surtout de la note. La leçon « les agents produisent plus » se voit peu dans les joueurs. | **À surveiller** pendant la partie test. Si besoin, on agrandira le backlog avec les demandes des joueurs (classement, combat de boss), comme le prévoit la section 0 du GDD. |
+
+**Deux simplifications assumées, à expliquer au débrief si on nous les signale :**
+- **Les humains ne produisent jamais de défaut.** Ils sont lents mais savent ce qu'ils font. C'est volontaire : ça rend visible le compromis entre la vitesse et la fiabilité.
+- **PIX ne produit pas de défaut au cycle 0.** C'est un cycle de prise en main, sans pression : PIX est « en démo ».
+
+**À surveiller :** les bonnes équipes approchent la note maximale de 5. Si la partie test le confirme, la note de départ pourra passer à 2,5.
+
+## Historique : la version 1 de l'étude
+
+La première étude utilisait des robots à stratégie fixe et a conduit à 4 réglages :
+- un humain produit 1 bloc par cycle au maximum ;
+- plus de bonus « release sans défaut » ;
+- la note reste entre 1 et 5 ;
+- au cycle 0, chaque humain produit 2 blocs. Une première version donnait 5 blocs à PIX au cycle 0 : elle a été écartée car illogique, avec des résultats identiques.
+
+Elle avait montré que les humains produisaient autant que PIX, et que la note saturait ou s'effondrait.

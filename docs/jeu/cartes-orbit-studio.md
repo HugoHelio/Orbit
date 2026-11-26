@@ -1,6 +1,6 @@
-# Cartes d'Orbit : Studio — règles de base, version 4
+# Cartes d'Orbit : Studio — règles de base, version 5
 
-*Cartes du prototype papier — version 4 du 26 novembre 2026 : réglages issus de la simulation (un bloc humain par cycle, PIX à 5 blocs au cycle 0, plus de bonus « release sans défaut », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du premier jouable, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.10, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
+*Cartes du prototype papier — version 5 du 26 novembre 2026 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un bloc humain par cycle, 2 blocs humains au cycle 0, plus de bonus « release sans défaut », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du premier jouable, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.11, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
 
 *Chaque carte a un identifiant (F01, D01, FB01, E01, V0…) : c'est sa clé pour la traduction anglaise et pour le jeu numérique.*
 
@@ -15,16 +15,16 @@ Chaque humain a **3 points d'action (PA) par cycle**. L'équipe a **20 crédits 
 | Trier 2 cartes Feedback | 1 PA | Chef de projet |
 | Écrire un brief **simple** pour une fonctionnalité entière (1 carte Défaut tirée par bloc de PIX) | 1 PA | Chef de projet ou designer |
 | Écrire un brief **détaillé** pour une fonctionnalité entière (2 cartes Défaut tirées par bloc, on garde la meilleure) | 2 PA | Chef de projet ou designer |
-| Produire 1 bloc soi-même (aucune carte Défaut ; **1 bloc par cycle au maximum**) | 1 PA | Le responsable de la fonctionnalité |
+| Produire 1 bloc soi-même (aucune carte Défaut ; **1 bloc par cycle au maximum**, 2 au cycle 0) | 1 PA | Le responsable de la fonctionnalité |
 | Relire 1 bloc produit par PIX (révèle sa carte Défaut) | 1 PA | Le responsable de la fonctionnalité |
 | Faire un playtest d'une fonctionnalité (révèle un « Pas fun » sur tous ses blocs) | 1 PA | Designer |
 | Corriger un défaut révélé | 1 PA | Le responsable de la fonctionnalité |
-| Faire produire 1 bloc par PIX (3 par cycle, 5 au cycle 0 ; les blocs en trop attendent au cycle suivant) | 1 crédit | — |
+| Faire produire 1 bloc par PIX (3 par cycle ; les blocs en trop attendent au cycle suivant) | 1 crédit | — |
 | Faire tester 1 bloc par SCAN (révèle un « Bug », jamais un « Pas fun ») | 1 crédit | — |
 
 **Le responsable** d'une fonctionnalité est indiqué sur sa carte : **Prog** = le programmeur ; **Design** et **Art** = le designer.
 
-**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte de 0,5 quand un bug signalé par un joueur est corrigé et publié. **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu en ligne × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans premier jouable, il n'y a pas de joueurs : le score vaut 0.
+**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les joueurs demandent** : +0,5 par carte Feedback traitée (+1 pour Nova). **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu en ligne × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans premier jouable, il n'y a pas de joueurs : le score vaut 0.
 
 ---
 
@@ -104,7 +104,7 @@ Pour chaque bloc produit par PIX, une carte Défaut est glissée **face cachée*
 |---|---|---|---|---|
 | D01 – D12 | **Aucun défaut** | 12 | Relecture, test, playtest ou release | — |
 | D13 – D17 | **Bug** | 5 | SCAN, relecture ou release | La fonctionnalité ne rapporte **aucun joueur** tant qu'elle n'est pas corrigée, et la note baisse de 0,5 |
-| D18 – D20 | **Pas fun** | 3 | Playtest du designer, relecture ou release (**jamais par SCAN**) | La fonctionnalité ne rapporte que **la moitié de ses étoiles** (arrondi à l'inférieur) tant qu'elle n'est pas corrigée |
+| D18 – D20 | **Pas fun** | 3 | Playtest du designer, relecture ou release (**jamais par SCAN**) | La fonctionnalité **perd 1 étoile** tant qu'elle n'est pas corrigée |
 
 **Corriger un défaut révélé** coûte 1 PA au responsable de la fonctionnalité. La carte Défaut est alors défaussée.
 
@@ -121,13 +121,12 @@ Pour chaque bloc produit par PIX, une carte Défaut est glissée **face cachée*
 
 Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque palier de 100 joueurs atteint pour la première fois** (une équipe à 250 joueurs en a pioché 2 en tout), placée dans la file **Feedback → Backlog**. Le chef de projet les trie (1 PA pour 2 cartes).
 
-**Effet du tri, selon le type :**
-- **Bug :** crée une tâche de correction de 1 bloc sur la fonctionnalité citée. Livrée, elle fait remonter la note de 0,5 (maximum 5).
-- **Pas fun / Idée liée à une fonctionnalité :** on pose la carte sur la fonctionnalité citée. Elle rapporte **+1 étoile** quand la fonctionnalité sort. Si la fonctionnalité est déjà sortie, il faut d'abord produire **1 bloc d'amélioration** dessus.
+**Effet du tri (une seule règle pour Bug, Idée et Pas fun) :** on pose la carte sur la fonctionnalité citée.
+- Si la fonctionnalité est **déjà sortie**, il faut produire **1 bloc de travail** dessus (correction ou amélioration). Quand ce travail sort, **la note monte de 0,5** (+1 pour Nova).
+- Si la fonctionnalité **n'est pas encore sortie**, la carte attend : la note monte quand la fonctionnalité sort.
 - **Hors liste / Compliment :** on l'écarte. Savoir dire non, c'est aussi du pilotage.
-- **Les cartes de Nova comptent double :** +2 étoiles au lieu de +1, et elles comptent pour 2 dans la file d'attente.
 
-**Si plus de 4 cartes attendent depuis plus d'un cycle, la note baisse de 0,5** : « la communauté se sent ignorée ».
+**À la release, s'il reste plus de 4 cartes Feedback non triées, la note baisse de 0,5** : « la communauté se sent ignorée ».
 
 *Les citations viennent des vrais playtests de SpacePlan (16 joueurs, prototype et alpha).*
 
@@ -166,7 +165,7 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 
 | Id | Type (recto) | Cycle | Événement (verso) | Effet |
 |---|---|---|---|---|
-| E1 | Communauté | 1 | **Les premiers joueurs arrivent.** Les forums s'animent. | Piochez 2 cartes Feedback de plus ce cycle |
+| E1 | Communauté | 1 | **Les premiers joueurs arrivent.** Les forums s'animent. | Si votre jeu a des joueurs, piochez 2 cartes Feedback de plus ce cycle |
 | E2 | Technique | 2 | **Mise à jour du modèle de PIX.** Plus rapide, toujours aussi sûr de lui. | Ce cycle, PIX peut produire 4 blocs au lieu de 3 |
 | E3 | Éditeur | 3 | **Vera veut une démo pour ses investisseurs.** | À la release de ce cycle, si une fonctionnalité du premier jouable a un bug, la note baisse de 0,5 de plus |
 | E4 | Communauté | 4 | **Nova joue en direct au festival.** Des milliers de spectateurs. | Ce cycle, chaque bug publié fait baisser la note de 1 au lieu de 0,5 |
@@ -195,9 +194,9 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 - Les **20 cartes Fonctionnalité** sont posées dans le Backlog, **mélangées**, sans indication de priorité.
 - L'animateur lit le message de Vera (V0). Les équipes doivent en déduire les 5 Must.
 - Les actions sont les actions normales (PA, briefs, PIX), avec deux exceptions pour ce cycle : **aucune carte Défaut** et **aucun coût en crédits IA**. Pas d'événement ni de feedback.
-- Capacité du cycle 0 : **PIX produit jusqu'à 5 blocs** (si le chef de projet écrit les briefs), et chaque humain 1 bloc sur ses fonctionnalités. Soit 7 blocs pour les 6 blocs des Must : ils tiennent, **à condition de ne pas se disperser**.
+- Capacité du cycle 0 : PIX produit jusqu'à 3 blocs (si le chef de projet écrit les briefs) et, comme il n'y a rien à vérifier ni à trier, **chaque humain peut produire 2 blocs** sur ses fonctionnalités. Soit 7 blocs pour les 6 blocs des Must : ils tiennent, **à condition de ne pas se disperser**.
 - Release : si les 5 Must sont livrés, 10 étoiles = **250 joueurs**, et le score du cycle vaut 250 × 3 (la note de départ) = 750. Sinon : **0 joueur et 0 point**, et l'animateur le fait remarquer au leaderboard.
-- Au cycle 1, une équipe à 250 joueurs pioche **2 cartes Feedback**, plus 2 avec l'événement E1.
+- Au cycle 1, une équipe à 250 joueurs pioche **2 cartes Feedback**, plus 2 avec l'événement E1. Une équipe à 0 joueur ne pioche rien : personne ne parle d'un jeu qui n'existe pas.
 
 ---
 

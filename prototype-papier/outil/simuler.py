@@ -1,282 +1,362 @@
-"""Simulateur d'équilibrage d'Orbit : Studio (règles de base + décisions du 26 nov. 2026).
+"""Simulateur d'Orbit : Studio, version 2.
 
-Joue des milliers de parties avec plusieurs stratégies et compare les scores.
+Des équipes au profil réaliste (elles se trompent, tentent des choses, s'adaptent) jouent des milliers
+de parties. Le simulateur mesure les scores, l'impact de la chance et la durée des cycles.
 Les cartes sont lues dans docs/jeu/cartes-orbit-studio.md (via generer_kit).
 
-    python prototype-papier/outil/simuler.py [nombre_de_parties]
+    python prototype-papier/outil/simuler.py            # étude complète
+    python prototype-papier/outil/simuler.py --rapide   # moins de parties
 """
-import random, statistics, sys
+import random, statistics as st, sys
 from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import generer_kit as K  # noqa: E402  (lecture des cartes uniquement)
+import generer_kit as K  # noqa: E402
 
 FEATS = [dict(id=f["id"], blocs=f["blocs"], etoiles=f["etoiles"], must=f["prio"] == "Must",
               resp="P" if f["resp"] == "Prog" else "D") for f in K.feats]
 FB = [dict(id=f["id"], qui=f["qui"], type=f["type"], cible=f["cible"] if f["cible"].startswith("F") else None)
       for f in K.feedbacks]
 DECK0 = ["none"] * 12 + ["bug"] * 5 + ["pasfun"] * 3
-RANG = {"none": 0, "pasfun": 1, "bug": 2}  # plus petit = meilleur
+RANG = {"none": 0, "pasfun": 1, "bug": 2}
 
-# Règles en vigueur (variante R7, adoptée le 26 nov. 2026)
-REGLES = dict(bonus_propre=False, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=1, pix_c0=5, note_min=1)
+# ------------------------------------------------------------------ règles
+REGLES = dict(
+    cycles=5,             # cycles 0 à 4
+    humain_max=1, humain_c0=2, pix_cap=3,
+    note_depart=3.0, note_min=1.0, note_max=5.0,
+    fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
+    pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)
+    file_simple=True,     # simplification : à la release, plus de 4 cartes non triées = −0,5 (sans âge)
+    e1_si_joueurs=True,   # logique : E1 n'apporte du feedback que si le jeu a des joueurs
+)
 
-STRATS = {
-    "A · Étoiles d'abord, tout à PIX, sans vérifier": dict(prio="stars", detail=False, scan=False, review=False, playtest=False, sort=False, hold=False),
-    "B · Must d'abord, tout à PIX, sans vérifier":    dict(prio="must", detail=False, scan=False, review=False, playtest=False, sort=False, hold=False),
-    "C · Must d'abord, équilibré (SCAN + tri)":       dict(prio="must", detail=False, scan=True, review=False, playtest=True, sort=True, hold=True),
-    "D · Must d'abord, prudent (briefs détaillés, relecture, SCAN, tri)": dict(prio="must", detail=True, scan=True, review=True, playtest=True, sort=True, hold=True),
-    "E · Étoiles d'abord, équilibré (SCAN + tri)":    dict(prio="stars", detail=False, scan=True, review=False, playtest=True, sort=True, hold=True),
-    "F · Must d'abord, sans vérifier, mais tri du feedback": dict(prio="must", detail=False, scan=False, review=False, playtest=False, sort=True, hold=False),
+# Durées (minutes) d'une action sur papier, pour des débutants : hypothèses à caler pendant la partie test.
+DUREES = dict(vera=2, decouverte_c0=8, planif=4, tri=0.7, brief=1.0, bloc_pix=0.6, bloc_humain=0.3,
+              scan=0.5, relecture=0.6, playtest=1.5, correction=0.5, release=2, par_fonct=0.5,
+              par_defaut=0.5, comptage=2.5, pioche=0.3, retro=2, erreur=1.0)
+
+# ------------------------------------------------------------------ profils d'équipes
+PROFILS = {
+    "Les fonceurs": dict(must=0.6, pix=0.95, detail=0.05, scan=0.1, relire=0.05, playtest=0.1, tri=0.4,
+                         garder_bug=0.3, apprend=0.5, erreur=0.12, avidite=0.8,
+                         desc="Tout à PIX, peu de vérification, apprennent un peu après un échec"),
+    "Les élèves sérieux": dict(must=0.85, pix=0.7, detail=0.4, scan=0.6, relire=0.4, playtest=0.5, tri=0.9,
+                               garder_bug=0.9, apprend=0.8, erreur=0.06, avidite=0.4,
+                               desc="Font les choses bien, sans tout optimiser"),
+    "Les perfectionnistes": dict(must=0.95, pix=0.5, detail=0.9, scan=0.9, relire=0.9, playtest=0.9, tri=1.0,
+                                 garder_bug=1.0, apprend=0.2, erreur=0.04, avidite=0.2,
+                                 desc="Vérifient tout, briefs détaillés, lents"),
+    "Le chef de projet débordé": dict(must=0.8, pix=0.85, detail=0.15, scan=0.5, relire=0.2, playtest=0.3,
+                                      tri=0.25, garder_bug=0.7, apprend=0.4, erreur=0.1, avidite=0.6,
+                                      desc="Produit beaucoup, trie peu le feedback"),
+    "Les artistes": dict(must=0.7, pix=0.6, detail=0.3, scan=0.3, relire=0.2, playtest=1.0, tri=0.7,
+                         garder_bug=0.6, apprend=0.6, erreur=0.08, avidite=0.9,
+                         desc="Visent les étoiles et le fun, playtestent tout, vérifient peu le code"),
+    "L'équipe experte": dict(must=1.0, pix=0.8, detail=0.25, scan=0.85, relire=0.3, playtest=0.6, tri=1.0,
+                             garder_bug=1.0, apprend=0.5, erreur=0.0, avidite=0.5,
+                             desc="Joue bien : Must d'abord, PIX vérifié par SCAN, feedback trié"),
 }
 
 
 class Partie:
-    def __init__(self, st, rng):
-        self.st, self.r = st, rng
-        self.f = {x["id"]: dict(x, blocs=REGLES["tailles"][x["blocs"]], blocks=[], rel=False, bonus=0, pend_bonus=0, improve=0, fixtask=0) for x in FEATS}
+    def __init__(self, prof, rng, regles=REGLES):
+        self.p, self.r, self.R = dict(prof), rng, regles
+        self.f = {x["id"]: dict(x, blocks=[], rel=False, bonus=0, attente_note=0.0, travail=0)
+                  for x in FEATS}
         self.deck = DECK0[:]; rng.shuffle(self.deck); self.disc = []
         self.fbdeck = FB[:]; rng.shuffle(self.fbdeck)
-        self.queue = []  # [carte, âge]
-        self.credits, self.note, self.drawn, self.maxj = 20, 3.0, 0, 0
+        self.file, self.pix_file = [], []
+        self.credits, self.note, self.pioches, self.maxj, self.bonus_e1 = 20, regles["note_depart"], 0, 0, 0
+        self.t, self.mauvais, self.tires = [], 0, 0
         self.log = Counter()
+        # les fonctionnalités que l'équipe croit être les Must au cycle 0
+        self.cru_must = set()
+        autres = [x["id"] for x in FEATS if not x["must"]]
+        for x in FEATS:
+            if x["must"]:
+                self.cru_must.add(x["id"] if rng.random() < self.p["must"] else rng.choice(autres))
 
-    # -- cartes Défaut
     def draw(self):
         if not self.deck:
             self.deck, self.disc = self.disc, []
             self.r.shuffle(self.deck)
         return self.deck.pop() if self.deck else "none"
 
-    def defect(self, detail):
+    def defaut(self, detail):
         a = self.draw()
-        if not detail:
-            return a
-        b = self.draw()
-        best, other = (a, b) if RANG[a] <= RANG[b] else (b, a)
-        self.deck.insert(0, other)
-        return best
+        if detail:
+            b = self.draw()
+            a, autre = (a, b) if RANG[a] <= RANG[b] else (b, a)
+            self.deck.insert(0, autre)
+        self.tires += 1; self.mauvais += a != "none"
+        return a
 
     def done(self, f):
         return len(f["blocks"]) >= f["blocs"]
 
-    def known(self, f, kind):
-        return any(b["card"] == kind and b["known"] for b in f["blocks"])
-
-    def eff_stars(self, f):
-        if any(b["card"] == "bug" for b in f["blocks"]):
+    def etoiles(self, f):
+        if any(b["c"] == "bug" for b in f["blocks"]):
             return 0
-        s = f["etoiles"] // 2 if any(b["card"] == "pasfun" for b in f["blocks"]) else f["etoiles"]
+        s = f["etoiles"]
+        if any(b["c"] == "pasfun" for b in f["blocks"]):
+            s = s - 1 if self.R["pasfun_moins1"] else s // 2
         return s + f["bonus"]
 
     def jouable(self):
-        return all(f["rel"] and not any(b["card"] == "bug" for b in f["blocks"]) for f in self.f.values() if f["must"])
+        return all(f["rel"] and not any(b["c"] == "bug" for b in f["blocks"]) for f in self.f.values() if f["must"])
 
     def joueurs(self):
-        if not self.jouable():
-            return 0
-        return 25 * sum(self.eff_stars(f) for f in self.f.values() if f["rel"])
+        return 25 * sum(self.etoiles(f) for f in self.f.values() if f["rel"]) if self.jouable() else 0
 
-    def order(self):
+    def ordre(self):
         fs = [f for f in self.f.values() if not f["rel"] and not self.done(f)]
-        if self.st["prio"] == "must":
-            return sorted(fs, key=lambda f: (not f["must"], -f["etoiles"] / f["blocs"], f["blocs"]))
-        return sorted(fs, key=lambda f: (-f["etoiles"], f["blocs"]))
+        jou = self.jouable()
 
-    def fix(self, pa, f):
+        def cle(f):
+            prio = 0 if (jou or f["id"] in self.cru_must) else 1
+            valeur = f["etoiles"] / f["blocs"] * (1 + self.p["avidite"]) + self.r.random() * 0.8
+            return (prio, -valeur)
+        return sorted(fs, key=cle)
+
+    def agit(self, pa, qui, n=1):
+        """Dépense n PA ; parfois l'action est perdue (hésitation, erreur de règle)."""
+        if pa[qui] < n:
+            return False
+        pa[qui] -= n
+        if self.r.random() < self.p["erreur"]:
+            self.temps += DUREES["erreur"]; self.log["erreurs"] += 1
+            return False
+        return True
+
+    def corriger(self, pa, f):
         for b in f["blocks"]:
-            if b["card"] in ("bug", "pasfun") and b["known"] and pa[f["resp"]] > 0:
-                pa[f["resp"]] -= 1
-                self.disc.append(b["card"]); b["card"] = "none"; b["known"] = True
-                self.log["corrections"] += 1
+            if b["c"] != "none" and b["k"] and pa[f["resp"]] > 0:
+                if self.agit(pa, f["resp"]):
+                    self.disc.append(b["c"]); b["c"] = "none"
+                    self.temps += DUREES["correction"]; self.log["corrections"] += 1
 
     def cycle(self, c):
-        st, pa = self.st, {"CP": 3, "D": 3, "P": 3}
-        pixcap = REGLES["pix_c0"] if c == 0 else (4 if c == 2 else 3)
-        cost = 0 if c == 0 else 1
-        cycles_left = max(1, 5 - c)
-        # 1. tri du feedback
-        if st["sort"] and self.queue:
-            n_pa = 1 if len(self.queue) <= 2 else 2
-            for _ in range(n_pa):
-                for _ in range(2):
-                    if not self.queue:
-                        break
-                    card, _age = self.queue.pop(0)
-                    f = self.f.get(card["cible"]) if card["cible"] else None
-                    if card["type"] == "Bug" and f:
-                        f["fixtask"] += 1
-                    elif card["type"] in ("Idée", "Pas fun") and f:
-                        gain = 2 if card["qui"] == "Nova" else 1
-                        if f["rel"]:
-                            f["improve"] += 1; f["pend_bonus"] += gain
-                        else:
-                            f["bonus"] += gain
-                    self.log["tri"] += 1
-                pa["CP"] -= 1
-        # 2. corrections connues et tâches issues du feedback
-        for f in self.f.values():
-            self.fix(pa, f)
-            while f["fixtask"] and pa[f["resp"]] > 0:
-                pa[f["resp"]] -= 1; f["fixtask"] -= 1; f.setdefault("fixdone", 0); f["fixdone"] = f.get("fixdone", 0) + 1
-            while f["improve"] and pa[f["resp"]] > 0:
-                pa[f["resp"]] -= 1; f["improve"] -= 1; f["bonus"] += f["pend_bonus"]; f["pend_bonus"] = 0
-        # réserve de PA pour la vérification
-        reserve = {"P": 1 if st["review"] and c > 0 else 0, "D": 1 if st["playtest"] and c > 0 else 0}
-        budget = self.credits if (c == 0 or not st["scan"]) else max(0, self.credits // cycles_left - (2 if st["scan"] else 0))
-        # 3a. si les humains sont limités, ils produisent d'abord
+        p, R, D = self.p, self.R, DUREES
+        self.temps = D["vera"] + D["planif"] + (D["decouverte_c0"] if c == 0 else 0) + D["retro"]
+        pa = {"CP": 3, "D": 3, "P": 3}
+        pixcap = 4 if c == 2 else R["pix_cap"]
+        hmax = R["humain_c0"] if c == 0 else R["humain_max"]
         faits = {"D": 0, "P": 0}
-        if REGLES["max_humain"] < 9:
-            for f in self.order():
-                ch = REGLES["cout_humain"]
-                while (not self.done(f) and faits[f["resp"]] < REGLES["max_humain"]
-                       and pa[f["resp"]] - reserve[f["resp"]] >= ch):
-                    pa[f["resp"]] -= ch; faits[f["resp"]] += 1
-                    f["blocks"].append(dict(by="H", card="none", known=True, scanned=True))
-                    self.log["blocs_humains"] += 1
-        # 3. PIX
-        pix = 0
-        for f in self.order():
-            if pix >= pixcap:
+        cout = 0 if c == 0 else 1
+        # 1. tri du feedback
+        while self.file and pa["CP"] > (1 if len(self.file) <= 2 else 0) and self.r.random() < p["tri"]:
+            ok = self.agit(pa, "CP")
+            for _ in range(2):
+                if not self.file:
+                    break
+                carte = self.file.pop(0); self.temps += D["tri"]
+                if not ok:
+                    self.file.append(carte); continue
+                f = self.f.get(carte["cible"]) if carte["cible"] else None
+                if f and carte["type"] in ("Bug", "Idée", "Pas fun"):
+                    nova = carte["qui"] == "Nova"
+                    if R["fb_note"]:
+                        f["travail"] += 1 if f["rel"] else 0
+                        f["attente_note"] += 1.0 if nova else 0.5
+                    elif carte["type"] == "Bug":
+                        f["travail"] += 1; f["attente_note"] += 0.5
+                    elif f["rel"]:
+                        f["travail"] += 1; f["bonus_att"] = f.get("bonus_att", 0) + (2 if nova else 1)
+                    else:
+                        f["bonus"] += 2 if nova else 1
+                self.log["cartes_triees"] += 1
+        # 2. corrections connues et travail demandé par les joueurs
+        for f in self.f.values():
+            self.corriger(pa, f)
+            while f["travail"] and pa[f["resp"]] > 0:
+                if self.agit(pa, f["resp"]):
+                    f["travail"] -= 1; self.temps += D["bloc_humain"]
+                    if f.get("bonus_att"):
+                        f["bonus"] += f["bonus_att"]; f["bonus_att"] = 0
+        res = {"P": 1 if p["relire"] > 0.5 and c > 0 else 0, "D": 1 if p["playtest"] > 0.5 and c > 0 else 0}
+        ordre = self.ordre()
+        en_pix = {x["id"] for x in self.pix_file}
+        # 3a. les humains produisent (1 bloc, 2 au cycle 0) sur leurs fonctionnalités
+        for f in ordre:
+            while (not self.done(f) and f["id"] not in en_pix and faits[f["resp"]] < hmax
+                   and pa[f["resp"]] - res[f["resp"]] > 0):
+                faits[f["resp"]] += 1
+                if self.agit(pa, f["resp"]):
+                    f["blocks"].append(dict(by="H", c="none", k=True, s=True))
+                    self.temps += D["bloc_humain"]; self.log["blocs_humains"] += 1
+        # 3b. briefs pour PIX
+        a_produire = sum(x["blocs"] - len(x["blocks"]) for x in self.pix_file)
+        for f in ordre:
+            if a_produire >= pixcap + 1:
                 break
-            rest = f["blocs"] - len(f["blocks"])
-            bcost = 2 if (st["detail"] and c > 0) else 1
-            writer = "CP" if pa["CP"] >= bcost else ("D" if pa["D"] - reserve["D"] >= bcost else None)
-            if not writer:
+            vise_must = not self.jouable() and f["id"] in self.cru_must
+            if f["id"] in en_pix or self.done(f) or (not vise_must and self.r.random() > p["pix"]):
+                continue
+            detail = c > 0 and self.r.random() < p["detail"]
+            cb = 2 if detail else 1
+            qui = "CP" if pa["CP"] >= cb else ("D" if pa["D"] - res["D"] >= cb else None)
+            if not qui:
                 break
-            k = min(rest, pixcap - pix)
-            if c > 0:
-                k = min(k, self.credits if not st["scan"] else budget)
-            if k <= 0:
-                break
-            pa[writer] -= bcost
-            for _ in range(k):
-                card = "none" if c == 0 else self.defect(st["detail"])
-                f["blocks"].append(dict(by="PIX", card=card, known=False, scanned=False))
-                self.credits -= cost; budget -= cost; pix += 1
-                self.log["blocs_pix"] += 1
-        # 4. les humains produisent
-        for f in self.order():
-            ch = REGLES["cout_humain"]
-            while (not self.done(f) and pa[f["resp"]] - reserve[f["resp"]] >= ch
-                   and faits[f["resp"]] < REGLES["max_humain"]):
-                pa[f["resp"]] -= ch; faits[f["resp"]] += 1
-                f["blocks"].append(dict(by="H", card="none", known=True, scanned=True))
-                self.log["blocs_humains"] += 1
-        # 5. vérification
+            if self.agit(pa, qui, cb):
+                f["detail"] = detail; self.pix_file.append(f); en_pix.add(f["id"])
+                self.temps += D["brief"]; a_produire += f["blocs"] - len(f["blocks"]); self.log["briefs"] += 1
+        # 3c. PIX produit (les blocs en trop attendent)
+        prod = 0
+        for f in list(self.pix_file):
+            while not self.done(f) and prod < pixcap and self.credits >= cout:
+                carte = "none" if c == 0 else self.defaut(f.get("detail"))
+                f["blocks"].append(dict(by="PIX", c=carte, k=False, s=False))
+                self.credits -= cout; prod += 1; self.temps += D["bloc_pix"]; self.log["blocs_pix"] += 1
+            if self.done(f):
+                self.pix_file.remove(f)
+        # 4. vérification
         if c > 0:
-            ready = [f for f in self.f.values() if not f["rel"] and self.done(f)]
-            ready.sort(key=lambda f: not f["must"])
-            if st["scan"]:
-                tests = 0
-                for f in ready:
-                    for b in f["blocks"]:
-                        if b["by"] == "PIX" and not b["scanned"] and tests < 4 and self.credits > 0:
-                            b["scanned"] = True; tests += 1; self.credits -= 1; self.log["tests_scan"] += 1
-                            if b["card"] == "bug":
-                                b["known"] = True
-            if st["review"]:
-                for f in ready:
-                    for b in f["blocks"]:
-                        if b["by"] == "PIX" and not b["known"] and pa[f["resp"]] > 0:
-                            pa[f["resp"]] -= 1; b["known"] = True; self.log["relectures"] += 1
-            if st["playtest"]:
-                for f in ready:
-                    if pa["D"] > 0 and any(b["by"] == "PIX" and not b["known"] for b in f["blocks"]):
-                        pa["D"] -= 1; self.log["playtests"] += 1
+            prets = [f for f in self.f.values() if not f["rel"] and self.done(f)]
+            tests = 0
+            for f in prets:
+                for b in f["blocks"]:
+                    if b["by"] == "PIX" and not b["s"] and tests < 4 and self.credits > 1 and self.r.random() < p["scan"]:
+                        b["s"] = True; tests += 1; self.credits -= 1; self.temps += D["scan"]; self.log["tests_scan"] += 1
+                        if b["c"] == "bug":
+                            b["k"] = True
+            for f in prets:
+                for b in f["blocks"]:
+                    if b["by"] == "PIX" and not b["k"] and pa[f["resp"]] > 0 and self.r.random() < p["relire"]:
+                        if self.agit(pa, f["resp"]):
+                            b["k"] = True; self.temps += D["relecture"]; self.log["relectures"] += 1
+            for f in prets:
+                if pa["D"] > 0 and any(b["by"] == "PIX" and not b["k"] for b in f["blocks"]) and self.r.random() < p["playtest"]:
+                    if self.agit(pa, "D"):
+                        self.temps += D["playtest"]; self.log["playtests"] += 1
                         for b in f["blocks"]:
-                            if b["card"] == "pasfun":
-                                b["known"] = True
-            for f in ready:
-                self.fix(pa, f)
-        # 6. release
-        released_now, revealed = 0, 0
-        bugs_pub = 0
+                            if b["c"] == "pasfun":
+                                b["k"] = True
+            for f in prets:
+                self.corriger(pa, f)
+        # 5. release
+        sortis, reveles, bugs = 0, 0, 0
         for f in self.f.values():
             if f["rel"] or not self.done(f):
                 continue
-            if st["hold"] and self.known(f, "bug"):
+            if any(b["c"] == "bug" and b["k"] for b in f["blocks"]) and self.r.random() < p["garder_bug"]:
                 continue
-            f["rel"] = True; released_now += 1
+            f["rel"] = True; sortis += 1
             for b in f["blocks"]:
-                if b["card"] in ("bug", "pasfun") and not b["known"]:
-                    b["known"] = True; revealed += 1
-                if b["card"] == "bug":
-                    bugs_pub += 1
+                if b["c"] != "none" and not b["k"]:
+                    b["k"] = True; reveles += 1
+                if b["c"] == "bug":
+                    bugs += 1
                     self.note -= 1.0 if c == 4 else 0.5
                     if c == 3 and f["must"]:
                         self.note -= 0.5
-        self.log["bugs_publies"] += bugs_pub
-        for f in self.f.values():
-            if f["rel"] and f.get("fixdone"):
-                self.note += 0.5 * f["fixdone"]; f["fixdone"] = 0
-        if REGLES["bonus_propre"] and c > 0 and released_now and not revealed:
-            self.note += 0.5
-        old = sum(2 if q[0]["qui"] == "Nova" else 1 for q in self.queue if q[1] >= 1)
-        if old > 4:
+        self.temps += D["release"] + D["par_fonct"] * sortis + D["par_defaut"] * reveles + D["comptage"]
+        self.log["bugs_publies"] += bugs
+        for f in self.f.values():  # le feedback livré fait monter la note
+            if f["rel"] and f["attente_note"] and not f["travail"]:
+                self.note += f["attente_note"]; f["attente_note"] = 0
+        restantes = len(self.file)
+        if R["file_simple"] and restantes > 4:
             self.note -= 0.5; self.log["communaute_ignoree"] += 1
-        self.note = max(REGLES["note_min"], min(5.0, self.note))
+        self.note = max(R["note_min"], min(R["note_max"], self.note))
         j = self.joueurs()
-        self.maxj = max(self.maxj, j)
         if c == 0:
             self.log["jouable_c0"] += int(self.jouable())
-        # feedback pour le cycle suivant
-        for q in self.queue:
-            q[1] += 1
-        target = self.maxj // 100 + 2  # E1 (cycle 1) : 2 cartes de plus
-        while self.drawn < target and self.fbdeck:
-            self.queue.append([self.fbdeck.pop(), 0]); self.drawn += 1
-        self.log["file_max"] = max(self.log["file_max"], len(self.queue))
+        # l'équipe apprend de ses erreurs
+        if j == 0 and self.r.random() < 0.85:
+            self.cru_must = {x["id"] for x in FEATS if x["must"]}
+        if bugs and self.r.random() < p["apprend"]:
+            p["scan"] = min(1, p["scan"] + 0.3); p["garder_bug"] = 1
+        if restantes > 4 and self.r.random() < p["apprend"]:
+            p["tri"] = min(1, p["tri"] + 0.4)
+        # feedback pour le cycle suivant (E1 : +2 cartes au cycle 1, si le jeu a des joueurs)
+        self.maxj = max(self.maxj, j)
+        if c == 0 and (j > 0 or not R["e1_si_joueurs"]):
+            self.bonus_e1 = 2
+        while self.pioches < self.maxj // 100 + self.bonus_e1 and self.fbdeck:
+            self.file.append(self.fbdeck.pop()); self.pioches += 1; self.temps += D["pioche"]
+        self.t.append(self.temps)
         return j
 
     def jouer(self):
-        for c in range(5):
+        j = 0
+        for c in range(self.R["cycles"]):
             j = self.cycle(c)
-        self.log["credits_restants"] = self.credits
-        self.log["jouable_fin"] = int(self.jouable())
-        return round(j * self.note), j, self.note
+        return dict(score=round(j * self.note), joueurs=j, note=self.note, credits=self.credits,
+                    chance=(self.mauvais / self.tires) if self.tires else 0.0, temps=self.t, log=self.log)
 
 
-def simuler(n=2000, graine=2026):
-    res = {}
-    for nom, st in STRATS.items():
+def pct(v, q):
+    v = sorted(v); return v[min(len(v) - 1, int(q * len(v)))]
+
+
+def etude(n=3000, graine=1):
+    out = {}
+    for nom, prof in PROFILS.items():
         rng = random.Random(graine)
-        scores, js, notes, logs = [], [], [], Counter()
-        for _ in range(n):
-            p = Partie(st, rng)
-            s, j, no = p.jouer()
-            scores.append(s); js.append(j); notes.append(no); logs.update(p.log)
-        res[nom] = dict(scores=scores, joueurs=js, notes=notes, log={k: v / n for k, v in logs.items()})
-    return res
+        res = [Partie(prof, rng).jouer() for _ in range(n)]
+        sc = [r["score"] for r in res]
+        out[nom] = dict(
+            moyen=st.mean(sc), p10=pct(sc, .1), med=st.median(sc), p90=pct(sc, .9), mini=min(sc), maxi=max(sc),
+            zero=sum(s == 0 for s in sc) / n, joueurs=st.mean(r["joueurs"] for r in res),
+            note=st.mean(r["note"] for r in res), jouable_c0=sum(r["log"]["jouable_c0"] for r in res) / n,
+            bugs=st.mean(r["log"]["bugs_publies"] for r in res), credits=st.mean(r["credits"] for r in res),
+            temps=[st.mean(r["temps"][c] for r in res) for c in range(REGLES["cycles"])], res=res)
+    return out
 
 
-def rapport(res):
-    lignes = ["| Stratégie | Score moyen | Médiane | 10 % pires | Joueurs | Note | Bugs publiés | Crédits restants | Jouable au cycle 0 | Blocs humains / PIX |",
-              "|---|---|---|---|---|---|---|---|---|---|"]
-    for nom, r in res.items():
-        s = sorted(r["scores"])
-        lignes.append(f"| {nom} | {statistics.mean(s):.0f} | {statistics.median(s):.0f} | {s[len(s) // 10]:.0f} | "
-                      f"{statistics.mean(r['joueurs']):.0f} | {statistics.mean(r['notes']):.2f} | {r['log'].get('bugs_publies', 0):.1f} | "
-                      f"{r['log'].get('credits_restants', 0):.1f} | {100 * r['log'].get('jouable_c0', 0):.0f} % | {r['log'].get('blocs_humains', 0):.0f} / {r['log'].get('blocs_pix', 0):.0f} |")
-    return "\n".join(lignes)
+def chance(res):
+    """Parties chanceuses / malchanceuses : part de cartes Défaut défavorables tirées (10 % extrêmes)."""
+    res = sorted([r for r in res if r["log"]["blocs_pix"] > 3], key=lambda r: r["chance"])
+    k = max(1, len(res) // 10)
+    bon, mal = res[:k], res[-k:]
+    return dict(taux_chanceux=st.mean(r["chance"] for r in bon), taux_malchanceux=st.mean(r["chance"] for r in mal),
+                score_chanceux=st.mean(r["score"] for r in bon), score_malchanceux=st.mean(r["score"] for r in mal),
+                score_moyen=st.mean(r["score"] for r in res))
 
 
-VARIANTES = {
-    "R0 · règles actuelles": dict(bonus_propre=True, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=9, pix_c0=3, note_min=0),
-    "R1 · sans le bonus « release sans défaut »": dict(bonus_propre=False, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=9, pix_c0=3, note_min=0),
-    "R5 · R1 + un humain produit 1 bloc max par cycle ; PIX jusqu'à 5 blocs au cycle 0": dict(bonus_propre=False, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=1, pix_c0=5, note_min=0),
-    "R6 · R5 avec le bonus « release sans défaut »": dict(bonus_propre=True, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=1, pix_c0=5, note_min=0),
-    "R7 · R5 + la note ne descend pas sous 1 (règles adoptées)": dict(bonus_propre=False, tailles={1: 1, 2: 2, 3: 3}, cout_humain=1, max_humain=1, pix_c0=5, note_min=1),
-}
+def temps_classe(n_equipes=6, n=500, graine=7):
+    """Une classe mélange les profils ; l'animateur attend l'équipe la plus lente à chaque cycle."""
+    rng = random.Random(graine)
+    noms = list(PROFILS)
+    totaux, par_cycle = [], [[] for _ in range(REGLES["cycles"])]
+    for _ in range(n):
+        eq = [Partie(PROFILS[rng.choice(noms)], rng).jouer() for _ in range(n_equipes)]
+        tc = [max(e["temps"][c] for e in eq) for c in range(REGLES["cycles"])]
+        for c, v in enumerate(tc):
+            par_cycle[c].append(v)
+        totaux.append(sum(tc))
+    return dict(par_cycle=[st.mean(v) for v in par_cycle], total=st.mean(totaux), p90=pct(totaux, .9))
+
+
+def meilleur_score(n=20000, graine=3):
+    """Cherche le meilleur score atteignable : beaucoup de stratégies tirées au hasard, sans erreur."""
+    rng = random.Random(graine)
+    best = 0
+    for _ in range(n):
+        prof = dict(must=1, pix=rng.random(), detail=rng.random() * .6, scan=rng.random(), relire=rng.random(),
+                    playtest=rng.random(), tri=1, garder_bug=1, apprend=1, erreur=0, avidite=rng.random())
+        best = max(best, Partie(prof, rng).jouer()["score"])
+    return best
+
 
 if __name__ == "__main__":
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
-    for nv, v in VARIANTES.items():
-        REGLES.update(v)
-        res = simuler(n)
-        print("\n### " + nv + "\n")
-        print(rapport(res))
-        if "-v" in sys.argv:
-            for nom, r in res.items():
-                print(nom, {k: round(v, 2) for k, v in sorted(r["log"].items())})
+    rapide = "--rapide" in sys.argv
+    etu = etude(600 if rapide else 3000)
+    print("| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Parties à 0 | Joueurs | Note | Jouable au cycle 0 | Bugs publiés | Crédits restants |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    for nom, e in etu.items():
+        print(f"| {nom} | {e['moyen']:.0f} | {e['p10']} | {e['med']:.0f} | {e['p90']} | {e['mini']} | {e['maxi']} | "
+              f"{100 * e['zero']:.0f} % | {e['joueurs']:.0f} | {e['note']:.2f} | {100 * e['jouable_c0']:.0f} % | {e['bugs']:.1f} | {e['credits']:.1f} |")
+    print("\nCHANCE")
+    for nom in PROFILS:
+        print(nom, {k: round(v, 2) for k, v in chance(etu[nom]["res"]).items()})
+    print("\nTEMPS par cycle (min)")
+    for nom, e in etu.items():
+        print(nom, [round(x, 1) for x in e["temps"]], "total", round(sum(e["temps"]), 1))
+    tc = temps_classe(n=150 if rapide else 500)
+    print("CLASSE de 6 équipes (on attend la plus lente):", [round(x, 1) for x in tc["par_cycle"]],
+          "total", round(tc["total"], 1), "p90", round(tc["p90"], 1))
+    print("\nMEILLEUR score trouvé:", meilleur_score(3000 if rapide else 20000),
+          "| plafond théorique:", 25 * sum(f["etoiles"] for f in FEATS) * REGLES["note_max"])
