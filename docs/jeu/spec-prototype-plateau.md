@@ -1,67 +1,74 @@
-# Spécification — le prototype du plateau numérique (« proto plateau »)
+# Spécification — la démo animée du plateau (« proto plateau »)
 
-*Version 1, 26 novembre 2026. C'est la **prochaine étape du projet** (décision du 26 nov., voir le plan de sprints). Ce document suffit pour démarrer avec Claude Code : il dit quoi construire, dans quel ordre, et comment savoir que c'est terminé. Les règles du jeu sont dans le GDD (section 0, qui prime) et dans `docs/jeu/regles-une-page.md`.*
+*Version 2, 26 novembre 2026. C'est la **prochaine étape du projet**. Ce document suffit pour démarrer avec Claude Code : il dit quoi construire, dans quel ordre, et comment savoir que c'est terminé.*
 
-## 1. Pourquoi ce prototype, et pourquoi d'abord
+*Version 1 → 2 : ce n'est plus un jeu avec ses règles, c'est une **démo animée et scriptée**. Le moteur de règles viendra après, si la démo convainc.*
 
-La recette du jeu, c'est **l'interactivité** : voir le plateau qui s'illumine, les efforts qui se cumulent, les agents qui codent, les files d'attente qui grossissent, les fonctionnalités qui apparaissent, le score et les joueurs qui montent. **Le papier ne fait pas ressentir ça** : on ne sait pas à qui c'est le tour ni ce qui se passe ensuite. C'est donc ce prototype qui dira si le jeu marche ou pas.
+## 1. Pourquoi cette démo, et pourquoi d'abord
 
-Il passe **avant les builds SpacePlan** : les builds sont un risque connu (elles existent déjà dans SpacePlan) ; le plateau est le risque principal. On traite d'abord le plus gros risque.
+La recette du jeu, c'est **l'interactivité et la gamification** : le plateau qui s'illumine, les efforts qui se remplissent, les agents qui travaillent, les fonctionnalités qui apparaissent, le score et les joueurs qui montent. Le papier ne fait pas ressentir ça.
 
-**La question à laquelle il répond :** « En jouant sur cet écran, est-ce qu'on a envie de faire un cycle de plus, et est-ce qu'on voit tout seul que le goulot devient la décision et la vérification ? »
+Avant de coder les règles, on veut savoir si **l'expérience** marche. La démo n'a donc **pas besoin de vraies règles** : elle joue un **scénario écrit à l'avance**, 1 ou 2 boucles d'itération, comme un petit film qu'on peut arrêter et rejouer.
+
+**Les questions auxquelles elle répond :**
+1. **Comprend-on où regarder** et ce qui se passe, sans explication ?
+2. **Voit-on le flux** : le travail qui tourne sur l'orbite, les files qui se remplissent, le goulot ?
+3. **Est-ce attirant** (*appealing*) : a-t-on envie de jouer en voyant l'écran ?
+4. **Est-ce gratifiant** (*rewarding*) : les étoiles, les joueurs, la note et le score qui montent donnent-ils envie de faire une boucle de plus ?
 
 ## 2. Le périmètre
 
-| Dans le prototype | Plus tard (pas maintenant) |
+| Dans la démo | Pas dans la démo |
 |---|---|
-| **Une équipe, un écran** (ordinateur ou vidéoprojecteur), sans serveur | Plusieurs équipes, leaderboard, écran animateur (N1, N2) |
-| Les **règles de base complètes** (GDD section 0) sur les **5 cycles** (0 à 4) : ce sont les mêmes règles à chaque cycle | ARTY, les modules (dépendances, crash, dette technique…) |
-| Les 20 cartes Fonctionnalité, le paquet de 20 cartes Test, les cartes Feedback, les 4 événements, tirés du fichier du scénario | Les textes en anglais (mais les clés de texte sont prévues dès maintenant) |
-| Les animations et la gamification : c'est **le cœur du prototype** | La feuille de score complète (XP, badges) : seulement un premier compteur |
-| Le bouton « Jouer à votre jeu » à la release, qui **affiche quelle build SpacePlan serait lancée** (règle de `docs/jeu/builds-spaceplan.md`) | Le lancement réel des builds |
-| Le chrono du cycle (25 min puis 20), qu'on peut mettre en pause | Le cadenas par code de licence |
-| Le journal de partie, exportable en fichier | Les statistiques du débrief |
+| Le plateau complet et joli, dans les deux thèmes | Les règles, les calculs réels, les choix des joueurs |
+| **Un scénario scripté de 2 boucles** (cycle 0, puis cycle 1), avec des données inventées mais crédibles | Le hasard (les cartes Test révélées sont écrites dans le script) |
+| Les animations : stations qui s'illuminent, vaisseaux qui voyagent, efforts qui se remplissent, agents qui travaillent, files qui grossissent, cartes qui se retournent | Plusieurs équipes, leaderboard, sauvegarde, journal |
+| **La couche de gamification** : score qui s'incrémente, joueurs qui augmentent, étoiles qui volent vers les fonctionnalités, note du jeu, célébration du MVP, anneau de boucle qui s'allume | XP, badges, feuille de score complète |
+| Une barre de lecture : lecture, pause, pas à pas, vitesse (×1, ×2), recommencer | Le chrono de 20 minutes |
 
 ## 3. Ce qu'on voit à l'écran
 
 Le plateau reprend le Whiteboard (`docs/whiteboard/plateau-orbite.json`) et la direction artistique (`docs/jeu/direction-artistique.md`).
 
-- **Au centre, le soleil ambre** (le pilotage) : les 3 rôles (chef de projet, designer, programmeur) avec leurs **3 jetons Heure** chacun. Un jeton utilisé se pose sur la station où l'on agit (petite animation de vol).
-- **Autour, l'orbite et ses 6 stations-planètes :** Backlog → Prompt → Build → Test → Release → Feedback, puis retour au Backlog. **La station du temps en cours s'illumine.**
-- **Les cartes Fonctionnalité sont des petits vaisseaux** qui voyagent de station en station. Chacune montre son nom, ses étoiles et ses **cases d'effort** (1 à 3) qui se remplissent.
-- **Les satellites :** PIX sur Build, SCAN sur Test (portraits dans `assets/personnages/`). Quand ils travaillent, ils s'animent (PIX « tape du code », SCAN « scanne ») et affichent une bulle de leur personnalité (« Terminé ! Tout fonctionne parfaitement. »).
-- **Les cartes Test cachées** sont visibles face cachée sous les efforts de PIX. On les retourne avec une animation à la relecture, au test ou à la release (moment fort : révélation devant les joueurs).
-- **Les 3 files d'attente orange** (entre Prompt et Build, entre Build et Test, entre Feedback et Backlog) **grossissent visiblement** quand le travail s'entasse.
-- **Les planètes extérieures :** Nébuleuse Games (Vera, en haut) et la communauté (Max, Sam, Nora), d'où arrivent les cartes Feedback.
-- **Les pistes autour du plateau :** tokens IA (20 au départ), note (3 au départ, de 1 à 5), cycle (0 à 4), et **le compteur de boucles** : chaque cycle terminé allume un anneau de l'orbite.
-- **Le tableau de bord du studio :** joueurs (compteur animé qui monte), note en étoiles, **score = joueurs × note**, et l'indicateur **MVP** qui s'allume quand les 5 *Must* sont publiés sans bug (gros moment de célébration : « Votre jeu a ses premiers joueurs ! »).
-- **Un bouton « Temps suivant »** (joué par l'animateur ou l'équipe) et le chrono.
-- **Le bouton de thème** clair / sombre « Tech ».
+- **Au centre, le soleil ambre** (le pilotage) : les 3 rôles avec leurs 3 jetons Heure. Un jeton utilisé s'envole vers la station où l'on agit.
+- **L'orbite et ses 6 stations-planètes :** Backlog → Prompt → Build → Test → Release → Feedback. **La station active s'illumine.** Le nom du temps en cours (Brief, Planning, Build, Test, Release, Review) s'affiche en grand.
+- **Les cartes Fonctionnalité sont des petits vaisseaux** qui voyagent de station en station, avec leur nom, leurs étoiles et leurs cases d'effort qui se remplissent.
+- **Les satellites :** PIX sur Build, SCAN sur Test (portraits dans `assets/personnages/`). Ils s'animent quand ils travaillent, avec une bulle de personnalité (PIX : « Terminé ! Tout fonctionne parfaitement. » ; SCAN : « Aucun défaut détecté. »).
+- **Les cartes Test cachées** sous les efforts de PIX, qui se retournent (OK en vert, Bug en rouge).
+- **Les 3 files d'attente orange**, qui grossissent quand le travail s'entasse (surtout Feedback → Backlog).
+- **Les planètes extérieures :** Nébuleuse Games (Vera) et la communauté (Max, Sam, Nora), d'où partent les cartes Feedback.
+- **Le tableau de bord du studio :** joueurs (compteur qui défile), note en étoiles, **score**, tokens IA, indicateur **MVP**, et le **compteur de boucles** (un anneau s'allume à chaque cycle terminé).
 
-## 4. Ce qu'on peut faire (les interactions)
+## 4. Le scénario de la démo (le script)
 
-Chaque action coûte des heures (jetons) ou des tokens, selon les règles de base. Le jeu **refuse** une action impossible (plus d'heures, plus de tokens, mauvais rôle) avec un message court.
+Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit des règles (1 étoile = 25 joueurs, score = joueurs × note), sans calcul réel.
 
-| Temps du cycle | Actions à l'écran |
-|---|---|
-| **Brief** | Le message de Vera s'affiche (portrait + texte), puis la carte Événement se retourne |
-| **Planning** | Trier une carte Feedback (glisser sur une fonctionnalité ou l'écarter) ; choisir les fonctionnalités du cycle (glisser du Backlog vers Prompt) ; écrire le risque du cycle (champ texte court) |
-| **Build** | Pour une fonctionnalité : prompt simple ou détaillé à PIX (une carte Test cachée par effort, 1 token par effort, 3 efforts par cycle au maximum, le reste attend dans la file) ; ou effort fait par un humain (1 heure, sans carte Test) |
-| **Test** | Relire un effort (1 heure) ; tester avec SCAN (1 token, 4 par cycle) ; playtester (1 heure, designer) ; corriger un problème trouvé (1 heure) |
-| **Release** | Cocher les fonctionnalités prêtes à publier ; bouton « Publier » : révélation des cartes Test cachées ; bouton « Jouer à votre jeu » (affiche la build qui serait lancée) |
-| **Review** | Calcul animé : étoiles → joueurs → note → score ; arrivée des cartes Feedback (1 par nouveau palier de 100 joueurs) ; pénalité si plus de 4 cartes non triées ; l'anneau de la boucle s'allume |
+**Boucle 1 : le cycle 0, « le pitch »**
+1. *Brief* : Vera apparaît : « Avant de signer, je veux un premier jouable. »
+2. *Planning* : 5 cartes quittent le Backlog (les 5 *Must*).
+3. *Build* : les jetons Heure des 3 humains s'envolent ; les efforts se remplissent un par un.
+4. *Release* : les 5 vaisseaux passent la station Release.
+5. *Review* : **célébration du MVP** (« Votre jeu a ses premiers joueurs ! ») ; 10 étoiles volent vers le jeu ; le compteur passe de 0 à 250 joueurs ; note 3 ; le score monte à 750 ; le premier anneau de boucle s'allume.
+
+**Boucle 2 : le cycle 1, « l'accès anticipé »**
+1. *Brief* : « Les premiers joueurs arrivent. Écoutez-les. »
+2. *Planning* : 2 cartes Feedback arrivent de la communauté (Max, Sam) dans la file Feedback → Backlog ; le chef de projet en trie une ; 3 fonctionnalités partent vers Prompt (Explosions, Score, Fond spatial).
+3. *Build* : PIX s'anime et fait 3 efforts (3 tokens dépensés), avec 3 cartes Test cachées ; un humain fait 1 effort ; la file Prompt → Build garde 1 effort en attente.
+4. *Test* : SCAN scanne 2 efforts : un OK, **un Bug trouvé** (rouge, corrigé par le programmeur). Un effort n'est pas testé.
+5. *Release* : la carte Test non testée se retourne **devant les joueurs** : OK, soulagement (moment de tension).
+6. *Review* : les étoiles volent vers les 3 nouvelles fonctionnalités ; les joueurs passent de 250 à 475 ; une carte Feedback de Nora fait monter la note à 3,5 ; le score passe à 1 662 ; le deuxième anneau s'allume. Une nouvelle carte Feedback arrive : la file Feedback → Backlog grossit (le succès crée sa propre charge).
+
+*Le script est un fichier de données, facile à modifier (ordre, textes, durées, chiffres) sans toucher au code.*
 
 ## 5. Les règles techniques (en plus de `CLAUDE.md`)
 
 - **Dossier :** `game/plateau/` (`index.html`, `style.css`, `js/`).
-- **Le plateau s'ouvre en double-cliquant sur `index.html`**, sans serveur ni Internet. Donc le scénario est un fichier JavaScript chargé par une balise `<script>` (`game/scenarios/orbit-studio.js`, qui définit `window.SCENARIO`), pas un JSON chargé par `fetch` (qui ne marche pas en ouverture directe de fichier).
-- **Le fichier du scénario contient tout ce qui peut changer :** les 20 fonctionnalités (id, nom, catégorie, efforts, étoiles, priorité cachée, responsable, phrase), les 20 cartes Test, les cartes Feedback, les 4 événements, les messages de Vera, les chiffres des règles (heures par rôle, capacité de PIX et de SCAN, tokens de départ, joueurs par étoile, effets sur la note, durée des cycles) et **tous les textes affichés** (clé + `fr`). La source des données est `docs/jeu/cartes-orbit-studio.md`.
-- **Les règles sont les mêmes que celles du simulateur** (`prototype-papier/outil/simuler.py`) : s'en servir comme référence pour le calcul du score, du MVP et de la note, pour que le jeu et la simulation donnent les mêmes résultats.
-- **Le moteur est une machine à états** (les 6 temps × 5 cycles), séparé de l'affichage : un fichier pour l'état et les règles, un fichier pour le dessin et les animations.
-- **Le hasard est rejouable :** les paquets sont mélangés avec une graine (affichée dans le journal), pour pouvoir rejouer une partie à l'identique.
-- **L'état est sauvegardé dans le navigateur** à chaque action : on peut fermer et rouvrir sans perdre la partie. Un bouton « Nouvelle partie ».
-- **Le journal de partie** note chaque action (cycle, temps, rôle, action, coût, résultat) ; bouton « Exporter le journal ».
-- **Dessin :** le plateau en SVG, les animations en CSS (transitions) et un peu de JavaScript. Pas de bibliothèque lourde. Toutes les couleurs par les variables CSS de la direction artistique.
+- **La démo s'ouvre en double-cliquant sur `index.html`**, sans serveur ni Internet. Le script et les textes sont des fichiers JavaScript chargés par une balise `<script>` (par exemple `game/plateau/js/script-demo.js`, qui définit `window.DEMO_SCRIPT`), pas des JSON chargés par `fetch`.
+- **Le script est une liste d'étapes** (par exemple `{ temps: "build", action: "effort", fonctionnalite: "F17", par: "PIX", duree: 800 }`). Un petit lecteur les joue l'une après l'autre.
+- **Séparer le dessin du script :** les fonctions d'affichage (« illuminer une station », « remplir un effort », « faire voler des étoiles », « faire monter le compteur ») ne savent pas d'où viennent les ordres. Plus tard, le vrai moteur de règles appellera **les mêmes fonctions** à la place du script : rien n'est jeté.
+- **Les textes affichés** ont une clé et une version `fr`, comme le demande `CLAUDE.md`. Les noms des fonctionnalités viennent de `docs/jeu/cartes-orbit-studio.md`.
+- **Dessin :** plateau en SVG, animations en CSS et un peu de JavaScript, sans bibliothèque lourde. Toutes les couleurs par les variables CSS de la direction artistique ; bouton de thème clair / sombre.
+- **Sons :** légers et coupés par défaut, un bouton pour les activer (célébration du MVP, étoiles, compteur).
 
 ## 6. Les étapes de construction (une étape = une session de travail)
 
@@ -69,28 +76,26 @@ Chaque étape se termine par un test dans le navigateur, une mise à jour de ce 
 
 | # | Étape | Terminé quand… | Fait |
 |---|---|---|---|
-| 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, pistes, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☐ |
-| 2 | **Le fichier du scénario** et les 20 cartes Fonctionnalité dans le Backlog | Les 20 cartes s'affichent avec nom, étoiles et cases d'effort, sans texte en dur dans le code | ☐ |
-| 3 | **La machine à états** : les 6 temps et les 5 cycles, bouton « Temps suivant », station active qui s'illumine, chrono | On fait défiler une partie vide du cycle 0 au cycle 4 | ☐ |
-| 4 | **Planning et Build** : choisir, jetons Heure, prompts à PIX, cartes Test cachées, tokens, file d'attente de PIX | Au cycle 0, on fait les 5 *Must* à la main ; au cycle 1, PIX travaille et les cartes Test se posent | ☐ |
-| 5 | **Test et Release** : relire, SCAN, playtest, corriger, publier, révélation des cartes Test | Une fonctionnalité publiée avec un Bug rapporte 0 étoile, comme dans les règles | ☐ |
-| 6 | **Review et score** : joueurs, note, MVP, score animés ; anneau de boucle | Les scores d'une partie correspondent à ceux du simulateur pour les mêmes décisions | ☐ |
-| 7 | **Feedback et événements** : arrivée des cartes, tri, pénalité, messages de Vera, événements E1 à E4 | Une partie complète des cycles 0 à 4 est jouable de bout en bout | ☐ |
-| 8 | **La gamification** : célébration du MVP, compteur de joueurs, bulles de PIX et SCAN, files qui grossissent, sons légers (coupables) | Un proche regarde 2 minutes et dit « c'est quoi ce jeu ? je peux essayer ? » | ☐ |
-| 9 | **Journal, sauvegarde, « Jouer à votre jeu »** (affiche la build qui serait lancée) | On ferme le navigateur, on rouvre, la partie continue ; le journal s'exporte | ☐ |
+| 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, tableau de bord, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☐ |
+| 2 | **Les briques animées** : illuminer une station, faire voyager un vaisseau, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file | Chaque animation se déclenche par un bouton de test et elle est belle | ☐ |
+| 3 | **Le lecteur et le script** des 2 boucles, avec la barre de lecture | La démo se joue de bout en bout en 2 à 3 minutes, et on peut la mettre en pause, avancer pas à pas, recommencer | ☐ |
+| 4 | **La couche de gamification** : compteur de joueurs, étoiles qui volent, note, score, célébration du MVP, anneaux de boucle, sons | En la regardant, on a envie de voir la boucle suivante | ☐ |
+| 5 | **Les retouches après les premiers regards** | Les points relevés au test (section 7) sont corrigés | ☐ |
 
-**Estimation :** 9 sessions de 2 à 3 heures, soit 20 à 25 heures : la période libre de début décembre, puis S1. À revoir après l'étape 3.
+**Estimation :** 4 à 5 sessions de 2 à 3 heures, soit 10 à 15 heures : la période libre de début décembre.
 
 ## 7. Comment on saura que ça marche (le test)
 
-Partie test avec 2 ou 3 proches, cycles 0 et 1 d'abord (après l'étape 7), puis la partie complète. Les critères du GDD (section 13) s'appliquent :
-- au moins 2 joueurs sur 3 veulent rejouer ;
-- au débrief, les joueurs formulent **eux-mêmes** au moins 3 des 7 leçons ;
-- un cycle tient en moins de 20 à 25 minutes ;
-- l'équipe qui relit et trie n'est pas pénalisée.
+Montrer la démo à 3 ou 4 personnes (proches, puis un enseignant si possible), **sans rien expliquer avant**. Après une première lecture, leur demander :
+1. « Qu'est-ce qui s'est passé ? » Est-ce qu'ils racontent le cycle, les agents, les tests, les joueurs ?
+2. « Où regardiez-vous ? » Est-ce qu'il y avait trop de choses à la fois ?
+3. « Quel moment vous a plu le plus ? » (MVP, révélation de la carte Test, joueurs qui montent…)
+4. « Vous auriez envie de jouer ? » Sur une échelle de 1 à 5.
 
-Questions propres au numérique : sait-on toujours à qui c'est le tour et quoi faire ensuite ? Voit-on la file Feedback → Backlog grossir sans qu'on l'explique ? Quel moment a été le plus fort (MVP, révélation des cartes Test, arrivée de Nora) ?
+**C'est réussi si** au moins 3 personnes sur 4 racontent le flux sans aide et notent l'envie de jouer à 4 ou plus. Sinon, on corrige la démo avant d'écrire une seule règle.
+
+**Après la démo :** si elle convainc, on construit le moteur de règles (GDD section 0, mêmes calculs que `prototype-papier/outil/simuler.py`) qui pilotera les mêmes animations, puis on y branche les builds SpacePlan.
 
 ## 8. Le prompt de départ pour Claude Code
 
-> Lis `CLAUDE.md`, puis `docs/jeu/spec-prototype-plateau.md`, la section 0 du GDD, `docs/jeu/regles-une-page.md`, `docs/jeu/direction-artistique.md` et `docs/jeu/cartes-orbit-studio.md`. Nous faisons l'étape 1 de la spécification : le plateau statique. Explique-moi ton plan en quelques lignes avant de coder, puis propose-moi de tester dans le navigateur.
+> Lis `CLAUDE.md`, puis `docs/jeu/spec-prototype-plateau.md`, `docs/jeu/direction-artistique.md` et le Whiteboard `docs/whiteboard/plateau-orbite.json`. Nous faisons l'étape 1 de la spécification : le plateau statique et joli, sans règles. Explique-moi ton plan en quelques lignes avant de coder, puis propose-moi de tester dans le navigateur.

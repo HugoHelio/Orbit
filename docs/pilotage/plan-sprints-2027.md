@@ -1,12 +1,12 @@
 # Plan de sprints, décembre 2026 – juin 2027
 
-*Document vivant : mis à jour à chaque fin de sprint. Version 6, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`. Prochaine étape : `docs/jeu/spec-prototype-plateau.md`. Builds de SpacePlan : `docs/jeu/builds-spaceplan.md`.*
+*Document vivant : mis à jour à chaque fin de sprint. Version 7, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`. Prochaine étape : `docs/jeu/spec-prototype-plateau.md`. Builds de SpacePlan : `docs/jeu/builds-spaceplan.md`.*
 
 ## Où on en est (pour reprendre une session, y compris avec Claude Code)
 
 - **Fait :** GDD 0.14, cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan par chapitre.
-- **Prochaine étape : le prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), étape 1 « le plateau statique, joli ». C'est lui qui dira si le jeu marche.
-- **Ensuite :** les builds SpacePlan (PoC d'abord, puis Proto, page de lancement, Alpha).
+- **Prochaine étape : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), étape 1 « le plateau statique, joli ». Scénario scripté de 2 boucles, sans règles : elle dira si l'expérience est engageante.
+- **Ensuite :** le moteur de règles numérique (qui pilote les mêmes animations), puis les builds SpacePlan (PoC d'abord, puis Proto, page de lancement, Alpha).
 
 ## Cadre
 
@@ -22,7 +22,8 @@
 
 La force du jeu est dans l'**interactivité** : le plateau qui s'anime, qui montre à qui c'est le tour et ce qui se passe ensuite, les efforts qui se cumulent, les agents qui codent, la gamification. Le papier ne fait pas ressentir ça. Donc :
 
-- **Le prototype du plateau numérique passe en premier**, avant les builds SpacePlan : c'est le plus gros risque (l'expérience), alors que les builds sont un risque connu (elles existent dans SpacePlan).
+- **Le plateau passe en premier**, avant les builds SpacePlan : c'est le plus gros risque (l'expérience), alors que les builds sont un risque connu (elles existent dans SpacePlan).
+- **D'abord une démo animée et scriptée, sans règles** (1 ou 2 boucles) : voit-on où regarder, comprend-on le flux, est-ce attirant et gratifiant ? Le moteur de règles ne se construit que si la démo convainc, et il réutilise ses animations.
 - **Le papier devient une vérification légère** : relire les règles, une partie courte (cycles 0 et 1) avec 1 ou 2 personnes. Question posée : « les règles se comprennent-elles ? ». Le kit papier reste le **repli hors ligne** obligatoire.
 - **Le vrai test, c'est le prototype numérique.** Les critères de réussite du GDD (envie de rejouer, leçons formulées par les joueurs, durée du cycle) s'appliquent à la partie numérique.
 - **Parades contre le risque de coder des règles bancales :** toutes les règles et tous les chiffres dans le **fichier de scénario** (pas dans le code) ; les mêmes règles que le simulateur ; un test avec des proches dès que les cycles 0 et 1 sont jouables.
@@ -56,12 +57,12 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 
 ## Décembre 2026 : sprint d'avance
 
-**Début décembre (temps disponible) : le prototype du plateau** (`docs/jeu/spec-prototype-plateau.md`)
+**Début décembre (temps disponible) : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), puis le début du moteur de règles
 
 | Tâche | Définition du « terminé » |
 |---|---|
-| Étapes 1 à 3 : plateau statique joli, fichier du scénario, machine à états | Une partie vide défile du cycle 0 au cycle 4 sur un beau plateau |
-| Étapes 4 à 6 : Planning, Build, Test, Release, Review et score | Les cycles 0 et 1 se jouent ; les scores correspondent au simulateur |
+| Démo, étapes 1 à 4 : plateau joli, briques animées, script des 2 boucles, gamification | La démo se joue en 2 à 3 minutes et donne envie de voir la boucle suivante |
+| Démo, étape 5 : la montrer à 3 ou 4 personnes sans rien expliquer, puis retoucher | 3 personnes sur 4 racontent le flux sans aide et notent l'envie de jouer à 4 sur 5 ou plus |
 | Relecture des règles + **mini-test papier** (cycles 0 et 1, 1 ou 2 personnes, 1 h) | Liste des points incompris, corrections dans le GDD |
 
 **Fin décembre (fêtes, peu de temps), des tâches courtes, qu'on peut sauter :**
@@ -72,7 +73,7 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 
 | Sprint | Dates | Objectif | Production (≈ 12 h) | Prospection (≈ 6 h) |
 |---|---|---|---|---|
-| **S1** | 4 – 17 janv. | Plateau jouable | Étapes 7 à 9 du plateau (feedback, événements, gamification, journal) ; **première partie test** (cycles 0 et 1) avec 2 ou 3 proches | Premier message à l'ancienne école et à l'IUT proche |
+| **S1** | 4 – 17 janv. | Plateau jouable | **Moteur de règles** (GDD section 0, mêmes calculs que le simulateur) branché sur les animations de la démo ; **première partie test** (cycles 0 et 1) avec 2 ou 3 proches | Premier message à l'ancienne école et à l'IUT proche |
 | **S2** | 18 – 31 janv. | Builds SpacePlan | Corrections après le test ; builds **PoC** (3 interrupteurs) et **Proto** ; README des builds ; page de lancement branchée sur « Jouer à votre jeu » | Guide d'entretien ; 2 messages vers le réseau indirect |
 | **S3** | 1er – 14 févr. | Jeu complet | Build **Alpha** à interrupteurs ; partie test complète (cycles 0 à 4) ; feuille de score gamifiée | 2 ou 3 rendez-vous découverte, démo en main |
 | **S4** | 15 – 28 févr. | Montrer | Corrections ; plusieurs équipes et leaderboard (N1) ; vidéo de démo de 2 min | 2 ou 3 rendez-vous de plus |
@@ -94,7 +95,8 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 | Kit papier v1 (plateau, cartes, fiches de rôle, livret), généré depuis les documents | En avance | Fait (26 nov.) ; sert au mini-test et au repli hors ligne |
 | Règles sur une page (`docs/jeu/regles-une-page.md`) et simulateur d'équilibrage (`docs/jeu/simulation-equilibrage.md`) | En avance | Fait (26 nov.) : règles validées par 2 000 parties simulées par stratégie |
 | Inventaire des builds par chapitre (`docs/jeu/builds-spaceplan.md`) | En avance | Fait (26 nov.) : Proto, PoC, Alpha à interrupteurs ; Beta optionnelle |
-| **Prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), 9 étapes | Début décembre → S1 | **Prochaine étape** |
+| **Démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), 5 étapes, sans règles | Début décembre | **Prochaine étape** |
+| Moteur de règles numérique, qui pilote les animations de la démo | Décembre → S1, si la démo convainc | À faire |
 | **Mini-test papier** : cycles 0 et 1, 1 ou 2 personnes | Début décembre | À organiser |
 | Builds PoC et Proto + README + page de lancement | S2 | À faire |
 | Build Alpha à interrupteurs | S3 | À faire |
