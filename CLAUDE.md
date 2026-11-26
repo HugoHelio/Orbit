@@ -11,6 +11,15 @@ Il fait partie de l'activité **Helioso** en préparation (lancement mi/fin 2027
 - ce business game, en licence avec séminaires animés (brique B) ;
 - plus tard, un atelier licencié à des animateurs certifiés (brique C).
 
+## Où on en est et prochaine étape
+
+*À lire en premier à chaque session. Mis à jour à chaque décision (dernière mise à jour : 26 novembre 2026).*
+
+- L'utilisateur prépare le projet aussi en discussion avec Claude (chat), que Claude Code ne voit pas : **les décisions sont toujours reportées dans les documents du dépôt**. Si une demande contredit un document, le signaler et demander laquelle des deux fait foi.
+- **Fait :** GDD 0.14, cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan.
+- **Prochaine étape : le prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`). Il passe **avant les builds SpacePlan**, car c'est l'interactivité du plateau qui dira si le jeu marche. Commencer par l'étape 1 (le plateau statique, joli), une étape par session, cocher l'étape dans la spécification à la fin.
+- **Ensuite :** les builds SpacePlan (PoC d'abord), voir `docs/jeu/builds-spaceplan.md` et le plan de sprints.
+
 ## Les documents de référence
 
 - `docs/jeu/gdd-orbit-studio.md` : **le GDD, qui fait foi pour tout le design du jeu.** Lis-le avant de coder une règle.
@@ -20,6 +29,9 @@ Il fait partie de l'activité **Helioso** en préparation (lancement mi/fin 2027
 - `docs/whiteboard/plateau-orbite.json` : la sauvegarde du whiteboard du plateau.
 - `LICENSE.md` : la licence Helioso (code visible, usage sous licence).
 - `docs/jeu/direction-artistique.md` : la palette, les deux thèmes et la typographie.
+- `docs/jeu/spec-prototype-plateau.md` : **la spécification de la prochaine étape**, le prototype du plateau numérique, en 9 étapes.
+- `docs/jeu/builds-spaceplan.md` : les builds jouables de SpacePlan et la règle « cartes publiées → build » (après le plateau).
+- `docs/jeu/regles-une-page.md`, `docs/jeu/cartes-orbit-studio.md`, `prototype-papier/outil/simuler.py` : les règles, les cartes et le simulateur (référence pour le calcul du score).
 
 ## Conventions
 

@@ -35,7 +35,7 @@ Les 20 fonctionnalités sont réparties en 5 catégories : Player, Alien, Gamepl
 
 ## 2. Les problèmes de design (insights de playtest)
 
-Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Max, Sam ou Nova).
+Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Max, Sam ou Nora).
 
 ### Prototype (`1-Conception/SP-C15`)
 1. **Manque de défi :** trop facile, trop court (13 s en moyenne pour finir le niveau). « Si j'appuie sans arrêt sur espace, je tue tous les aliens. » « Les aliens restants restent au milieu et ne vont pas sur les côtés. »
@@ -87,7 +87,7 @@ Classes principales (Alpha) : `Player`, `Projectile`, `Invader`, `InvaderProject
 | **Icônes de pilotage** : Budget, Temps, Qualité, Équipe, Périmètre (GPS, Galaxy, Clockwork, Compass) | 15 à 17 | Pictogrammes des pistes du plateau (crédits, temps, note) |
 | **Frise des phases et des versions** (Proto, PoC, α, β, avec « première version publiable », « fonctionnalités complètes ») | 27-29, 62-66, 87-93 | Piste du temps du plateau et choix de la version de SpacePlan jouée à chaque release |
 | **K6**, le personnage guide de SpacePlan | 55-56, 155, 436 | Piste : un guide pour l'animateur ou le mode solo (à ne pas confondre avec Vera) |
-| **Cartes insights « retro gaming »** (besoins : compétence, autonomie, relation ; motivations : se défouler, se divertir, accomplir ; profil 30 ans et plus) et **persona « Retro Gamer »** | 70-77 | Enrichir les profils de Max, Sam et Nova ; matière pour le cycle 0 (le pitch) |
+| **Cartes insights « retro gaming »** (besoins : compétence, autonomie, relation ; motivations : se défouler, se divertir, accomplir ; profil 30 ans et plus) et **persona « Retro Gamer »** | 70-77 | Enrichir les profils de Max, Sam et Nora ; matière pour le cycle 0 (le pitch) |
 | **Fiche mandat (ID card)** : projet, studio, équipe, budget, mesures de succès, pitch | 79-82 | Modèle de la **fiche mission de Vera** remise au cycle 0 |
 | **Kanban, Gantt, block plan, burndown** avec les rôles P / A / D | 102-123, 211-245, 352-384 | Visuels du plateau numérique ; **burndown** affiché au débrief |
 | **Débriefs de playtest** (bulles « Challenge », analyse des boîtes de collision avec options A, B, C) | 125-131, 313-315, 321 | Cartes Feedback et futures cartes « problème de design » à arbitrer |

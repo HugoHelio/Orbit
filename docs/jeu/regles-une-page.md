@@ -19,7 +19,7 @@ Vous dirigez **Orbital Studio**, un petit studio de jeu vidéo qui travaille ave
 | 🟠 | **Heure** | Le temps d'un joueur : **3 jetons Heure par joueur et par cycle**. Chaque action coûte 1 ou 2 heures : on pose ses jetons sur la station où l'on agit. |
 | 🔷 | **Token IA** | Le budget IA du studio, comme les tokens que l'on paie pour utiliser une IA : **20 pour toute la partie**. Chaque effort fait par PIX et chaque test de SCAN coûte 1 token. On le suit avec un marqueur sur la piste. |
 | 🟥 | **Carte Test** | Cachée sous chaque effort fait par PIX : elle dit ce que cache son travail, *OK*, *Bug* ou *Pas fun*. Personne ne la regarde avant de tester. |
-| 🟨 | **Carte Feedback** | Ce que disent les joueurs (Max, Sam, Nova), à trier. |
+| 🟨 | **Carte Feedback** | Ce que disent les joueurs (Max, Sam, Nora), à trier. |
 | 📈 | **Note** | La qualité du jeu aux yeux des joueurs, de 1 à 5. Elle commence à 3. |
 
 ## Un cycle en 6 temps
@@ -39,7 +39,7 @@ L'animateur lit le message de Vera et retourne la carte Événement du cycle. So
 
 ### 2. Planning
 
-- **Trier le feedback** (le chef de projet, 1 heure pour 2 cartes). Une carte Bug, Idée ou Pas fun se pose sur la fonctionnalité qu'elle cite. Si cette fonctionnalité est déjà publiée, il faut 1 effort de plus dessus. Quand ce travail est publié, **la note monte de 0,5** (+1 pour Nova). Les cartes Hors liste et Compliment s'écartent.
+- **Trier le feedback** (le chef de projet, 1 heure pour 2 cartes). Une carte Bug, Idée ou Pas fun se pose sur la fonctionnalité qu'elle cite. Si cette fonctionnalité est déjà publiée, il faut 1 effort de plus dessus. Quand ce travail est publié, **la note monte de 0,5** (+1 pour Nora). Les cartes Hors liste et Compliment s'écartent.
 - **Choisir** les fonctionnalités du cycle dans le Backlog.
 - **Noter le risque du cycle** sur la feuille de score, en une phrase : ce qui pourrait mal tourner, et ce que vous faites contre. Après la release, cochez s'il est arrivé.
 

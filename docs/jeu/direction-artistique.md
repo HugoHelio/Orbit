@@ -74,7 +74,7 @@ Corps de texte imprimé : 11 pt minimum sur les cartes.
 
 ## 7. Les personnages en pixel art
 
-- **Portraits des personnages non joueurs** dans `assets/personnages/` (un fichier `<nom>-portrait.png` par personnage, fond transparent, à afficher dans un cercle) : Vera, Max, Sam, Nova, PIX et SCAN. Le détail est dans le GDD (section 4, « Les portraits »).
+- **Portraits des personnages non joueurs** dans `assets/personnages/` (un fichier `<nom>-portrait.png` par personnage, fond transparent, à afficher dans un cercle) : Vera, Max, Sam, Nora, PIX et SCAN. Le détail est dans le GDD (section 4, « Les portraits »).
 - **Les agents sont des robots de la même famille** (dérivés de K6, la mascotte de SpacePlan), en grille de 19 × 30 pixels : **PIX en ambre**, **SCAN en cyan** (la couleur des agents). Contours bleu nuit `#0D2329`.
 - **Affichage :** toujours en `image-rendering: pixelated`, jamais lissé.
 - **À faire :** une passe de retouche des portraits humains (issus de générations IA de SpacePlan), pour un style homogène et unique.

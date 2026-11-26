@@ -156,16 +156,16 @@ class Partie:
                     self.file.append(carte); continue
                 f = self.f.get(carte["cible"]) if carte["cible"] else None
                 if f and carte["type"] in ("Bug", "Idée", "Pas fun"):
-                    nova = carte["qui"] == "Nova"
+                    nora = carte["qui"] == "Nora"
                     if R["fb_note"]:
                         f["travail"] += 1 if f["rel"] else 0
-                        f["attente_note"] += 1.0 if nova else 0.5
+                        f["attente_note"] += 1.0 if nora else 0.5
                     elif carte["type"] == "Bug":
                         f["travail"] += 1; f["attente_note"] += 0.5
                     elif f["rel"]:
-                        f["travail"] += 1; f["bonus_att"] = f.get("bonus_att", 0) + (2 if nova else 1)
+                        f["travail"] += 1; f["bonus_att"] = f.get("bonus_att", 0) + (2 if nora else 1)
                     else:
-                        f["bonus"] += 2 if nova else 1
+                        f["bonus"] += 2 if nora else 1
                 self.log["cartes_triees"] += 1
         # 2. corrections connues et travail demandé par les joueurs
         for f in self.f.values():

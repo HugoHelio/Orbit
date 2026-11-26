@@ -24,7 +24,7 @@ Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a 
 
 **Le responsable** d'une fonctionnalité est indiqué sur sa carte : **Prog** = le programmeur ; **Design** et **Art** = le designer.
 
-**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les joueurs demandent** : +0,5 par carte Feedback traitée (+1 pour Nova). **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans MVP, il n'y a pas de joueurs : le score vaut 0.
+**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les joueurs demandent** : +0,5 par carte Feedback traitée (+1 pour Nora). **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans MVP, il n'y a pas de joueurs : le score vaut 0.
 
 ---
 
@@ -122,7 +122,7 @@ Pour chaque effort produit par PIX, une carte Test est glissée **face cachée**
 Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque palier de 100 joueurs atteint pour la première fois** (une équipe à 250 joueurs en a pioché 2 en tout), placée dans la file **Feedback → Backlog**. Le chef de projet les trie (1 heure pour 2 cartes).
 
 **Effet du tri (une seule règle pour Bug, Idée et Pas fun) :** on pose la carte sur la fonctionnalité citée.
-- Si la fonctionnalité est **déjà publiée**, il faut produire **1 effort de plus** dessus (correction ou amélioration). Quand ce travail est publié, **la note monte de 0,5** (+1 pour Nova).
+- Si la fonctionnalité est **déjà publiée**, il faut produire **1 effort de plus** dessus (correction ou amélioration). Quand ce travail est publié, **la note monte de 0,5** (+1 pour Nora).
 - Si la fonctionnalité **n'est pas encore publiée**, la carte attend : la note monte quand la fonctionnalité est publiée.
 - **Hors liste / Compliment :** on l'écarte. Savoir dire non, c'est aussi du pilotage.
 
@@ -149,13 +149,13 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | FB15 | Sam | Pas fun | « C'est dur au début, puis trop facile. Ça n'a pas de sens. » | F08 |
 | FB16 | Sam | Compliment | « Les graphismes sont vraiment cool ! » | Hors liste |
 | FB17 | Sam | Idée | « On pourrait avoir différents types d'aliens ? » | Hors liste |
-| FB18 | Nova | Pas fun | « Quand je touche ou que je suis touchée, il ne se passe rien. Il faut des explosions ! » | F17 |
-| FB19 | Nova | Pas fun | « L'espace paraît un peu statique. » | F18 |
-| FB20 | Nova | Idée | « Dommage qu'il n'y ait pas de son… » | Hors liste |
-| FB21 | Nova | Compliment | « La sensation de puissance du vaisseau est géniale ! » | Hors liste |
-| FB22 | Nova | Pas fun | « Finir le jeu avec le meilleur vaisseau, ce n'est pas gratifiant. » | F16 |
-| FB23 | Nova | Idée | « Un classement en ligne, et je fais un live tous les soirs ! » | Hors liste (une idée pour plus tard) |
-| FB24 | Nova | Idée | « Un combat de boss pour finir en beauté ? » | Hors liste (une idée pour plus tard) |
+| FB18 | Nora | Pas fun | « Quand je touche ou que je suis touchée, il ne se passe rien. Il faut des explosions ! » | F17 |
+| FB19 | Nora | Pas fun | « L'espace paraît un peu statique. » | F18 |
+| FB20 | Nora | Idée | « Dommage qu'il n'y ait pas de son… » | Hors liste |
+| FB21 | Nora | Compliment | « La sensation de puissance du vaisseau est géniale ! » | Hors liste |
+| FB22 | Nora | Pas fun | « Finir le jeu avec le meilleur vaisseau, ce n'est pas gratifiant. » | F16 |
+| FB23 | Nora | Idée | « Un classement en ligne, et je fais un live tous les soirs ! » | Hors liste (une idée pour plus tard) |
+| FB24 | Nora | Idée | « Un combat de boss pour finir en beauté ? » | Hors liste (une idée pour plus tard) |
 
 ---
 
@@ -168,7 +168,7 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | E1 | Communauté | 1 | **Les premiers joueurs arrivent.** Les forums s'animent. | Si votre jeu a des joueurs, piochez 2 cartes Feedback de plus ce cycle |
 | E2 | Technique | 2 | **Mise à jour du modèle de PIX.** Plus rapide, toujours aussi sûr de lui. | Ce cycle, PIX peut produire 4 efforts au lieu de 3 |
 | E3 | Éditeur | 3 | **Vera veut une démo pour ses investisseurs.** | À la release de ce cycle, si une fonctionnalité du MVP a un bug, la note baisse de 0,5 de plus |
-| E4 | Communauté | 4 | **Nova joue en direct au festival.** Des milliers de spectateurs. | Ce cycle, chaque bug publié fait baisser la note de 1 au lieu de 0,5 |
+| E4 | Communauté | 4 | **Nora joue en direct au festival.** Des milliers de spectateurs. | Ce cycle, chaque bug publié fait baisser la note de 1 au lieu de 0,5 |
 | E5 | Technique | Rechange | **SCAN est en maintenance.** | Ce cycle, SCAN ne peut faire aucun test |
 | E6 | Éditeur | Rechange | **Les tokens IA augmentent.** | Ce cycle, chaque action d'un agent coûte 2 tokens |
 
@@ -184,7 +184,7 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | V1 | Cycle 1 | « Les premiers joueurs arrivent. Écoutez-les… mais pas tous. Prochain événement : Technique. » |
 | V2 | Cycle 2 | « PIX a été mis à jour. Plus vite, ce n'est pas forcément mieux. Prochain événement : Éditeur. » |
 | V3 | Cycle 3 | « Mes investisseurs veulent une démo. Pas de bug sur l'essentiel, s'il vous plaît. Prochain événement : Communauté. » |
-| V4 | Cycle 4 | « C'est le festival. Nova est en direct. Je compte sur vous. » |
+| V4 | Cycle 4 | « C'est le festival. Nora est en direct. Je compte sur vous. » |
 | V5 | Fin | « Merci à tous les studios. Nébuleuse Games signe avec… » *(l'animateur annonce le studio en tête du leaderboard)* |
 
 ---

@@ -79,7 +79,7 @@ Pour mesurer la chance, on compare les 10 % de parties où l'équipe a tiré le 
 
 | # | Ce qui n'allait pas | Ce qu'on a fait |
 |---|---|---|
-| 1 | **La note ne pouvait presque que baisser.** Seules 2 cartes Feedback (des Bug sur F06) la faisaient monter, donc elle n'avait pas de sens positif. | **Simplifié :** toute carte Feedback livrée fait monter la note (+0,5, ou +1 pour Nova). Le travail sur les fonctionnalités donne les joueurs, l'écoute des joueurs donne la note. |
+| 1 | **La note ne pouvait presque que baisser.** Seules 2 cartes Feedback (des Bug sur F06) la faisaient monter, donc elle n'avait pas de sens positif. | **Simplifié :** toute carte Feedback livrée fait monter la note (+0,5, ou +1 pour Nora). Le travail sur les fonctionnalités donne les joueurs, l'écoute des joueurs donne la note. |
 | 2 | **Une carte Bug portait sur une fonctionnalité qui n'est peut-être pas sortie** (FB12, sur F15). | Avec la règle unique du feedback, la carte attend la sortie de la fonctionnalité. Plus de cas particulier. |
 | 3 | **E1 apportait des retours de joueurs même à un jeu sans joueurs.** | E1 ne fait piocher que si le jeu a des joueurs. |
 | 4 | **Des calculs inutiles.** La moitié des étoiles arrondie à l'inférieur donnait 1 étoile pour les fonctionnalités à 2 comme à 3 étoiles, et il fallait suivre l'âge de chaque carte dans la file. | Un Pas fun coûte 1 étoile. La pénalité de file se compte à la release : plus de 4 cartes non triées, −0,5. |

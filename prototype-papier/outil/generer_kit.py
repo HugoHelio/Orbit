@@ -79,7 +79,7 @@ def portrait(nom):
     return "data:image/png;base64," + base64.b64encode(f.read_bytes()).decode()
 
 
-PORT = {n: portrait(n) for n in ("max", "sam", "nova", "vera", "pix", "scan")}
+PORT = {n: portrait(n) for n in ("max", "sam", "nora", "vera", "pix", "scan")}
 
 
 def img_portrait(nom, taille=10, fond=SAGE):
@@ -220,7 +220,7 @@ DOS_DEFAUT = f"""<div class="in centre" style="border-color:{NAVY}"><div style="
 
 
 def c_feedback(fb):
-    nova = fb["qui"] == "Nova"
+    nora = fb["qui"] == "Nora"
     typ = {"Bug": CORAL, "Pas fun": CORAL, "Idée": TEAL, "Compliment": SAGE}[fb["type"]]
     cible = fb["cible"]
     if cible.startswith("F"):
@@ -228,13 +228,13 @@ def c_feedback(fb):
     else:
         cible = "<b>Hors liste</b>" + (" · une idée pour plus tard" if "plus tard" in cible else "")
     if fb["cible"].startswith("F"):
-        effet_tri = f"<b>Trié :</b> sur {fb['cible']}. Publié : <b>note +{'1' if nova else '0,5'}</b> (1 effort de plus si {fb['cible']} est déjà publiée)."
+        effet_tri = f"<b>Trié :</b> sur {fb['cible']}. Publié : <b>note +{'1' if nora else '0,5'}</b> (1 effort de plus si {fb['cible']} est déjà publiée)."
     else:
         effet_tri = "<b>Trié :</b> on l'écarte. Savoir dire non, c'est aussi du pilotage."
-    x2 = f'<span style="background:{AMBER};border:.5mm solid {NAVY};border-radius:1mm;padding:.2mm 1.4mm">Vaut double</span>' if nova else ""
+    x2 = f'<span style="background:{AMBER};border:.5mm solid {NAVY};border-radius:1mm;padding:.2mm 1.4mm">Vaut double</span>' if nora else ""
     return f"""<div class="in"><div class="bande" style="background:{AMBER}"><span>Feedback</span><span>{fb['id']}</span></div>
 <div class="corps"><div style="display:flex;align-items:center;gap:2mm;justify-content:space-between">
-<div style="display:flex;align-items:center;gap:2mm">{img_portrait(fb['qui'].lower(), 11, AMBER if nova else SAGE)}<div class="t" style="font-size:13pt">{fb['qui']}</div></div>
+<div style="display:flex;align-items:center;gap:2mm">{img_portrait(fb['qui'].lower(), 11, AMBER if nora else SAGE)}<div class="t" style="font-size:13pt">{fb['qui']}</div></div>
 <span class="pill" style="background:{typ}">{fb['type']}</span></div>
 <div class="cit">« {fb['cit']} »</div>
 <div class="bas" style="flex-direction:column;align-items:stretch;gap:1.2mm"><div style="display:flex;justify-content:space-between;align-items:center"><div class="lab">Fonctionnalité citée</div><div class="lab">{x2}</div></div><div class="txt" style="font-size:9pt">{cible}</div>
@@ -405,9 +405,9 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
     s.append(zone_carte(499, 292, "Pioche Test", "20 cartes, face cachée", CORAL))
     s.append(zone_carte(264, 305, "Pioche Feedback", "24 cartes, face cachée", AMBER))
     s.append(T(297, 301, "COMMUNAUTÉ · LES JOUEURS", 2.8, 800, "middle", AMBER_T, ls=.3))
-    for i, n in enumerate(("max", "sam", "nova")):
+    for i, n in enumerate(("max", "sam", "nora")):
         px_ = 281 + i * 16
-        s.append(f'<circle cx="{px_}" cy="291" r="6.5" fill="{AMBER if n == "nova" else SAGE}" stroke="{NAVY}" stroke-width=".8"/>')
+        s.append(f'<circle cx="{px_}" cy="291" r="6.5" fill="{AMBER if n == "nora" else SAGE}" stroke="{NAVY}" stroke-width=".8"/>')
         s.append(f'<image href="{PORT[n]}" x="{px_ - 5.5}" y="285.5" width="11" height="11"/>')
 
     # pistes : tokens, note, cycles
@@ -514,7 +514,7 @@ def livret():
 <table class="tab risques"><tr><th>Cycle</th><th>Le risque que nous voyons</th><th>Notre parade</th><th>Arrivé ?</th></tr>{risques}</table>
 <div style="border:.8mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;margin-top:5mm;background:{BG};display:flex;justify-content:space-between;align-items:center"><div class="lab">Score final</div>
 <div class="t" style="font-size:14pt">Joueurs ______ × note ____ = <span style="display:inline-block;border-bottom:.6mm solid {NAVY};width:28mm"></span></div></div>
-<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles publiées × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans MVP, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié coûte 1 étoile ; chaque carte Feedback traitée et publiée fait monter la note de 0,5 (Nova : 1).</div></div>"""
+<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles publiées × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans MVP, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié coûte 1 étoile ; chaque carte Feedback traitée et publiée fait monter la note de 0,5 (Nora : 1).</div></div>"""
 
     equipes = "".join(f"<tr><td class='c'><b>{i}</b></td>" + "<td></td>" * 7 + "</tr>" for i in range(1, 9))
     leader = f"""<div class="feuille" style="padding:14mm">

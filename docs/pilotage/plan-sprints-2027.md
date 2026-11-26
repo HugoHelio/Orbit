@@ -1,14 +1,32 @@
 # Plan de sprints, décembre 2026 – juin 2027
 
-*Document vivant : mis à jour à chaque fin de sprint. Version 4, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`.*
+*Document vivant : mis à jour à chaque fin de sprint. Version 6, 26 novembre 2026. Scénarios du jeu : voir `docs/offre/scenarios-business-game.md`. Design du jeu : `docs/jeu/gdd-orbit-studio.md`. Prochaine étape : `docs/jeu/spec-prototype-plateau.md`. Builds de SpacePlan : `docs/jeu/builds-spaceplan.md`.*
+
+## Où on en est (pour reprendre une session, y compris avec Claude Code)
+
+- **Fait :** GDD 0.14, cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan par chapitre.
+- **Prochaine étape : le prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), étape 1 « le plateau statique, joli ». C'est lui qui dira si le jeu marche.
+- **Ensuite :** les builds SpacePlan (PoC d'abord, puis Proto, page de lancement, Alpha).
 
 ## Cadre
 
-- **Capacité :** 10 heures par semaine à partir de janvier 2027, à augmenter si les signaux sont bons.
+- **Capacité :** 10 heures par semaine à partir de janvier 2027, à augmenter si les signaux sont bons. **Décembre :** beaucoup de temps début décembre, peu pendant les fêtes.
 - **Rythme :** des sprints de 2 semaines, soit **20 heures par sprint**.
 - **Répartition type d'un sprint :** environ 12 h de production (jeu, kit), 6 h de prospection, 2 h de pilotage (revue de sprint, mise à jour de ce plan).
 - **Rituel :** à la fin de chaque sprint, une revue de 30 minutes avec Claude : ce qui est fait, ce qui bloque, ce qu'on ajuste.
+- **Rituel de cadrage :** chaque session de travail commence par **un objectif et sa définition du « terminé »** (les étapes de la spécification servent à ça), et finit par la mise à jour des documents.
 - **Rituel de sauvegarde :** à la fin de chaque session de travail, mise à jour des documents, export du whiteboard, puis commit et push sur GitHub.
+- **Lien entre les outils :** Claude Code ne voit pas les discussions avec Claude (chat). **Tout ce qui est décidé en discussion est écrit dans les documents du dépôt** (ce plan, le GDD, les spécifications), qui sont la mémoire commune.
+
+## Décisions du 26 novembre 2026 : le numérique d'abord, le plateau avant les builds
+
+La force du jeu est dans l'**interactivité** : le plateau qui s'anime, qui montre à qui c'est le tour et ce qui se passe ensuite, les efforts qui se cumulent, les agents qui codent, la gamification. Le papier ne fait pas ressentir ça. Donc :
+
+- **Le prototype du plateau numérique passe en premier**, avant les builds SpacePlan : c'est le plus gros risque (l'expérience), alors que les builds sont un risque connu (elles existent dans SpacePlan).
+- **Le papier devient une vérification légère** : relire les règles, une partie courte (cycles 0 et 1) avec 1 ou 2 personnes. Question posée : « les règles se comprennent-elles ? ». Le kit papier reste le **repli hors ligne** obligatoire.
+- **Le vrai test, c'est le prototype numérique.** Les critères de réussite du GDD (envie de rejouer, leçons formulées par les joueurs, durée du cycle) s'appliquent à la partie numérique.
+- **Parades contre le risque de coder des règles bancales :** toutes les règles et tous les chiffres dans le **fichier de scénario** (pas dans le code) ; les mêmes règles que le simulateur ; un test avec des proches dès que les cycles 0 et 1 sont jouables.
+- **L'avance sert aussi la prospection :** le plateau animé (et plus tard les builds) servent de démo dès les premiers rendez-vous.
 
 ## Ce que change le passage à 10 heures
 
@@ -17,9 +35,8 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 - **Gardé :** les règles du jeu, le prototype sur le scénario « Studio de jeu », la prospection dès janvier, **un** pilote au printemps, un kit D réduit (3 activités).
 - **Décalé à l'été 2027 :** le scénario 2 « Média local », le guide d'animation complet, la marque définitive.
 - **Décalé à 2028 :** la brique C, les business schools et le scénario 3 « Industrie ».
-- **Ajouté :** un **prototype papier** avant le code. On teste les règles avec des cartes et une feuille, c'est 10 fois moins cher que de coder une mauvaise idée.
 
-## Sprint 0 : l'outillage (décembre 2026)
+## Sprint 0 : l'outillage (novembre 2026)
 
 | Tâche | Statut |
 |---|---|
@@ -37,14 +54,28 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 
 **Sprint 0 terminé le 26 novembre 2026.** Reste hors sprint : la relecture juridique de la licence.
 
+## Décembre 2026 : sprint d'avance
+
+**Début décembre (temps disponible) : le prototype du plateau** (`docs/jeu/spec-prototype-plateau.md`)
+
+| Tâche | Définition du « terminé » |
+|---|---|
+| Étapes 1 à 3 : plateau statique joli, fichier du scénario, machine à états | Une partie vide défile du cycle 0 au cycle 4 sur un beau plateau |
+| Étapes 4 à 6 : Planning, Build, Test, Release, Review et score | Les cycles 0 et 1 se jouent ; les scores correspondent au simulateur |
+| Relecture des règles + **mini-test papier** (cycles 0 et 1, 1 ou 2 personnes, 1 h) | Liste des points incompris, corrections dans le GDD |
+
+**Fin décembre (fêtes, peu de temps), des tâches courtes, qu'on peut sauter :**
+- Cartographie du réseau (avancée de S1) : qui enseigne, qui connaît qui.
+- Jouer seul au plateau et noter les idées de gamification.
+
 ## Les sprints
 
 | Sprint | Dates | Objectif | Production (≈ 12 h) | Prospection (≈ 6 h) |
 |---|---|---|---|---|
-| **S1** | 4 – 17 janv. | Poser le jeu | Règles en une page ; cartes « humain » et « agent IA » ; détail du scénario « Studio de jeu » ; analyse rapide du Jeu de l'IA (AI4Better) pour en tirer des idées | Cartographie du réseau : qui enseigne, qui connaît qui |
-| **S2** | 18 – 31 janv. | Tester sur papier | Prototype papier + 1 partie test avec 3 ou 4 proches | Premier message à l'ancienne école et à l'IUT proche |
-| **S3** | 1er – 14 févr. | Passer au numérique | Prototype web v0 (Claude Code) : carte 2D, tâches qui circulent, goulots | Guide d'entretien ; 2 messages vers le réseau indirect |
-| **S4** | 15 – 28 févr. | Montrer | Corrections après test ; vidéo de démo de 2 min | 2 ou 3 rendez-vous découverte, prototype en main |
+| **S1** | 4 – 17 janv. | Plateau jouable | Étapes 7 à 9 du plateau (feedback, événements, gamification, journal) ; **première partie test** (cycles 0 et 1) avec 2 ou 3 proches | Premier message à l'ancienne école et à l'IUT proche |
+| **S2** | 18 – 31 janv. | Builds SpacePlan | Corrections après le test ; builds **PoC** (3 interrupteurs) et **Proto** ; README des builds ; page de lancement branchée sur « Jouer à votre jeu » | Guide d'entretien ; 2 messages vers le réseau indirect |
+| **S3** | 1er – 14 févr. | Jeu complet | Build **Alpha** à interrupteurs ; partie test complète (cycles 0 à 4) ; feuille de score gamifiée | 2 ou 3 rendez-vous découverte, démo en main |
+| **S4** | 15 – 28 févr. | Montrer | Corrections ; plusieurs équipes et leaderboard (N1) ; vidéo de démo de 2 min | 2 ou 3 rendez-vous de plus |
 | **S5** | 1er – 14 mars | Porte d'entrée | Kit D v0 : 3 activités pour les profs | 2 rendez-vous de plus ; repérer l'école la plus chaude |
 | **S6** | 15 – 28 mars | Préparer le pilote | Déroulé de la séance pilote ; supports ; **choix du scénario du pilote** (« Média local » à avancer si le pilote est en GEA, TC ou MMI) | Caler la date du pilote (gratuit ou petit prix) |
 | **S7** | 29 mars – 11 avr. | **Pilote** | Séance pilote (jeu B ou formation D) | Recueillir les retours ; demander une recommandation |
@@ -60,10 +91,18 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 
 | Élément | Quand | Statut |
 |---|---|---|
-| Kit papier v1 (plateau, cartes, fiches de rôle, livret), généré depuis les documents | S2, en avance | Fait (26 nov.) ; partie test à organiser |
-| **Retouche des portraits en pixel art** (Vera, Max, Sam, Nova, et la réserve Bill) pour qu'ils soient uniques et issus de nos propres générations d'IA | Avant toute diffusion publique (S4, vidéo de démo) | À faire |
-| Feuille de score gamifiée du jeu numérique : score global, XP, niveau du studio, badges | S3 (prototype web) | Idée notée dans le GDD |
-| Rendre jouables seules les versions de SpacePlan (`game/spaceplan-builds/`) | S3 | À faire |
+| Kit papier v1 (plateau, cartes, fiches de rôle, livret), généré depuis les documents | En avance | Fait (26 nov.) ; sert au mini-test et au repli hors ligne |
+| Règles sur une page (`docs/jeu/regles-une-page.md`) et simulateur d'équilibrage (`docs/jeu/simulation-equilibrage.md`) | En avance | Fait (26 nov.) : règles validées par 2 000 parties simulées par stratégie |
+| Inventaire des builds par chapitre (`docs/jeu/builds-spaceplan.md`) | En avance | Fait (26 nov.) : Proto, PoC, Alpha à interrupteurs ; Beta optionnelle |
+| **Prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), 9 étapes | Début décembre → S1 | **Prochaine étape** |
+| **Mini-test papier** : cycles 0 et 1, 1 ou 2 personnes | Début décembre | À organiser |
+| Builds PoC et Proto + README + page de lancement | S2 | À faire |
+| Build Alpha à interrupteurs | S3 | À faire |
+| Build Beta à interrupteurs | Après le pilote | Optionnel |
+| Interrupteur « bug » par fonctionnalité (jouer une fonctionnalité publiée avec une carte Bug) | Après S3 | Idée |
+| **Retouche des portraits en pixel art** (Vera, Max, Sam, Nora, et la réserve Bill) pour qu'ils soient uniques et issus de nos propres générations d'IA | Avant toute diffusion publique (S4, vidéo de démo) | À faire |
+| Feuille de score gamifiée du jeu numérique : score global, XP, niveau du studio, badges | S3 | Idée notée dans le GDD ; premier compteur dans le plateau |
+| Impression finale du kit papier (A2, 250 g) | Avant le pilote (S6) | À faire |
 | Relecture de la licence par un juriste | Avant la première vente | À faire |
 
 ## Critères de décision, fin juin 2027
