@@ -14,7 +14,7 @@ Ce dépôt est **public, mais pas open source** : le code est visible, l'usage d
 
 | Dossier | Contenu |
 |---|---|
-| `docs/jeu/` | **Le GDD d'Orbit : Studio** : la référence du jeu |
+| `docs/jeu/` | **Le GDD d'Orbit : Studio** (la référence du jeu), les cartes, la direction artistique et ce qu'on reprend de SpacePlan |
 | `docs/offre/` | La proposition d'activité et les scénarios du business game |
 | `docs/pilotage/` | Le plan de sprints 2027 |
 | `docs/whiteboard/` | La sauvegarde du whiteboard du plateau (format JSON) et son lien |
@@ -33,4 +33,5 @@ Les données internes (contacts, contrats, prospection, scénarios de revenus) n
 
 - Dépôt : https://github.com/HugoHelio/Orbit
 - Whiteboard du plateau : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn
+- Planches de style : https://claude.ai/artifact/4BPUkjWkmBSnmjL38LyVxb
 - Le jeu en ligne (à venir) : https://orbit.helioso.com

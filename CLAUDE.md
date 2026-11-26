@@ -19,6 +19,7 @@ Il fait partie de l'activité **Helioso** en préparation (lancement mi/fin 2027
 - `docs/pilotage/plan-sprints-2027.md` : le calendrier et les sprints.
 - `docs/whiteboard/plateau-orbite.json` : la sauvegarde du whiteboard du plateau.
 - `LICENSE.md` : la licence Helioso (code visible, usage sous licence).
+- `docs/jeu/direction-artistique.md` : la palette, les deux thèmes et la typographie.
 
 ## Conventions
 
@@ -37,4 +38,5 @@ L'utilisateur n'est pas développeur : il pilote, Claude Code écrit le code. Do
 - Chaque décision de jeu est écrite dans un **journal de partie** (pour le débrief).
 - Le jeu doit **fonctionner hors ligne** (application web installable, état gardé en local).
 - **Chapitre gratuit et cadenas :** le cycle 0 et le cycle 1 sont jouables sans code ; la suite se débloque avec un code de licence. Un système simple au début (N1). À partir du multijoueur (N2), les contenus payants ne sont plus dans le dépôt public : ils sont servis par Firebase aux licences valides.
+- **Deux thèmes, clair (par défaut) et sombre « Tech »** : toutes les couleurs passent par des variables CSS (`--bg`, `--surface`, `--text`, `--accent`…) définies dans `docs/jeu/direction-artistique.md`, avec un bouton pour basculer de l'un à l'autre. Jamais de couleur en dur dans les composants.
 - Expliquer chaque étape en termes simples et proposer de tester dans le navigateur après chaque changement.

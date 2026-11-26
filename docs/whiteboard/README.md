@@ -6,5 +6,6 @@
 
 | Export | Contenu |
 |---|---|
+| 26 nov. 2026 | Couleurs de la direction artistique (palette HLC v2.0) |
 | 26 nov. 2026 | Renommage : Helioso Orbit |
 | 26 nov. 2026 | Première version : orbite à 6 stations, poste de pilotage, 3 agents, éditeur et communauté, 3 files d'attente (goulot principal Feedback → Backlog) |

@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | 0.5 — 26 novembre 2026 |
+| **Version** | 0.7 — 26 novembre 2026 |
 | **Statut** | Conception, avant prototype papier |
 | **Plateau de travail** | Whiteboard « Helioso Orbit — plateau de l'orbite d'itération » : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn (sauvegarde : `docs/whiteboard/plateau-orbite.json`) |
-| **Documents liés** | `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
+| **Documents liés** | `docs/jeu/cartes-orbit-studio.md` (toutes les cartes), `docs/jeu/direction-artistique.md` (palette, thèmes, typographie), `docs/jeu/reprise-spaceplan.md` (ce qu'on reprend de SpacePlan), `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
 
 **Journal des versions**
 - **0.1** — Premier plan : équipe, benchmarks, cycle, session de 3 h.
@@ -15,8 +15,28 @@
 - **0.3** — Passage au format GDD. Trois goulots sur le plateau, mécanique de tri du feedback, jeu hors ligne obligatoire, premier jet du narratif.
 - **0.4** — Nom du jeu : Helioso Orbit ; scénario « Orbit : Studio » ; le studio fictif s'appelle Orbital Studio. Chapitre gratuit et cadenas par code de licence.
 - **0.5** — Ton et personnages du narratif validés ; cartes en français, conçues pour être traduites en anglais.
+- **0.6** — **Règles de base** simplifiées pour le premier prototype (section 0) ; les 20 fonctionnalités de SpacePlan ; un seul paquet de défauts ; premier jet complet des cartes.
+- **0.7** — Direction artistique : palette HLC v2.0, deux thèmes (clair et sombre « Tech »), kit papier en style flat.
 
 *Tous les chiffres sont des valeurs de départ, à régler pendant les tests.*
+
+---
+
+## 0. Règles de base (version 1 du prototype) — elles priment sur le reste du document
+
+Le jeu se construit comme un jeu de société : des **règles de base**, simples à expliquer et à équilibrer, puis des **modules** ajoutés un par un. Les sections 5 à 10 décrivent le jeu complet ; **pour les premiers tests, seules les règles ci-dessous s'appliquent.** Le détail de toutes les cartes est dans `docs/jeu/cartes-orbit-studio.md`.
+
+| Élément | Règles de base | Modules pour plus tard |
+|---|---|---|
+| **Fonctionnalités** | Les **20 fonctionnalités de SpacePlan** (master feature list). Les 5 *Must* forment le premier jouable (cycle 0). Taille : *Low* = 1 bloc, *Medium* = 2, *High* = 3 | Dépendances entre fonctionnalités ; demandes de joueurs (classement, combat de boss…) |
+| **Valeur** | *Must* = 2 étoiles, *Should* = 3, *Could* = 2. **Une étoile livrée = 25 joueurs** | Fun variable par carte |
+| **Équipe** | Chef de projet, designer, programmeur : **3 PA chacun par cycle**. 20 crédits IA pour la partie | 4e rôle |
+| **Agents** | **PIX** (jusqu'à 3 blocs par cycle) et **SCAN** (jusqu'à 4 tests par cycle), 1 crédit par action | ARTY |
+| **Défauts** | **Un seul paquet de 20 cartes** : 12 Aucun, 5 Bug, 3 Pas fun. Brief simple = 1 carte ; brief détaillé = **2 cartes, on garde la meilleure**. SCAN trouve les Bug, seul le playtest du designer trouve les Pas fun | Crash, dette technique, faille de sécurité ; renvoi à PIX |
+| **Feedback** | 24 cartes tirées des **vrais playtests de SpacePlan**, signées Lou, Sam ou Nova ; 1 carte pour 100 joueurs ; à trier par le chef de projet | Agent de tri |
+| **Événements** | Un par cycle, ordre fixe (E1 à E4), sans choix de résolution | Résolutions et bonus |
+| **Score** | **Joueurs + note × 100** (note sur 5, départ à 3) | Bonus d'étapes et d'événements, pénalités |
+| **Release** | L'équipe joue vraiment à son jeu : la version de SpacePlan qui correspond à ce qu'elle a livré (voir section 12) | Activation fine fonctionnalité par fonctionnalité |
 
 ---
 
@@ -190,6 +210,14 @@ Les petits blocs orange sont des **files d'attente**. Il y en a trois, de taille
 
 **En version papier :** un plateau A2, des cartes, des figurines et des jetons. **En version numérique :** le même plan, animé (les vaisseaux qui voyagent, les files d'attente qui grossissent en orbite).
 
+### Le style visuel
+
+Détail complet dans `docs/jeu/direction-artistique.md`.
+- **Palette HLC v2.0** : bleu nuit `#0D2329`, sarcelle `#23C2AA`, cyan `#0AE2EA`, ambre `#FBAB00`, gris sauge `#B9CAC9`, plus un rouge corail pour les défauts.
+- **Deux thèmes numériques** : clair par défaut (salles éclairées, tablettes, cohérence avec le papier) et sombre « Tech » (écrans, préférence des étudiants), au choix à tout moment.
+- **Kit papier** en style flat, sur le thème clair : aplats, contours épais bleu nuit.
+- **Le pilotage est un soleil ambre** au centre, les six stations sont des planètes en orbite.
+
 ---
 
 ## 7. La boucle de jeu : un cycle (environ 20 à 30 minutes)
@@ -325,6 +353,10 @@ Une session ne doit **jamais** s'arrêter à cause du réseau.
 - Chaque décision est écrite dans le **journal de partie**.
 - L'application est **installable et utilisable hors ligne** (une application web qui se charge une fois et fonctionne ensuite sans réseau).
 
+### Le jeu SpacePlan joué à chaque release
+
+Le code du mini-jeu SpacePlan (prototype, PoC, alpha, bêta) est repris dans `game/spaceplan-builds/`. À chaque release, l'animateur lance la version la plus proche de ce que l'équipe a livré : prototype après le cycle 0, puis des versions de plus en plus complètes. Le jeu numérique activera plus tard les fonctionnalités une par une, selon les cartes livrées (et montrera les défauts laissés passer).
+
 ### Chapitre gratuit et licence
 
 Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `LICENSE.md`).
@@ -370,6 +402,11 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 26 nov. 2026 | Adresse du jeu en ligne : **orbit.helioso.com** |
 | 26 nov. 2026 | Ton léger avec de l'humour ; personnages PIX, SCAN, ARTY, Vera, Lou, Sam et Nova validés |
 | 26 nov. 2026 | Textes en français pour le pilote, écrits pour être traduits en anglais ; une clé par texte et une version par langue dans le jeu numérique |
+| 26 nov. 2026 | Règles de base simplifiées pour le premier prototype (section 0) ; modules ajoutés un par un ensuite |
+| 26 nov. 2026 | Les 20 fonctionnalités de la master feature list de SpacePlan (les 2 « demandes de joueurs », classement et combat de boss, viendront plus tard) |
+| 26 nov. 2026 | Les insights de playtest de SpacePlan deviennent les cartes Feedback |
+| 26 nov. 2026 | Le code du mini-jeu SpacePlan est repris dans le dépôt public `Orbit`, sous licence Helioso |
+| 26 nov. 2026 | Direction artistique : palette HLC v2.0 ; style flat pour le papier ; deux thèmes numériques, clair par défaut et sombre « Tech » ; le pilotage est un soleil, les stations des planètes |
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "source": "https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn",
-  "exporte_le": "2026-11-26",
+  "exporte_le": "2026-11-26 (palette HLC v2.0)",
   "board_meta": {
     "v": 1,
     "title": "Helioso Orbit — plateau de l'orbite d'itération",
@@ -75,7 +75,8 @@
       "h": 90,
       "color": "white",
       "text": "**Backlog**\nIdées et demandes",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e4": {
       "type": "shape",
@@ -86,7 +87,8 @@
       "h": 90,
       "color": "white",
       "text": "**Brief**\nOn explique à l'agent",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e5": {
       "type": "shape",
@@ -97,7 +99,8 @@
       "h": 90,
       "color": "white",
       "text": "**Production**\nAgents et humains codent",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e6": {
       "type": "shape",
@@ -108,7 +111,8 @@
       "h": 90,
       "color": "white",
       "text": "**Test et relecture**\nOn trouve les défauts",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e7": {
       "type": "shape",
@@ -119,7 +123,8 @@
       "h": 90,
       "color": "white",
       "text": "**Release**\nLe jeu sort",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e8": {
       "type": "shape",
@@ -130,7 +135,8 @@
       "h": 90,
       "color": "white",
       "text": "**Feedback**\nRetours des joueurs",
-      "size": "body"
+      "size": "body",
+      "stroke": "#0D2329"
     },
     "e9": {
       "type": "shape",
@@ -139,8 +145,8 @@
       "y": 300,
       "w": 300,
       "h": 160,
-      "color": "purple",
-      "text": "**Poste de pilotage**\nChef de projet\nDesigner\nProgrammeur",
+      "color": "#FBAB00",
+      "text": "**Poste de pilotage**\nle soleil de l'orbite\nChef de projet · Designer · Programmeur",
       "size": "body"
     },
     "e10": {
@@ -150,7 +156,7 @@
       "y": 110,
       "w": 230,
       "h": 90,
-      "color": "purple",
+      "color": "#0AE2EA",
       "text": "**Agent codeur**\n3 blocs par cycle",
       "size": "body"
     },
@@ -165,7 +171,7 @@
       "text": "**Agent artiste**\nDébloqué au cycle 2",
       "size": "body",
       "hollow": true,
-      "stroke": "purple"
+      "stroke": "#0AE2EA"
     },
     "e12": {
       "type": "shape",
@@ -174,7 +180,7 @@
       "y": 560,
       "w": 230,
       "h": 90,
-      "color": "purple",
+      "color": "#0AE2EA",
       "text": "**Agent testeur**\nTrouve les bugs, pas l'ennui",
       "size": "body"
     },
@@ -185,7 +191,7 @@
       "y": 120,
       "w": 240,
       "h": 90,
-      "color": "blue",
+      "color": "#23C2AA",
       "text": "**Éditeur**\nNébuleuse Games",
       "size": "body"
     },
@@ -196,7 +202,7 @@
       "y": 840,
       "w": 220,
       "h": 90,
-      "color": "blue",
+      "color": "#B9CAC9",
       "text": "**Communauté**\nLes joueurs",
       "size": "body"
     },
@@ -207,8 +213,9 @@
       "y": 70,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e16": {
       "type": "shape",
@@ -217,8 +224,9 @@
       "y": 96,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e17": {
       "type": "text",
@@ -235,8 +243,9 @@
       "y": 290,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e19": {
       "type": "shape",
@@ -245,8 +254,9 @@
       "y": 316,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e20": {
       "type": "shape",
@@ -255,8 +265,9 @@
       "y": 342,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e21": {
       "type": "shape",
@@ -265,8 +276,9 @@
       "y": 368,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e22": {
       "type": "text",
@@ -283,8 +295,9 @@
       "y": 250,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e24": {
       "type": "shape",
@@ -293,8 +306,9 @@
       "y": 276,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e25": {
       "type": "shape",
@@ -303,8 +317,9 @@
       "y": 302,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e26": {
       "type": "shape",
@@ -313,8 +328,9 @@
       "y": 328,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e27": {
       "type": "shape",
@@ -323,8 +339,9 @@
       "y": 354,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e28": {
       "type": "shape",
@@ -333,8 +350,9 @@
       "y": 380,
       "w": 60,
       "h": 22,
-      "color": "peach",
-      "text": ""
+      "color": "#FBAB00",
+      "text": "",
+      "stroke": "#0D2329"
     },
     "e29": {
       "type": "text",
@@ -415,7 +433,7 @@
       "fromSide": "left",
       "toSide": "right",
       "dash": true,
-      "color": "purple"
+      "color": "#0E7C6B"
     },
     "e40": {
       "type": "arrow",
@@ -424,7 +442,7 @@
       "fromSide": "left",
       "toSide": "right",
       "dash": true,
-      "color": "purple"
+      "color": "#0E7C6B"
     },
     "e41": {
       "type": "arrow",
@@ -433,7 +451,7 @@
       "fromSide": "left",
       "toSide": "right",
       "dash": true,
-      "color": "purple"
+      "color": "#0E7C6B"
     },
     "e42": {
       "type": "shape",
@@ -461,7 +479,7 @@
       "type": "text",
       "x": -240,
       "y": 860,
-      "text": "**Orange :** tâches en attente (goulots)\n**Violet :** l'équipe, humains et agents\n**Bleu :** acteurs extérieurs",
+      "text": "**Ambre :** tâches en attente (goulots) et soleil du pilotage\n**Cyan :** agents IA\n**Sarcelle / sauge :** éditeur et joueurs\nPalette HLC v2.0 — voir la direction artistique",
       "size": "small",
       "wrap": 380
     }
