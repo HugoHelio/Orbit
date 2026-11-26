@@ -1,0 +1,469 @@
+{
+  "source": "https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn",
+  "exporte_le": "2026-11-26",
+  "board_meta": {
+    "v": 1,
+    "title": "Helioso Orbit — plateau de l'orbite d'itération",
+    "order": [
+      "e1",
+      "e2",
+      "e3",
+      "e4",
+      "e5",
+      "e6",
+      "e7",
+      "e8",
+      "e9",
+      "e10",
+      "e11",
+      "e12",
+      "e13",
+      "e14",
+      "e15",
+      "e16",
+      "e17",
+      "e18",
+      "e19",
+      "e20",
+      "e21",
+      "e22",
+      "e23",
+      "e24",
+      "e25",
+      "e26",
+      "e27",
+      "e28",
+      "e29",
+      "e30",
+      "e31",
+      "e32",
+      "e33",
+      "e34",
+      "e35",
+      "e36",
+      "e37",
+      "e38",
+      "e39",
+      "e40",
+      "e41",
+      "e42",
+      "e43",
+      "e44"
+    ]
+  },
+  "elements": {
+    "e1": {
+      "type": "text",
+      "x": -240,
+      "y": -220,
+      "text": "Helioso Orbit : l'orbite d'itération",
+      "size": "title"
+    },
+    "e2": {
+      "type": "text",
+      "x": -240,
+      "y": -140,
+      "text": "Avec l'IA, le goulot passe à la vérification",
+      "size": "large"
+    },
+    "e3": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 160,
+      "y": 120,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Backlog**\nIdées et demandes",
+      "size": "body"
+    },
+    "e4": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 600,
+      "y": 0,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Brief**\nOn explique à l'agent",
+      "size": "body"
+    },
+    "e5": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1040,
+      "y": 120,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Production**\nAgents et humains codent",
+      "size": "body"
+    },
+    "e6": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1040,
+      "y": 560,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Test et relecture**\nOn trouve les défauts",
+      "size": "body"
+    },
+    "e7": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 600,
+      "y": 680,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Release**\nLe jeu sort",
+      "size": "body"
+    },
+    "e8": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 160,
+      "y": 560,
+      "w": 220,
+      "h": 90,
+      "color": "white",
+      "text": "**Feedback**\nRetours des joueurs",
+      "size": "body"
+    },
+    "e9": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 560,
+      "y": 300,
+      "w": 300,
+      "h": 160,
+      "color": "purple",
+      "text": "**Poste de pilotage**\nChef de projet\nDesigner\nProgrammeur",
+      "size": "body"
+    },
+    "e10": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1340,
+      "y": 110,
+      "w": 230,
+      "h": 90,
+      "color": "purple",
+      "text": "**Agent codeur**\n3 blocs par cycle",
+      "size": "body"
+    },
+    "e11": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1340,
+      "y": 230,
+      "w": 230,
+      "h": 90,
+      "color": "purple",
+      "text": "**Agent artiste**\nDébloqué au cycle 2",
+      "size": "body",
+      "hollow": true,
+      "stroke": "purple"
+    },
+    "e12": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1340,
+      "y": 560,
+      "w": 230,
+      "h": 90,
+      "color": "purple",
+      "text": "**Agent testeur**\nTrouve les bugs, pas l'ennui",
+      "size": "body"
+    },
+    "e13": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": -240,
+      "y": 120,
+      "w": 240,
+      "h": 90,
+      "color": "blue",
+      "text": "**Éditeur**\nNébuleuse Games",
+      "size": "body"
+    },
+    "e14": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 600,
+      "y": 840,
+      "w": 220,
+      "h": 90,
+      "color": "blue",
+      "text": "**Communauté**\nLes joueurs",
+      "size": "body"
+    },
+    "e15": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 900,
+      "y": 70,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e16": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 900,
+      "y": 96,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e17": {
+      "type": "text",
+      "x": 968,
+      "y": 70,
+      "text": "Attente",
+      "size": "small",
+      "wrap": 60
+    },
+    "e18": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1070,
+      "y": 290,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e19": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1070,
+      "y": 316,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e20": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1070,
+      "y": 342,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e21": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 1070,
+      "y": 368,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e22": {
+      "type": "text",
+      "x": 1170,
+      "y": 360,
+      "text": "Goulot : la relecture",
+      "size": "small",
+      "wrap": 150
+    },
+    "e23": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 250,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e24": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 276,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e25": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 302,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e26": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 328,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e27": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 354,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e28": {
+      "type": "shape",
+      "kind": "rounded",
+      "x": 290,
+      "y": 380,
+      "w": 60,
+      "h": 22,
+      "color": "peach",
+      "text": ""
+    },
+    "e29": {
+      "type": "text",
+      "x": 366,
+      "y": 300,
+      "text": "**Goulot principal :** trier le feedback",
+      "size": "small",
+      "wrap": 170
+    },
+    "e30": {
+      "type": "arrow",
+      "from": "e3",
+      "to": "e4",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    "e31": {
+      "type": "arrow",
+      "from": "e4",
+      "to": "e5",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    "e32": {
+      "type": "arrow",
+      "from": "e5",
+      "to": "e6",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    "e33": {
+      "type": "arrow",
+      "from": "e6",
+      "to": "e7",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    "e34": {
+      "type": "arrow",
+      "from": "e7",
+      "to": "e8",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    "e35": {
+      "type": "arrow",
+      "from": "e8",
+      "to": "e3",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    "e36": {
+      "type": "arrow",
+      "from": "e13",
+      "to": "e3",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "Missions"
+    },
+    "e37": {
+      "type": "arrow",
+      "from": "e7",
+      "to": "e14",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    "e38": {
+      "type": "arrow",
+      "from": "e14",
+      "to": "e8",
+      "fromSide": "left",
+      "toSide": "bottom"
+    },
+    "e39": {
+      "type": "arrow",
+      "from": "e10",
+      "to": "e5",
+      "fromSide": "left",
+      "toSide": "right",
+      "dash": true,
+      "color": "purple"
+    },
+    "e40": {
+      "type": "arrow",
+      "from": "e11",
+      "to": "e5",
+      "fromSide": "left",
+      "toSide": "right",
+      "dash": true,
+      "color": "purple"
+    },
+    "e41": {
+      "type": "arrow",
+      "from": "e12",
+      "to": "e6",
+      "fromSide": "left",
+      "toSide": "right",
+      "dash": true,
+      "color": "purple"
+    },
+    "e42": {
+      "type": "shape",
+      "kind": "pill",
+      "x": 960,
+      "y": 860,
+      "w": 270,
+      "h": 56,
+      "color": "white",
+      "text": "Temps : cycles 0 à 4, puis festival",
+      "size": "body"
+    },
+    "e43": {
+      "type": "shape",
+      "kind": "pill",
+      "x": 1260,
+      "y": 860,
+      "w": 270,
+      "h": 56,
+      "color": "white",
+      "text": "Score, note et crédits IA",
+      "size": "body"
+    },
+    "e44": {
+      "type": "text",
+      "x": -240,
+      "y": 860,
+      "text": "**Orange :** tâches en attente (goulots)\n**Violet :** l'équipe, humains et agents\n**Bleu :** acteurs extérieurs",
+      "size": "small",
+      "wrap": 380
+    }
+  }
+}

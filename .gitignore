@@ -1,0 +1,23 @@
+# Secrets et configuration locale
+.env
+.env.*
+*.key
+*.pem
+firebase-debug.log
+.firebaserc.local
+
+# Dépendances et builds
+node_modules/
+dist/
+build/
+.cache/
+
+# Fichiers système et éditeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+
+# Paramètres locaux de Claude Code
+.claude/settings.local.json
