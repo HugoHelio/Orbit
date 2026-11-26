@@ -1,0 +1,412 @@
+/* Helioso Orbit — le plateau.
+   Toutes les couleurs passent par les variables de docs/jeu/direction-artistique.md.
+   Les variables « dérivées » (--line, --ombre, --ciel…) sont listées dans la même page. */
+
+/* --- Les deux thèmes ------------------------------------------------------ */
+
+:root,
+[data-theme="clair"] {
+  --bg: #E9F3F1;
+  --surface: #FFFFFF;
+  --surface-2: #E9F3F1;
+  --border: transparent;
+  --text: #0D2329;
+  --text-muted: #4B5F63;
+  --accent: #23C2AA;
+  --accent-text: #0E7C6B;
+  --agent: #0AE2EA;
+  --sun: #FBAB00;
+  --sun-text: #8A5A00;
+  --danger: #E5484D;
+  --queue: #F26B5B;
+
+  /* Dérivées */
+  --ink: #0D2329;               /* encre bleu nuit (contours, texte sur ambre) */
+  --line: #0D2329;              /* contours du style flat */
+  --line-soft: #B9CAC9;         /* traits secondaires (gris sauge) */
+  --ombre: 0 2px 10px rgba(13, 35, 41, 0.10), 0 1px 2px rgba(13, 35, 41, 0.08);
+  --ciel: #B9CAC9;              /* étoiles du fond */
+  --halo-soleil: rgba(251, 171, 0, 0.30);
+  --halo-agent: rgba(10, 226, 234, 0.35);
+  --sur-accent: #0D2329;        /* texte sur aplat sarcelle */
+  --sur-danger: #FFFFFF;
+  --fond-plateau: #F4FAF9;
+}
+
+[data-theme="sombre"] {
+  --bg: #0A1114;
+  --surface: #161F22;
+  --surface-2: #0D2329;
+  --border: #24313A;
+  --text: #E6EDF3;
+  --text-muted: #8CA3AB;
+  --accent: #23C2AA;
+  --accent-text: #0AE2EA;
+  --agent: #0AE2EA;
+  --sun: #FBAB00;
+  --sun-text: #FBAB00;
+  --danger: #F87171;
+  --queue: #FBAB00;
+
+  --ink: #0D2329;
+  --line: #2E4550;
+  --line-soft: #24313A;
+  --ombre: 0 0 0 1px #24313A;
+  --ciel: #8CA3AB;
+  --halo-soleil: rgba(251, 171, 0, 0.38);
+  --halo-agent: rgba(10, 226, 234, 0.45);
+  --sur-accent: #0A1114;
+  --sur-danger: #0A1114;
+  --fond-plateau: #0C1518;
+}
+
+/* --- La page -------------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.ecran {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  min-height: 560px;
+  padding: 14px 18px;
+  gap: 12px;
+}
+
+/* Le titre suit le thème : Bricolage Grotesque en clair, Inter 900 en sombre. */
+.titre-police { font-family: "Bricolage Grotesque", "Inter", "Segoe UI", sans-serif; font-weight: 800; }
+[data-theme="sombre"] .titre-police { font-family: "Inter", "Segoe UI", sans-serif; font-weight: 900; }
+
+/* --- La barre du haut ----------------------------------------------------- */
+
+.barre-haut {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.marque { display: flex; align-items: center; gap: 10px; }
+.marque-soleil {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 4px var(--halo-soleil);
+}
+.marque-nom {
+  font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 22px;
+}
+[data-theme="sombre"] .marque-nom {
+  font-family: "Inter", sans-serif; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; font-size: 18px;
+}
+.marque-scenario {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent-text);
+  border: 2px solid var(--accent); border-radius: 999px; padding: 2px 10px;
+}
+
+/* Le temps en cours, en grand */
+.temps { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.temps-cycle { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+.temps-cycle-titre::before { content: " · "; }
+.temps-grand {
+  font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800;
+  font-size: 40px; line-height: 1; color: var(--text);
+}
+[data-theme="sombre"] .temps-grand {
+  font-family: "Inter", sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--agent); text-shadow: 0 0 18px var(--halo-agent);
+}
+.temps-frise { display: flex; gap: 6px; list-style: none; margin: 4px 0 0; padding: 0; }
+.temps-frise li {
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  color: var(--text-muted); background: var(--surface); box-shadow: var(--ombre);
+}
+.temps-frise li.fait { color: var(--accent-text); }
+.temps-frise li.fait::before { content: "✓ "; }
+.temps-frise li.actif { background: var(--agent); color: var(--ink); font-weight: 800; }
+
+.boutons { display: flex; justify-content: flex-end; gap: 8px; }
+
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; height: 40px; padding: 0 10px;
+  border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); box-shadow: var(--ombre);
+  font: 600 13px "Inter", sans-serif; cursor: pointer;
+  transition: transform 0.15s, background-color 0.3s;
+}
+.bouton:hover:not(:disabled) { transform: translateY(-1px); }
+.bouton:disabled { cursor: not-allowed; opacity: 0.55; }
+.bouton svg { width: 22px; height: 22px; }
+.icone-trait { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icone-plein { fill: currentColor; }
+
+#bouton-son[data-etat="off"] .son-on,
+#bouton-son[data-etat="on"] .son-off { display: none; }
+#bouton-theme[data-etat="clair"] .theme-soleil,
+#bouton-theme[data-etat="sombre"] .theme-lune { display: none; }
+
+/* --- La zone centrale ----------------------------------------------------- */
+
+.zone {
+  display: grid;
+  grid-template-columns: 1fr 290px;
+  gap: 14px;
+  min-height: 0;
+}
+
+.plateau-cadre {
+  min-height: 0;
+  border-radius: 22px;
+  background: var(--fond-plateau);
+  box-shadow: var(--ombre);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: background-color 0.3s;
+}
+.plateau { width: 100%; height: 100%; display: block; }
+
+/* --- Le plateau (SVG) ----------------------------------------------------- */
+
+.plateau text { font-family: "Inter", "Segoe UI", sans-serif; fill: var(--text); }
+
+.etoile { fill: var(--ciel); opacity: 0.7; }
+.etoile.scintille { animation: scintille 4s ease-in-out infinite; }
+@keyframes scintille { 50% { opacity: 0.15; } }
+
+/* L'orbite */
+.orbite-anneau { fill: none; stroke: var(--line-soft); stroke-width: 1.5; stroke-dasharray: 2 10; }
+.orbite-trace { fill: none; stroke: var(--line-soft); stroke-width: 16; opacity: 0.55; }
+.orbite-flux {
+  fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 14 18; stroke-linecap: round;
+  animation: flux 3s linear infinite;
+}
+@keyframes flux { to { stroke-dashoffset: -64; } }
+.chevron { fill: none; stroke: var(--accent-text); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Les stations-planètes */
+.station-planete { fill: var(--surface); stroke: var(--line); stroke-width: 3; transition: stroke 0.3s, fill 0.3s; }
+.station-interieur { fill: var(--surface-2); }
+.station-icone { fill: none; stroke: var(--text); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.station-halo { fill: var(--halo-agent); opacity: 0; transition: opacity 0.4s; }
+.station-nom { font-size: 20px; font-weight: 800; }
+[data-theme="clair"] .station-nom { font-family: "Bricolage Grotesque", "Inter", sans-serif; }
+[data-theme="sombre"] .station-nom { font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; font-size: 16px; }
+.station-aide { font-size: 13px; fill: var(--text-muted) !important; }
+
+.station.active .station-planete { stroke: var(--agent); stroke-width: 5; }
+.station.active .station-interieur { fill: var(--agent); }
+.station.active .station-icone { stroke: var(--ink); }
+.station.active .station-halo { opacity: 1; animation: pulsation 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.station.active .station-nom { fill: var(--accent-text); }
+@keyframes pulsation { 50% { transform: scale(1.12); opacity: 0.45; } }
+
+/* Les files d'attente */
+.file-fond { fill: var(--surface); stroke: var(--line-soft); stroke-width: 1.5; }
+[data-theme="sombre"] .file-fond { fill: var(--surface-2); }
+.case-file { fill: none; stroke: var(--queue); stroke-width: 2; stroke-dasharray: 4 4; opacity: 0.55; transition: all 0.3s; }
+.case-file.pleine { fill: var(--queue); stroke: var(--ink); stroke-dasharray: none; opacity: 1; }
+[data-theme="sombre"] .case-file.pleine { stroke: var(--queue); }
+.etiquette-file { font-size: 13px; fill: var(--text-muted) !important; }
+.etiquette-file.forte { font-weight: 800; fill: var(--text) !important; font-size: 14px; }
+.file-principale .file-fond { stroke: var(--queue); stroke-width: 2; }
+
+/* Le soleil du pilotage */
+.soleil-disque { fill: var(--sun); stroke: var(--ink); stroke-width: 3; }
+[data-theme="sombre"] .soleil-disque { stroke: none; }
+.halo-soleil-centre { stop-color: var(--sun); stop-opacity: 0.35; }
+.halo-soleil-bord { stop-color: var(--sun); stop-opacity: 0; }
+.soleil-halo { animation: respire 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes respire { 50% { transform: scale(1.05); opacity: 0.8; } }
+.plateau .soleil-titre {
+  fill: var(--ink); font-size: 13px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
+}
+.plateau .role-nom { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.jeton-heure { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; transition: all 0.3s; }
+[data-theme="sombre"] .jeton-heure { fill: #FFFFFF; }
+.jeton-heure.utilise { fill: none; stroke-dasharray: 3 3; opacity: 0.55; }
+.jeton-heure.pose { fill: var(--sun); stroke: var(--ink); }
+
+/* Les planètes extérieures */
+.planete-disque { stroke: var(--line); stroke-width: 3; }
+.planete-editeur .planete-disque { fill: var(--accent); }
+.planete-communaute .planete-disque { fill: var(--line-soft); }
+[data-theme="sombre"] .planete-communaute .planete-disque { fill: var(--surface-2); }
+.planete-anneau { fill: none; stroke: var(--accent-text); stroke-width: 3; opacity: 0.6; }
+.planete-icone { fill: none; stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.planete-nom { font-size: 17px; font-weight: 800; }
+[data-theme="clair"] .planete-nom { font-family: "Bricolage Grotesque", "Inter", sans-serif; }
+.planete-aide { font-size: 13px; fill: var(--text-muted) !important; }
+
+/* Les portraits en pixel art : jamais lissés */
+.pixel { image-rendering: crisp-edges; image-rendering: pixelated; }
+.portrait-cadre { fill: var(--line); }
+.portrait-cadre.agent { fill: var(--agent); }
+.portrait-fond { fill: var(--surface-2); }
+
+/* Les flèches */
+.fleche { fill: none; stroke: var(--text-muted); stroke-width: 2.5; stroke-dasharray: 7 6; }
+.pointe { fill: var(--text-muted); }
+.fleche-libelle { font-size: 13px; font-weight: 700; fill: var(--text-muted) !important; }
+
+/* Les satellites (agents IA) */
+.attache { stroke: var(--agent); stroke-width: 2.5; stroke-dasharray: 3 7; stroke-linecap: round; opacity: 0.9; }
+.attache.verrou { stroke: var(--line-soft); }
+.satellite-anneau { fill: none; stroke: var(--agent); stroke-width: 2; stroke-dasharray: 6 8; opacity: 0.5; }
+.satellite.actif .satellite-anneau {
+  opacity: 1; stroke-width: 3;
+  animation: tourne 6s linear infinite; transform-box: fill-box; transform-origin: center;
+}
+.satellite.actif .portrait-cadre.agent { filter: drop-shadow(0 0 10px var(--agent)); }
+@keyframes tourne { to { transform: rotate(360deg); } }
+.satellite-nom { font-size: 17px; font-weight: 900; letter-spacing: 0.1em; }
+.satellite-role { font-size: 12px; fill: var(--text-muted) !important; }
+.satellite-vide { fill: none; stroke: var(--line-soft); stroke-width: 2.5; stroke-dasharray: 5 5; }
+.satellite.verrouille .satellite-anneau { stroke: var(--line-soft); }
+.satellite.verrouille .satellite-nom { fill: var(--text-muted); font-size: 14px; }
+.cadenas { fill: none; stroke: var(--text-muted); stroke-width: 2.5; stroke-linejoin: round; }
+
+/* Les bulles de personnalité */
+.bulle-fond { fill: var(--surface); stroke: var(--agent); stroke-width: 2.5; }
+.bulle-texte { font-size: 14px; font-weight: 600; font-style: italic; }
+.bulle { animation: apparait 0.5s ease-out; }
+@keyframes apparait { from { opacity: 0; transform: translateY(6px); } }
+
+/* Les vaisseaux (cartes Fonctionnalité) */
+.vaisseau-coque { fill: var(--surface); stroke: var(--line); stroke-width: 2.5; }
+[data-theme="sombre"] .vaisseau-coque { stroke: var(--accent); }
+.vaisseau-bande { fill: var(--accent); }
+.vaisseau-hublot { fill: var(--agent); stroke: var(--line); stroke-width: 2; }
+.plateau .vaisseau-nom { font-size: 13px; font-weight: 700; }
+.vaisseau-etoile { fill: var(--sun); stroke: var(--ink); stroke-width: 0.8; }
+.case-effort { fill: none; stroke: var(--accent-text); stroke-width: 1.8; }
+.case-effort.faite { fill: var(--accent); stroke: var(--accent-text); }
+.flamme { fill: var(--sun); animation: flamme 0.35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: right center; }
+@keyframes flamme { to { transform: scaleX(1.5); opacity: 0.75; } }
+.vaisseau { filter: drop-shadow(0 3px 4px rgba(13, 35, 41, 0.18)); }
+
+/* Les cartes Test */
+.carte-test-fond { stroke: var(--line); stroke-width: 1.5; }
+.carte-test.cachee .carte-test-fond { fill: var(--surface-2); stroke-dasharray: 2 2; }
+.carte-test.ok .carte-test-fond { fill: var(--accent); }
+.carte-test.bug .carte-test-fond { fill: var(--danger); }
+.plateau .carte-test-texte { font-size: 11px; font-weight: 900; fill: var(--text-muted); }
+.plateau .carte-test.ok .carte-test-texte { fill: var(--sur-accent); }
+.plateau .carte-test.bug .carte-test-texte { fill: var(--sur-danger); }
+
+/* --- Le tableau de bord --------------------------------------------------- */
+
+.tableau {
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; min-height: 0;
+}
+.tableau-entete { padding: 2px 4px 4px; }
+.tableau-studio { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 20px; }
+[data-theme="sombre"] .tableau-studio { font-family: "Inter", sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 16px; }
+.tableau-projet { font-size: 13px; color: var(--text-muted); }
+.tableau-projet::before { content: "« "; }
+.tableau-projet::after { content: " »"; }
+
+.bloc {
+  background: var(--surface); border-radius: 16px; padding: 12px 14px;
+  box-shadow: var(--ombre); border: 1px solid var(--border);
+}
+.bloc-titre {
+  margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.bloc-aide { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.grand-chiffre {
+  font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 38px; line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+[data-theme="sombre"] .grand-chiffre { font-family: "Inter", sans-serif; font-weight: 900; }
+.bloc-joueurs .grand-chiffre { color: var(--sun-text); }
+.bloc-joueurs .grand-chiffre::before {
+  content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 10px; vertical-align: 0.12em;
+  border-radius: 50%; background: var(--sun); box-shadow: 0 0 0 3px var(--halo-soleil);
+}
+.grand-chiffre.score { color: var(--accent-text); }
+
+.note-ligne { display: flex; align-items: center; gap: 10px; }
+.note-etoiles { display: flex; gap: 3px; }
+.note-etoile {
+  position: relative; width: 24px; height: 24px;
+  background: var(--line-soft);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.note-etoile-pleine { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--sun); transition: width 0.5s; }
+.note-valeur { font-weight: 800; font-size: 20px; }
+.note-valeur::after { content: " / 5"; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+
+.tokens-grille { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+.token {
+  aspect-ratio: 1; background: var(--agent);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  transition: opacity 0.3s, background-color 0.3s;
+}
+.token.depense { background: var(--line-soft); opacity: 0.6; }
+
+.bloc-mvp { position: relative; }
+.mvp-texte { font-size: 13px; font-weight: 600; color: var(--text-muted); padding-left: 30px; position: relative; }
+.mvp-texte::before {
+  content: ""; position: absolute; left: 0; top: 50%; translate: 0 -50%;
+  width: 20px; height: 20px; border-radius: 50%; border: 2px dashed var(--line-soft);
+}
+.bloc-mvp.publie { background: var(--accent); }
+.bloc-mvp.publie .bloc-titre, .bloc-mvp.publie .mvp-texte { color: var(--sur-accent); }
+.bloc-mvp.publie .mvp-texte::before {
+  content: "✓"; border: none; background: var(--sur-accent); color: var(--accent);
+  display: grid; place-items: center; font-size: 13px; font-weight: 900;
+}
+
+.anneaux { display: flex; justify-content: space-between; }
+.anneau { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.anneau-rond {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 3px solid var(--line-soft);
+  display: grid; place-items: center; font-size: 13px; color: var(--text-muted);
+  transition: all 0.4s;
+}
+.anneau-nom { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+.anneau.allume .anneau-rond { border-color: var(--sun); background: var(--sun); box-shadow: 0 0 0 4px var(--halo-soleil); }
+.anneau.en-cours .anneau-rond { border-color: var(--agent); border-style: dashed; animation: tourne 8s linear infinite; }
+.anneau.festival .anneau-rond { border-style: dotted; }
+
+/* --- La barre de lecture (inactive à l'étape 1) --------------------------- */
+
+.barre-lecture {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border-radius: 16px; padding: 8px 12px;
+  box-shadow: var(--ombre); border: 1px solid var(--border);
+}
+.barre-lecture .bouton { box-shadow: none; background: var(--surface-2); }
+.barre-lecture .bouton-lire { background: var(--accent); color: var(--sur-accent); }
+.vitesses { display: flex; gap: 4px; }
+.vitesses .actif { outline: 2px solid var(--accent); }
+.piste { flex: 1; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.piste-remplie { width: 0; height: 100%; background: var(--accent); }
+.lecture-note { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+/* --- Écrans étroits et mouvement réduit ----------------------------------- */
+
+@media (max-width: 1100px) {
+  .ecran { height: auto; }
+  .zone { grid-template-columns: 1fr; }
+  .plateau-cadre { aspect-ratio: 1400 / 1040; }
+  .tableau { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .barre-haut { grid-template-columns: 1fr; justify-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

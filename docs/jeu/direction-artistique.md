@@ -79,3 +79,17 @@ Corps de texte imprimé : 11 pt minimum sur les cartes.
 - **Affichage :** toujours en `image-rendering: pixelated`, jamais lissé.
 - **À faire :** une passe de retouche des portraits humains (issus de générations IA de SpacePlan), pour un style homogène et unique.
 
+
+## 8. Les variables dérivées (jeu numérique)
+
+Le plateau numérique (`game/plateau/style.css`) ajoute quelques variables tirées de la palette, pour ne jamais écrire de couleur en dur dans les composants :
+
+| Variable | Thème clair | Thème sombre « Tech » | Rôle |
+|---|---|---|---|
+| `--ink` | `#0D2329` | `#0D2329` | Encre bleu nuit : texte et contours posés sur l'ambre ou le cyan |
+| `--line` | `#0D2329` | `#2E4550` | Contours du style flat (planètes, vaisseaux) |
+| `--line-soft` | `#B9CAC9` | `#24313A` | Traits secondaires, éléments éteints |
+| `--ciel` | `#B9CAC9` | `#8CA3AB` | Étoiles du fond |
+| `--fond-plateau` | `#F4FAF9` | `#0C1518` | Fond du cadre du plateau |
+| `--halo-soleil`, `--halo-agent` | ambre et cyan transparents | idem, un peu plus forts | Lueurs du soleil et de la station active |
+| `--sur-accent`, `--sur-danger` | `#0D2329`, `#FFFFFF` | `#0A1114`, `#0A1114` | Texte posé sur un aplat sarcelle ou rouge |

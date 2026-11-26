@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Helioso Orbit</title>
+  <script>
+    // Appliquer le thème gardé en mémoire avant l'affichage (pas de flash).
+    try {
+      var p = JSON.parse(localStorage.getItem("helioso-orbit-plateau") || "{}");
+      if (p.theme) document.documentElement.dataset.theme = p.theme;
+    } catch (e) {}
+  </script>
+  <!-- Polices de la direction artistique. Hors ligne, des polices système prennent le relais. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700;900&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ecran">
+    <header class="barre-haut">
+      <div class="marque">
+        <span class="marque-soleil" aria-hidden="true"></span>
+        <span class="marque-nom" data-texte="jeu.titre"></span>
+        <span class="marque-scenario" data-texte="jeu.scenario"></span>
+      </div>
+
+      <div class="temps" id="temps" aria-live="polite"></div>
+
+      <div class="boutons">
+        <button class="bouton bouton-texte" id="bouton-langue" data-texte="bouton.langue"></button>
+        <button class="bouton" id="bouton-son">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="icone-trait" d="M4 9h4l5-4v14l-5-4H4z"/>
+            <path class="icone-trait son-on" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>
+            <path class="icone-trait son-off" d="M16 9l5 6M21 9l-5 6"/>
+          </svg>
+        </button>
+        <button class="bouton" id="bouton-theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g class="theme-soleil">
+              <circle class="icone-trait" cx="12" cy="12" r="4.5"/>
+              <path class="icone-trait" d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>
+            </g>
+            <path class="icone-trait theme-lune" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="zone">
+      <div class="plateau-cadre">
+        <svg id="plateau" class="plateau" role="img" aria-label="Plateau de l'orbite d'itération"></svg>
+      </div>
+      <aside class="tableau" id="tableau"></aside>
+    </main>
+
+    <footer class="barre-lecture" data-titre="lecture.bientot">
+      <button class="bouton" disabled data-titre="lecture.recommencer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-trait" d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>
+      </button>
+      <button class="bouton bouton-lire" disabled data-titre="lecture.lire">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M8 5l11 7-11 7z"/></svg>
+      </button>
+      <button class="bouton" disabled data-titre="lecture.pas">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M6 5l9 7-9 7z"/><path class="icone-trait" d="M18 5v14"/></svg>
+      </button>
+      <div class="vitesses">
+        <button class="bouton bouton-texte actif" disabled>×1</button>
+        <button class="bouton bouton-texte" disabled>×2</button>
+      </div>
+      <div class="piste"><div class="piste-remplie"></div></div>
+      <span class="lecture-note" data-texte="lecture.bientot"></span>
+    </footer>
+  </div>
+
+  <script src="js/scenario-studio.js"></script>
+  <script src="js/vitrine.js"></script>
+  <script src="js/plateau.js"></script>
+  <script src="js/tableau-de-bord.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

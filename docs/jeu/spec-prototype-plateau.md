@@ -76,7 +76,7 @@ Chaque étape se termine par un test dans le navigateur, une mise à jour de ce 
 
 | # | Étape | Terminé quand… | Fait |
 |---|---|---|---|
-| 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, tableau de bord, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☐ |
+| 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, tableau de bord, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☑ 26 nov. 2026 |
 | 2 | **Les briques animées** : illuminer une station, faire voyager un vaisseau, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file | Chaque animation se déclenche par un bouton de test et elle est belle | ☐ |
 | 3 | **Le lecteur et le script** des 2 boucles, avec la barre de lecture | La démo se joue de bout en bout en 2 à 3 minutes, et on peut la mettre en pause, avancer pas à pas, recommencer | ☐ |
 | 4 | **La couche de gamification** : compteur de joueurs, étoiles qui volent, note, score, célébration du MVP, anneaux de boucle, sons | En la regardant, on a envie de voir la boucle suivante | ☐ |

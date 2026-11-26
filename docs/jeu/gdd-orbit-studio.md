@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | 0.14 — 26 novembre 2026 |
+| **Version** | 0.15 — 26 novembre 2026 |
 | **Statut** | Règles validées par simulation ; kit papier prêt pour un brouillon de test (`prototype-papier/`) |
 | **Plateau de travail** | Whiteboard « Helioso Orbit — plateau de l'orbite d'itération » : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn (sauvegarde : `docs/whiteboard/plateau-orbite.json`) |
 | **Documents liés** | `docs/jeu/regles-une-page.md` (les règles pour les joueurs), `docs/jeu/simulation-equilibrage.md` (la simulation), `docs/jeu/cartes-orbit-studio.md` (toutes les cartes), `docs/jeu/direction-artistique.md` (palette, thèmes, typographie), `docs/jeu/reprise-spaceplan.md` (ce qu'on reprend de SpacePlan), `docs/jeu/builds-spaceplan.md` (les builds jouables de SpacePlan, fonctionnalité par fonctionnalité), `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
@@ -24,6 +24,7 @@
 - **0.12** — 7e leçon : **la gestion des risques**. Le « risque du cycle » sur la feuille de score, une feuille de débrief sur les 4 réponses au risque.
 - **0.13** — Règles plus lisibles : recto en images (le matériel en un coup d'œil, le cycle en schéma, comment lire une carte), verso pour le détail. Les crédits IA deviennent des **tokens IA**. Le cycle commence par « Écouter », et le risque du cycle se note pendant « Planifier ».
 - **0.14** — **Passe sur le vocabulaire**, pour des mots compris dès la première lecture : bloc → **effort** ; point d'action → **heure** (jeton Heure) ; carte Défaut → **carte Test** (OK, Bug, Pas fun) ; brief à PIX → **prompt** ; premier jouable → **MVP** ; le cycle devient **Brief, Planning, Build, Test, Release, Review**. Les mots du métier restent en anglais, exprès, avec un glossaire dans les règles. Sur le plateau, la station « Brief » devient « Prompt » et « Production » devient « Build ». Les sections 5 à 11 gardent encore l'ancien vocabulaire : la section 0 prime. La streameuse Nova devient **Nora** (Nova ressemblait à un nom de planète). Inventaire des **builds jouables de SpacePlan** dans HLC (`docs/jeu/builds-spaceplan.md`) : les 20 fonctionnalités y apparaissent toutes, le prototype correspond au MVP.
+- **0.15** — **Plateau aligné sur le nouveau vocabulaire** (section « Le plateau ») : stations Backlog → Prompt → Build → Test → Release → Feedback, jetons Heure, files Prompt → Build et Build → Test, ARTY verrouillé jusqu'au cycle 2. Étape 1 de la démo numérique faite : le plateau statique dans les deux thèmes (`game/plateau/`).
 
 *Tous les chiffres sont des valeurs de départ, à régler pendant les tests.*
 
@@ -222,9 +223,9 @@ Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la
 
 ### Les zones
 
-1. **L'orbite d'itération.** Six stations en boucle : **Backlog → Brief → Production → Test et relecture → Release → Feedback**, puis retour au Backlog. Les cartes de tâches (des « vaisseaux ») avancent de station en station.
-2. **Le poste de pilotage (au centre).** Les 3 humains avec leurs jetons de points d'action.
-3. **Les satellites.** Les agents IA, posés sur la station où ils travaillent : PIX et ARTY sur Production, SCAN sur Test.
+1. **L'orbite d'itération.** Six stations en boucle : **Backlog → Prompt → Build → Test → Release → Feedback**, puis retour au Backlog. Les cartes Fonctionnalité (des « vaisseaux ») avancent de station en station. À ne pas confondre avec les 6 **temps** du cycle (Brief, Planning, Build, Test, Release, Review) : la station active s'illumine pendant le temps qui lui correspond.
+2. **Le poste de pilotage (au centre).** Les 3 humains (chef de projet, designer, programmeur), chacun avec ses 3 jetons Heure. Un jeton utilisé se pose sur la station où l'on agit.
+3. **Les satellites.** Les agents IA, posés sur la station où ils travaillent : PIX et ARTY sur Build (ARTY reste verrouillé jusqu'au cycle 2), SCAN sur Test.
 4. **Les planètes extérieures.** **Nébuleuse Games** envoie les missions vers le Backlog. **La communauté** reçoit les releases et renvoie le feedback.
 5. **Les pistes autour du plateau.** Le temps (cycles 0 à 4, puis le festival), le carburant (tokens IA), le score et la note.
 
@@ -234,13 +235,13 @@ Les petits blocs orange sont des **files d'attente**. Il y en a trois, de taille
 
 | Où | Pourquoi ça bloque | Taille attendue |
 |---|---|---|
-| **Entre Brief et Production** | Les idées s'enchaînent vite, mais PIX ne produit que 3 blocs par cycle : même si c'est rapide, les briefs attendent. | Petite |
-| **Entre Production et Test** | Les agents produisent plus que les humains ne peuvent relire. | Moyenne |
+| **Entre Prompt et Build** | Les idées s'enchaînent vite, mais PIX ne fait que 3 efforts par cycle : même si c'est rapide, les prompts attendent. | Petite |
+| **Entre Build et Test** | Les agents produisent plus que les humains ne peuvent relire. | Moyenne |
 | **Entre Feedback et Backlog** | Chaque release apporte des retours, de plus en plus nombreux à mesure que le jeu gagne des joueurs. Il faut les lire, les trier et décider, et ça ne peut être fait que par des humains. | **La plus grande : le goulot principal** |
 
 **Ce que le plateau doit faire voir d'un coup d'œil :** au fil de la partie, c'est la file **Feedback → Backlog** qui grossit le plus. Le goulot principal est la **décision**, pas la production.
 
-**En version papier :** un plateau A2, des cartes, des figurines et des jetons. **En version numérique :** le même plan, animé (les vaisseaux qui voyagent, les files d'attente qui grossissent en orbite).
+**En version papier :** un plateau A2, des cartes, des figurines et des jetons. **En version numérique :** le même plan, animé (les vaisseaux qui voyagent, les files d'attente qui grossissent en orbite), avec un tableau de bord du studio (joueurs, note, score, tokens IA, MVP, anneaux de boucles). Prototype en cours : `game/plateau/` (voir `docs/jeu/spec-prototype-plateau.md`).
 
 ### Le style visuel
 
@@ -355,7 +356,7 @@ Sur papier, la feuille de score reste simple. **Dans le jeu numérique, elle doi
 ### Le débrief en 4 temps (30 min)
 
 1. **Ressenti (5 min) :** « En un mot, comment vous êtes-vous senti au cycle 3 ? »
-2. **Ce qui s'est passé (10 min) :** on regarde les plateaux et le leaderboard. Quelle file d'attente a le plus grossi ? En principe, Feedback → Backlog, puis Production → Test.
+2. **Ce qui s'est passé (10 min) :** on regarde les plateaux et le leaderboard. Quelle file d'attente a le plus grossi ? En principe, Feedback → Backlog, puis Build → Test.
 3. **Les leçons (10 min) :** les équipes formulent les leçons à partir de leurs propres décisions, et classent leurs décisions dans les **4 réponses au risque** (éviter, réduire, détecter, accepter). On relit les « risques du cycle » : lesquels étaient vus venir ?
 4. **Transfert au réel (5 min) :** « Dans votre prochain projet, quelle règle allez-vous appliquer ? »
 
@@ -465,6 +466,7 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 26 nov. 2026 | Kit papier v1 généré automatiquement à partir de `docs/jeu/cartes-orbit-studio.md` (`prototype-papier/outil/generer_kit.py`) |
 | 26 nov. 2026 | **Le numérique d'abord :** la force du jeu est l'interactivité (plateau qui s'anime, efforts qui se cumulent, agents qui codent, gamification), que le papier ne fait pas ressentir. Le papier devient une vérification légère des règles et le repli hors ligne ; le vrai test est le **prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), qui passe **avant les builds SpacePlan**. Il commence par une **démo animée et scriptée, sans règles** (2 boucles), pour tester le flux et la gamification avant de coder les règles |
 | 26 nov. 2026 | **Builds SpacePlan :** pas une seule build à 20 interrupteurs, mais **une base par chapitre** (Proto, PoC, Alpha, puis Beta) avec des interrupteurs pour les fonctionnalités du chapitre et des précédents. Seul cas sans build : MVP incomplet (`docs/jeu/builds-spaceplan.md`) |
+| 26 nov. 2026 | **Plateau au nouveau vocabulaire** : stations Prompt et Build (au lieu de Brief et Production), files Prompt → Build et Build → Test, jetons Heure au pilotage. Premier plateau numérique statique, dans les deux thèmes (`game/plateau/`, étape 1 de la démo) |
 
 ---
 
