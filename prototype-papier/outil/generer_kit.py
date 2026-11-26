@@ -47,7 +47,7 @@ def gras(t):
 actions = [l for l in tables_sous("Les actions (reprises") ]
 refs = [l for l in tables_sous("fiches de rôle et les agents") if l[0].startswith("R")]
 feats = []
-for l in tables_sous("règle du premier jouable"):
+for l in tables_sous("règle du MVP"):
     feats.append(dict(id=l[0], nom=l[1], cat=l[2], blocs=int(l[3]), etoiles=l[4].count("★"),
                       resp=l[5], prio=l[6], phrase=nettoie(l[7])))
 MUSTS = [f for f in feats if f["prio"] == "Must"]
@@ -64,14 +64,14 @@ def phrases(prefixe):
     return [p.strip() for p in re.findall(r"«(.+?)»(?= /|$)", ligne.split(":*", 1)[1].strip())]
 
 
-PH = {"Aucun": phrases("Aucun"), "Bug": phrases("Bug"), "Pas fun": phrases("Pas fun")}
-dtab = {l[1].replace("*", ""): l for l in tables_sous("paquet de cartes Défaut")}
+PH = {"Aucun": phrases("OK"), "Bug": phrases("Bug"), "Pas fun": phrases("Pas fun")}
+dtab = {l[1].replace("*", ""): l for l in tables_sous("paquet de cartes Test")}
 defauts = []
-for typ, cle in (("Aucun défaut", "Aucun"), ("Bug", "Bug"), ("Pas fun", "Pas fun")):
+for typ, cle in (("OK", "Aucun"), ("Bug", "Bug"), ("Pas fun", "Pas fun")):
     l = dtab[typ]
     a, b = [int(x) for x in re.findall(r"\d+", l[0])]
     for i, n in enumerate(range(a, b + 1)):
-        defauts.append(dict(id=f"D{n:02d}", type=typ, cle=cle, revele=l[3].replace("**", ""),
+        defauts.append(dict(id=f"T{n:02d}", type=typ, cle=cle, revele=l[3].replace("**", ""),
                             effet=gras(l[4]), phrase=PH[cle][i % len(PH[cle])]))
 
 def portrait(nom):
@@ -197,7 +197,7 @@ def c_feat(f):
     resp = {"Prog": "Programmeur", "Design": "Designer", "Art": "Designer (art)"}[f["resp"]]
     return f"""<div class="in"><div class="bande" style="background:{TEAL}"><span>{f['cat']}</span><span>{f['id']}</span></div>
 <div class="corps"><div class="t nom">{f['nom']}</div>
-<div><div class="lab">Taille</div><div class="pas" style="margin-top:1mm">{blocs}<span class="txt" style="margin-left:1mm">{f['blocs']} bloc{'s' if f['blocs'] > 1 else ''}</span></div></div>
+<div><div class="lab">Taille</div><div class="pas" style="margin-top:1mm">{blocs}<span class="txt" style="margin-left:1mm">{f['blocs']} effort{'s' if f['blocs'] > 1 else ''}</span></div></div>
 <div><div class="lab">Valeur</div><div class="pas" style="margin-top:1mm">{et}<span class="txt" style="margin-left:1mm">{f['etoiles'] * 25} joueurs</span></div></div>
 <div class="ph">« {f['phrase']} »</div>
 <div class="bas"><span class="pill">{resp}</span><span class="lab">Fonctionnalité</span></div></div></div>"""
@@ -205,9 +205,9 @@ def c_feat(f):
 
 def c_defaut(d):
     ic = {"Aucun": "check", "Bug": "bug", "Pas fun": "ennui"}[d["cle"]]
-    effet = "Rien à signaler : le bloc est sain." if d["cle"] == "Aucun" else d["effet"]
-    corr = "" if d["cle"] == "Aucun" else '<div class="txt" style="font-size:8.5pt;margin-top:1mm"><b>Corriger :</b> 1 PA du responsable.</div>'
-    return f"""<div class="in"><div class="bande" style="background:{CORAL}"><span>Défaut</span><span>{d['id']}</span></div>
+    effet = "Rien à signaler : cet effort est propre." if d["cle"] == "Aucun" else d["effet"]
+    corr = "" if d["cle"] == "Aucun" else '<div class="txt" style="font-size:8.5pt;margin-top:1mm"><b>Corriger :</b> 1 heure du responsable.</div>'
+    return f"""<div class="in"><div class="bande" style="background:{CORAL}"><span>Test</span><span>{d['id']}</span></div>
 <div class="corps"><div style="display:flex;align-items:center;gap:2.5mm">{icone(ic, 15)}<div class="t nom" style="font-size:17pt">{d['type']}</div></div>
 <div class="txt" style="font-size:9pt"><b>Révélé par :</b> {d['revele']}</div>
 <div style="border:.6mm solid {NAVY};border-radius:2mm;padding:2mm;background:{BG}"><div class="lab" style="margin-bottom:.8mm">S'il part en release</div><div class="txt" style="font-size:9pt">{effet}</div>{corr}</div>
@@ -215,8 +215,8 @@ def c_defaut(d):
 
 
 DOS_DEFAUT = f"""<div class="in centre" style="border-color:{NAVY}"><div style="position:absolute;inset:2.2mm;border:1.2mm solid {CORAL};border-radius:2mm"></div>
-<div style="display:flex;flex-direction:column;align-items:center;gap:3mm">{icone('q', 26)}<div class="t" style="font-size:18pt">Défaut ?</div>
-<div class="ph" style="max-width:40mm">Face cachée sur chaque bloc produit par PIX</div><div class="lab">Helioso Orbit</div></div></div>"""
+<div style="display:flex;flex-direction:column;align-items:center;gap:3mm">{icone('q', 26)}<div class="t" style="font-size:18pt">Test ?</div>
+<div class="ph" style="max-width:40mm">Face cachée sous chaque effort fait par PIX</div><div class="lab">Helioso Orbit</div></div></div>"""
 
 
 def c_feedback(fb):
@@ -228,7 +228,7 @@ def c_feedback(fb):
     else:
         cible = "<b>Hors liste</b>" + (" · une idée pour plus tard" if "plus tard" in cible else "")
     if fb["cible"].startswith("F"):
-        effet_tri = f"<b>Trié :</b> sur {fb['cible']}. Livré : <b>note +{'1' if nova else '0,5'}</b> (1 bloc de travail si {fb['cible']} est déjà sortie)."
+        effet_tri = f"<b>Trié :</b> sur {fb['cible']}. Publié : <b>note +{'1' if nova else '0,5'}</b> (1 effort de plus si {fb['cible']} est déjà publiée)."
     else:
         effet_tri = "<b>Trié :</b> on l'écarte. Savoir dire non, c'est aussi du pilotage."
     x2 = f'<span style="background:{AMBER};border:.5mm solid {NAVY};border-radius:1mm;padding:.2mm 1.4mm">Vaut double</span>' if nova else ""
@@ -325,14 +325,14 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
         s.append(T(cx - 36, y + 1.5, role, 3.4, 700))
         for i in range(3):
             s.append(f'<circle cx="{cx + 10 + i * 9}" cy="{y}" r="3.6" fill="#fff" stroke="{NAVY}" stroke-width=".8"/>')
-    s.append(T(cx, cy + 37, "Posez ici vos 3 jetons PA à chaque cycle", 3, 600, "middle"))
+    s.append(T(cx, cy + 37, "Posez ici vos 3 jetons Heure à chaque cycle", 3, 600, "middle"))
 
     # stations
     stations = [(180, "1", "Backlog", "Idées et demandes", "Les cartes Fonctionnalité à faire"),
-                (120, "2", "Brief", "On explique à l'agent", "Brief simple : 1 PA · détaillé : 2 PA"),
-                (60, "3", "Production", "Agents et humains codent", "Jetons bloc + cartes Défaut cachées"),
-                (0, "4", "Test et relecture", "On trouve les défauts", "Relire, tester, playtester, corriger"),
-                (300, "5", "Release", "Le jeu sort", "Score du cycle = joueurs × note"),
+                (120, "2", "Prompt", "On écrit la consigne de PIX", "Prompt simple : 1 h · détaillé : 2 h"),
+                (60, "3", "Build", "Agents et humains codent", "Pions Effort + cartes Test cachées"),
+                (0, "4", "Test", "On trouve les bugs et le pas fun", "Relire, SCAN, playtester, corriger"),
+                (300, "5", "Release", "On publie le jeu", "Review : score = joueurs × note"),
                 (240, "6", "Feedback", "Retours des joueurs", "1 carte pour 100 joueurs")]
     for a, n, nom, sous, aide in stations:
         x, y = ellipse_pt(a)
@@ -361,18 +361,18 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
     s.append(f'<rect x="{x - 32}" y="{y - 21}" width="64" height="33" rx="5" fill="{BG}"/>')
     s.append(T(x, y - 15, "FILE D'ATTENTE", 3, 800, "middle", AMBER_T, ls=.4))
     s.append(slots(x - 23.5, y - 11, 3, 3))
-    s.append(T(x, y + 9, "Briefs prêts, pas encore produits", 2.8, 600, "middle"))
+    s.append(T(x, y + 9, "Prompts prêts, pas encore faits", 2.8, 600, "middle"))
 
     x, y = ellipse_pt(30)
     s.append(f'<rect x="{x - 28}" y="{y - 18}" width="70" height="32" rx="5" fill="{BG}"/>')
     s.append(T(x + 7, y - 12, "GOULOT : LA RELECTURE", 3, 800, "middle", AMBER_T, ls=.4))
     s.append(slots(x - 16.5, y - 8, 3, 3))
-    s.append(T(x + 7, y + 11, "Blocs produits, pas encore vérifiés", 2.8, 600, "middle"))
+    s.append(T(x + 7, y + 11, "Efforts faits, pas encore testés", 2.8, 600, "middle"))
 
     x, y = 102, 312
     s.append(f'<rect x="{x - 62}" y="{y - 20}" width="88" height="44" rx="5" fill="{BG}"/>')
     s.append(T(x - 58, y - 13, "GOULOT PRINCIPAL", 3.2, 800, fill=AMBER_T, ls=.4))
-    s.append(T(x - 58, y - 7.5, "Trier le feedback (1 PA pour 2)", 3, 700))
+    s.append(T(x - 58, y - 7.5, "Trier le feedback (1 heure pour 2)", 3, 700))
     s.append(slots(x - 58, y - 3, 5, 5, warn_last=True, size=11.5))
     s.append(T(x - 58, y + 17, "Plus de 4 cartes non triées à la release :", 2.7, 600, fill=CORAL))
     s.append(T(x - 58, y + 21, "la note baisse de 0,5.", 2.7, 600, fill=CORAL))
@@ -389,8 +389,8 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
             out.append(f'<rect x="{x + 27 + i * 11}" y="{y + 22}" width="9" height="9" rx="2" fill="#fff" stroke="{NAVY}" stroke-width=".8" stroke-dasharray="1.6 1.2"/>')
         return "".join(out)
 
-    s.append(agent(358, 170, "PIX", "Codeur · jusqu'à 3 blocs par cycle", "1 crédit par bloc · 1 carte Défaut cachée", 3))
-    s.append(agent(358, 248, "SCAN", "Testeur · jusqu'à 4 tests par cycle", "1 crédit par test · bugs oui, ennui non", 4))
+    s.append(agent(358, 170, "PIX", "Codeur · jusqu'à 3 efforts par cycle", "1 token par effort · 1 carte Test cachée", 3))
+    s.append(agent(358, 248, "SCAN", "Testeur · jusqu'à 4 tests par cycle", "1 token par test · bugs oui, ennui non", 4))
 
     # pioches et éditeur
     def zone_carte(x, y, titre, sous, coul):
@@ -402,7 +402,7 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
     s.append(f'<image href="{PORT["vera"]}" x="479" y="26" width="16" height="16"/>')
     s.append(T(487, 49, "VERA", 2.8, 800, "middle", TEAL_T, ls=.3))
     s.append(T(487, 53, "éditrice", 2.5, 500, "middle", MUTED))
-    s.append(zone_carte(499, 292, "Pioche Défauts", "20 cartes, face cachée", CORAL))
+    s.append(zone_carte(499, 292, "Pioche Test", "20 cartes, face cachée", CORAL))
     s.append(zone_carte(264, 305, "Pioche Feedback", "24 cartes, face cachée", AMBER))
     s.append(T(297, 301, "COMMUNAUTÉ · LES JOUEURS", 2.8, 800, "middle", AMBER_T, ls=.3))
     for i, n in enumerate(("max", "sam", "nova")):
@@ -410,9 +410,9 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
         s.append(f'<circle cx="{px_}" cy="291" r="6.5" fill="{AMBER if n == "nova" else SAGE}" stroke="{NAVY}" stroke-width=".8"/>')
         s.append(f'<image href="{PORT[n]}" x="{px_ - 5.5}" y="285.5" width="11" height="11"/>')
 
-    # pistes : crédits, note, cycles
-    s.append(T(26, 66, "CRÉDITS IA", 3.2, 800, ls=.4))
-    s.append(T(26, 70.5, "Un marqueur, départ à 20 · reculez-le d'une case par action d'agent", 2.7, 500, fill=MUTED))
+    # pistes : tokens, note, cycles
+    s.append(T(26, 66, "TOKENS IA", 3.2, 800, ls=.4))
+    s.append(T(26, 70.5, "Le budget IA de l'équipe · −1 par effort de PIX ou test de SCAN", 2.7, 500, fill=MUTED))
     for i in range(20):
         r, c = divmod(i, 10)
         cx_, cy_ = 30 + c * 10.5, 77 + r * 10.5
@@ -424,26 +424,40 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
         x_ = 26 + i * 10.6
         s.append(f'<rect x="{x_}" y="110" width="9.4" height="9.4" rx="2" fill="{AMBER if n == 3 else "#fff"}" stroke="{NAVY}" stroke-width="{1.4 if n == 3 else .8}"/>')
         s.append(T(x_ + 4.7, 116, f"{n:g}".replace(".", ","), 2.8, 700, "middle"))
-    s.append(T(26, 125, "Départ sur la case ambre (3) · bug publié −0,5 · feedback livré +0,5", 2.7, 500, fill=MUTED))
+    s.append(T(26, 125, "Départ sur la case ambre (3) · bug publié −0,5 · feedback publié +0,5", 2.7, 500, fill=MUTED))
     s.append(T(26, 140, "CYCLE", 3.2, 800, ls=.4))
     for i, lab in enumerate(("0", "1", "2", "3", "4", "Fin")):
         x_ = 26 + i * 15
         s.append(f'<rect x="{x_}" y="143" width="13" height="10" rx="2" fill="{TEAL if i == 0 else "#fff"}" stroke="{NAVY}" stroke-width=".8"/>')
         s.append(T(x_ + 6.5, 149.6, lab, 3.4, 800, "middle"))
-    s.append(T(26, 158, "0 : sans défaut, 2 blocs par humain · 1 à 4 : E1 à E4", 2.7, 500, fill=MUTED))
+    s.append(T(26, 158, "0 : sans carte Test, 2 efforts par humain · 1 à 4 : E1 à E4", 2.7, 500, fill=MUTED))
 
     # porte du premier jouable (à côté de la Release)
     s.append(f'<rect x="352" y="392" width="94" height="13" rx="3" fill="{AMBER}" stroke="{NAVY}" stroke-width="1"/>')
     s.append(f'<rect x="355" y="395" width="7" height="7" rx="1" fill="#fff" stroke="{NAVY}" stroke-width=".8"/>')
-    s.append(T(365, 398.2, "PREMIER JOUABLE ATTEINT", 2.9, 800, ls=.3))
+    s.append(T(365, 398.2, "MVP ATTEINT", 2.9, 800, ls=.3))
     s.append(T(365, 402.3, "Sans lui : 0 joueur, quelles que soient les étoiles", 2.5, 600))
     # légende
-    leg = [(AMBER, "Files d'attente, soleil, joueurs"), (CYAN, "Agents IA"), (TEAL, "Stations, éditeur"), (CORAL, "Défauts et alertes")]
+    leg = [(AMBER, "Files d'attente, soleil, joueurs"), (CYAN, "Agents IA"), (TEAL, "Stations, éditeur"), (CORAL, "Cartes Test et alertes")]
     for i, (c, t) in enumerate(leg):
         s.append(f'<rect x="{26 + i * 0}" y="{368 + i * 7.5}" width="5" height="5" rx="1" fill="{c}" stroke="{NAVY}" stroke-width=".6"/>')
         s.append(T(34, 372 + i * 7.5, t, 2.9, 600))
-    s.append(T(26, 364, "LÉGENDE", 2.8, 800, ls=.4, fill=MUTED))
-    s.append(T(568, 402, "© Helioso · orbit.helioso.com · prototype papier v1.2", 2.6, 500, "end", MUTED))
+    s.append(T(26, 364, "LES COULEURS", 2.8, 800, ls=.4, fill=MUTED))
+    s.append(T(88, 364, "LE MATÉRIEL", 2.8, 800, ls=.4, fill=MUTED))
+    pts = []
+    for k in range(10):
+        r_ = 2.8 if k % 2 == 0 else 1.2
+        a_ = math.pi / 2 + k * math.pi / 5
+        pts.append(f"{90.5 + r_ * math.cos(a_):.2f},{393.3 - r_ * math.sin(a_):.2f}")
+    s.append(f'<circle cx="90.5" cy="370.5" r="2.6" fill="{AMBER}" stroke="{NAVY}" stroke-width=".6"/>')
+    s.append(T(96, 372, "Jeton Heure : le temps d'un joueur", 2.9, 600))
+    s.append(f'<rect x="88" y="375.5" width="5" height="5" rx="1" fill="{SAGE}" stroke="{NAVY}" stroke-width=".6"/>')
+    s.append(T(96, 379.5, "Pion Effort : 1 effort fait", 2.9, 600))
+    s.append(f'<circle cx="90.5" cy="385.5" r="2.6" fill="#fff" stroke="{CYAN}" stroke-width="1"/>')
+    s.append(T(96, 387, "Token IA : budget des agents", 2.9, 600))
+    s.append(f'<polygon points="{" ".join(pts)}" fill="{AMBER}" stroke="{NAVY}" stroke-width=".5"/>')
+    s.append(T(96, 394.5, "Étoile : 25 joueurs", 2.9, 600))
+    s.append(T(568, 402, "© Helioso · orbit.helioso.com · prototype papier v1.3", 2.6, 500, "end", MUTED))
     s.append("</svg>")
     return "".join(s)
 
@@ -468,24 +482,24 @@ def livret():
         lig = "".join(f"<tr><td>{gras(a[0])}{' <i>(ses fonctionnalités)</i>' if 'responsable' in a[2].lower() else ''}{' <i>(vous décidez)</i>' if a[2] == '—' else ''}</td><td class='c'><b>{a[1]}</b></td></tr>" for a in actions_de(rid))
         return f"""<div style="height:148.5mm;padding:10mm 14mm;border-bottom:.3mm dashed {MUTED};position:relative">
 <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab" style="color:{TEAL_T}">Fiche de rôle · {rid}</div><div class="t" style="font-size:24pt;margin-top:1mm">{nom}</div></div>
-<div style="display:flex;gap:1.6mm;align-items:center">{''.join(f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER}"></div>' for _ in range(3))}<span class="txt" style="margin-left:1mm"><b>3 PA</b><br>par cycle</span></div></div>
+<div style="display:flex;gap:1.6mm;align-items:center">{''.join(f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER}"></div>' for _ in range(3))}<span class="txt" style="margin-left:1mm"><b>3 heures</b><br>par cycle</span></div></div>
 <div class="txt" style="margin:2.5mm 0 1mm;font-size:11pt"><b>Votre mission :</b> {mission}.</div>
 <div class="ph" style="margin-bottom:3mm">« {nettoie(phrase)} »</div>
 <div class="lab" style="margin-bottom:1.5mm">Vos actions</div>
 <table class="tab" style="font-size:10.5pt">{lig}</table>
-<div class="txt" style="margin-top:4mm;font-size:9.5pt;line-height:1.4"><b>Pour agir</b>, prenez un de vos jetons PA au poste de pilotage et posez-le sur la station où vous agissez. Ils reviennent au poste de pilotage à la fin du cycle.<br>
-<b>Premier jouable :</b> tant que les 5 fonctionnalités essentielles ne sont pas livrées sans bug, le jeu a 0 joueur. <b>Score</b> = joueurs × note.</div></div>"""
+<div class="txt" style="margin-top:4mm;font-size:9.5pt;line-height:1.4"><b>Pour agir</b>, prenez un de vos jetons Heure au poste de pilotage et posez-le sur la station où vous agissez. Ils reviennent au poste de pilotage à la fin du cycle.<br>
+<b>MVP :</b> tant que les 5 fonctionnalités essentielles ne sont pas publiées sans bug, le jeu a 0 joueur. <b>Score</b> = joueurs × note.</div></div>"""
 
     jet_expl = f"""<div style="height:148.5mm;padding:10mm 14mm;position:relative">
-<div class="lab" style="color:{TEAL_T}">Le matériel de l'équipe</div><div class="t" style="font-size:22pt;margin:1mm 0 4mm">Les jetons, à quoi ça sert ?</div>
+<div class="lab" style="color:{TEAL_T}">Le matériel de l'équipe</div><div class="t" style="font-size:22pt;margin:1mm 0 4mm">Les pions, à quoi ça sert ?</div>
 <div style="display:flex;flex-direction:column;gap:4mm">
-<div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER};flex:none;display:flex;align-items:center;justify-content:center;font-size:6.5pt;font-weight:800">PA</div>
-<div class="txt"><b>9 jetons point d'action</b>, 3 par joueur : c'est votre temps. Au début du cycle, ils sont au poste de pilotage. Pour agir, posez-en un sur la station où vous agissez. À la fin du cycle, ils reviennent. Au débrief, on voit où l'équipe a passé son temps.</div></div>
+<div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER};flex:none;display:flex;align-items:center;justify-content:center;font-size:5.5pt;font-weight:800">1 h</div>
+<div class="txt"><b>9 jetons Heure</b>, 3 par joueur : c'est votre temps de travail. Chaque action coûte 1 ou 2 heures. Au début du cycle, ils sont au poste de pilotage. Pour agir, posez-en un sur la station où vous agissez. À la fin du cycle, ils reviennent. Au débrief, on voit où l'équipe a passé son temps.</div></div>
 <div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border:.6mm solid {NAVY};border-radius:1.6mm;background:{SAGE};flex:none"></div>
-<div class="txt"><b>15 jetons bloc</b> : le travail produit. Une fonctionnalité fait 1 à 3 blocs (les carrés gris sur sa carte). Chaque bloc produit, par un humain ou par PIX, se marque d'un jeton sur un carré. Carte pleine = fonctionnalité prête à sortir. Après la release, les jetons reviennent dans la réserve.</div></div>
+<div class="txt"><b>15 pions Effort</b> : le travail fait. Une fonctionnalité demande 1 à 3 efforts (les cases grises sur sa carte). Chaque effort fait, par un humain ou par PIX, se marque d'un pion sur une case. Carte pleine = fonctionnalité prête pour la release. Après la release, les pions reviennent dans la réserve.</div></div>
 <div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border-radius:50%;border:.6mm solid {NAVY};background:{NAVY};flex:none"></div>
-<div class="txt"><b>3 marqueurs</b> pour les pistes du plateau : les crédits IA (départ 20, on recule d'une case par action d'agent), la note (départ 3) et le cycle (départ 0).</div></div>
-<div class="txt" style="border:.6mm solid {NAVY};border-radius:2mm;padding:3mm;background:{BG}"><b>Les blocs de PIX :</b> quand PIX produit un bloc, posez le jeton bloc <b>et</b> glissez une carte Défaut face cachée sous la carte Fonctionnalité. On ne la regarde qu'en relisant, en testant ou à la release.</div>
+<div class="txt"><b>3 marqueurs</b> pour les pistes du plateau : les tokens IA (départ 20, on recule d'une case par action d'agent), la note (départ 3) et le cycle (départ 0).</div></div>
+<div class="txt" style="border:.6mm solid {NAVY};border-radius:2mm;padding:3mm;background:{BG}"><b>Les efforts de PIX :</b> quand PIX fait un effort, posez le pion Effort <b>et</b> glissez une carte Test face cachée sous la carte Fonctionnalité. On ne la regarde qu'en relisant, en testant ou à la release.</div>
 </div><div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Des cubes, des pions ou des pièces de récupération font très bien l'affaire.</div></div>"""
     page_fiches = f'<div class="feuille">{fiche(refs[0])}{fiche(refs[1])}</div><div class="feuille">{fiche(refs[2])}{jet_expl}</div>'
 
@@ -494,34 +508,34 @@ def livret():
     score = f"""<div class="feuille" style="padding:14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:24pt">Feuille de score</div><div class="lab">Helioso Orbit · Orbit : Studio</div></div>
 <div style="display:flex;gap:6mm;margin:5mm 0">{''.join(f'<div style="flex:1;border:.6mm solid {NAVY};border-radius:2mm;padding:2mm 3mm;height:16mm"><div class="lab">{l}</div></div>' for l in ('Nom du studio', 'Chef(fe) de projet', 'Designer', 'Programmeur(se)'))}</div>
-<table class="tab big"><tr><th>Cycle</th><th>Fonctionnalités livrées</th><th>Premier<br>jouable ?</th><th>Étoiles (total)</th><th>Joueurs<br>(étoiles × 25)</th><th>Note<br>(sur 5)</th><th>Score<br>(joueurs × note)</th><th>Crédits IA<br>restants</th></tr>{lignes}</table>
+<table class="tab big"><tr><th>Cycle</th><th>Fonctionnalités publiées</th><th>MVP<br>atteint ?</th><th>Étoiles (total)</th><th>Joueurs<br>(étoiles × 25)</th><th>Note<br>(sur 5)</th><th>Score<br>(joueurs × note)</th><th>Tokens IA<br>restants</th></tr>{lignes}</table>
 <div class="t" style="font-size:13pt;margin:5mm 0 1mm">Notre risque du cycle</div>
 <div class="txt" style="font-size:8.5pt;margin-bottom:2mm">Au début de chaque cycle, en 30 secondes : quel risque voyons-nous, et que faisons-nous contre ? Après la release : est-il arrivé ?</div>
 <table class="tab risques"><tr><th>Cycle</th><th>Le risque que nous voyons</th><th>Notre parade</th><th>Arrivé ?</th></tr>{risques}</table>
 <div style="border:.8mm solid {NAVY};border-radius:3mm;padding:3mm 4mm;margin-top:5mm;background:{BG};display:flex;justify-content:space-between;align-items:center"><div class="lab">Score final</div>
 <div class="t" style="font-size:14pt">Joueurs ______ × note ____ = <span style="display:inline-block;border-bottom:.6mm solid {NAVY};width:28mm"></span></div></div>
-<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles en ligne × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans premier jouable, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié coûte 1 étoile ; chaque carte Feedback livrée fait monter la note de 0,5 (Nova : 1).</div></div>"""
+<div class="txt" style="margin-top:4mm;font-size:8.5pt;color:{MUTED}">Rappels : joueurs = étoiles publiées × 25, recalculés à chaque release ; la note reste entre 1 et 5 ; sans MVP, 0 joueur ; un bug publié ne rapporte aucun joueur et coûte 0,5 de note ; un « Pas fun » publié coûte 1 étoile ; chaque carte Feedback traitée et publiée fait monter la note de 0,5 (Nova : 1).</div></div>"""
 
     equipes = "".join(f"<tr><td class='c'><b>{i}</b></td>" + "<td></td>" * 7 + "</tr>" for i in range(1, 9))
     leader = f"""<div class="feuille" style="padding:14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:24pt">Leaderboard de l'animateur</div><div class="lab">Helioso Orbit</div></div>
-<div class="txt" style="margin:3mm 0 5mm">À recopier au tableau, ou dans la page de leaderboard, après chaque release. Score = joueurs × note. Une équipe sans premier jouable est à 0 : faites-le remarquer.</div>
+<div class="txt" style="margin:3mm 0 5mm">À recopier au tableau, ou dans la page de leaderboard, après chaque release. Score = joueurs × note. Une équipe sans MVP est à 0 : faites-le remarquer.</div>
 <table class="tab big"><tr><th>#</th><th>Studio</th><th>Cycle 0</th><th>Cycle 1</th><th>Cycle 2</th><th>Cycle 3</th><th>Cycle 4</th><th>Final</th></tr>{equipes}</table>
 <div class="t" style="font-size:14pt;margin:8mm 0 3mm">Déroulé de l'animateur</div>
 <table class="tab">{''.join(f"<tr><td class='c'><b>{v['id']}</b></td><td>{v['moment']}</td><td>{re.sub(r'[*]', '', v['msg'])}</td></tr>" for v in veras)}</table>
-<div class="txt" style="margin-top:3mm;font-size:8.5pt"><b>La solution du premier jouable (à garder pour vous) :</b> {", ".join(f["id"] + " " + f["nom"] for f in MUSTS)}.<br>Événements : E1 au cycle 1, E2 au cycle 2, E3 au cycle 3, E4 au cycle 4. E5 et E6 servent à varier les parties suivantes.</div></div>"""
+<div class="txt" style="margin-top:3mm;font-size:8.5pt"><b>La solution du MVP (à garder pour vous) :</b> {", ".join(f["id"] + " " + f["nom"] for f in MUSTS)}.<br>Événements : E1 au cycle 1, E2 au cycle 2, E3 au cycle 3, E4 au cycle 4. E5 et E6 servent à varier les parties suivantes.</div></div>"""
 
     def jeton_rond(c, txt, r=13):
         return f'<div style="width:{r}mm;height:{r}mm;border-radius:50%;border:.6mm solid {NAVY};background:{c};display:flex;align-items:center;justify-content:center;font-size:6.5pt;font-weight:800">{txt}</div>'
 
-    pa = "".join(jeton_rond(AMBER, "PA") for _ in range(9))
+    pa = "".join(jeton_rond(AMBER, "1 h") for _ in range(9))
     cr = "".join(jeton_rond(NAVY, f'<span style="color:#fff">{t}</span>') for t in ("IA", "NOTE", "CYCLE"))
     bl = "".join(f'<div style="width:12mm;height:12mm;border:.6mm solid {NAVY};border-radius:1.6mm;background:{SAGE}"></div>' for _ in range(15))
     jetons = f"""<div class="feuille" style="padding:12mm 14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:22pt">Jetons à découper</div><div class="lab">À imprimer sur papier épais</div></div>
-<div class="lab" style="margin:5mm 0 2mm">9 jetons point d'action (3 par humain)</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{pa}</div>
-<div class="lab" style="margin:5mm 0 2mm">3 marqueurs : crédits IA, note, cycle</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{cr}</div>
-<div class="lab" style="margin:5mm 0 2mm">15 jetons bloc</div><div style="display:flex;flex-wrap:wrap;gap:2.4mm">{bl}</div>
+<div class="lab" style="margin:5mm 0 2mm">9 jetons Heure (3 par humain)</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{pa}</div>
+<div class="lab" style="margin:5mm 0 2mm">3 marqueurs : tokens IA, note, cycle</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{cr}</div>
+<div class="lab" style="margin:5mm 0 2mm">15 pions Effort</div><div style="display:flex;flex-wrap:wrap;gap:2.4mm">{bl}</div>
 <div class="txt" style="margin-top:5mm;font-size:8.5pt;color:{MUTED}">Astuce : des cubes de couleur ou des pions de récupération font très bien l'affaire à la place de ces jetons.</div></div>"""
 
     guide = f"""<div class="feuille" style="padding:16mm">
@@ -531,10 +545,10 @@ def livret():
 <tr><td><b>plateau-A2.pdf</b></td><td>Le plateau de l'orbite d'itération</td><td>A2 paysage, 100 %, en reprographie</td></tr>
 <tr><td><b>plateau-4xA4.pdf</b></td><td>Le même plateau en 4 morceaux</td><td>A4 paysage, « taille réelle », puis assembler en suivant les repères</td></tr>
 <tr><td><b>cartes-recto.pdf</b></td><td>Fonctionnalités F01–F20 et messages de Vera V0–V5</td><td>A4, recto seul, papier 250 g ou plus</td></tr>
-<tr><td><b>cartes-recto-verso.pdf</b></td><td>Défauts D01–D20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos</td><td>A4, <b>recto verso, retournement bord long</b>, 250 g</td></tr>
-<tr><td><b>livret.pdf</b></td><td>Ce guide, les règles sur une page, les 3 fiches de rôle, l'explication des jetons, la feuille de score avec le risque du cycle, la feuille de débrief, le leaderboard, la planche de jetons</td><td>A4, recto seul ; les fiches de rôle se coupent en deux (A5)</td></tr></table>
+<tr><td><b>cartes-recto-verso.pdf</b></td><td>Cartes Test T01–T20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos</td><td>A4, <b>recto verso, retournement bord long</b>, 250 g</td></tr>
+<tr><td><b>livret.pdf</b></td><td>Ce guide, les règles (recto : l'essentiel en images ; verso : le détail), les 3 fiches de rôle, l'explication des pions, la feuille de score avec le risque du cycle, la feuille de débrief, le leaderboard, la planche de jetons</td><td>A4, recto seul ; les fiches de rôle se coupent en deux (A5)</td></tr></table>
 <div class="t" style="font-size:15pt;margin:8mm 0 3mm">Par équipe</div>
-<div class="txt">1 plateau · 3 fiches de rôle (une par joueur) · 20 Fonctionnalités · 20 Défauts · 24 Feedback · 9 jetons PA · 15 jetons bloc · 3 marqueurs · 1 feuille de score.<br>
+<div class="txt">1 plateau · 3 fiches de rôle (une par joueur) · 20 Fonctionnalités · 20 cartes Test · 24 Feedback · 9 jetons Heure · 15 pions Effort · 3 marqueurs · 1 feuille de score.<br>
 <b>Pour l'animateur :</b> les 6 Événements, les 6 messages de Vera et le leaderboard.</div>
 <div class="t" style="font-size:15pt;margin:8mm 0 3mm">Conseils</div>
 <div class="txt">• Coupez sur les traits gris : les cartes sont jointives, un seul coup de massicot sépare deux cartes.<br>
@@ -554,18 +568,70 @@ def livret():
     import markdown
     texte = (RACINE / "docs/jeu/regles-une-page.md").read_text(encoding="utf-8")
     texte = re.sub(r"^\*Version.*?\*\n", "", texte, flags=re.M)
-    regles = f'<div class="feuille regles" style="padding:10mm 13mm">{markdown.markdown(texte)}</div>'
+    essentiel, detail = texte.split("## Le détail", 1)
+    # 1. les symboles du document deviennent les visuels du jeu
+    sym = {
+        "⭐": etoile(7),
+        "🟩": f'<div style="width:7mm;height:7mm;border:.6mm solid {NAVY};border-radius:1.2mm;background:{SAGE}"></div>',
+        "🟠": f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER};font-size:5pt;font-weight:800;display:flex;align-items:center;justify-content:center">1 h</div>',
+        "🔷": f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:#fff;box-shadow:inset 0 0 0 1.1mm {CYAN};font-size:5.5pt;font-weight:800;display:flex;align-items:center;justify-content:center">IA</div>',
+        "🟥": f'<div style="width:6mm;height:8.5mm;border:.5mm solid {NAVY};border-radius:1mm;background:#fff;border-top:2.4mm solid {CORAL}"></div>',
+        "🟨": f'<div style="width:6mm;height:8.5mm;border:.5mm solid {NAVY};border-radius:1mm;background:#fff;border-top:2.4mm solid {AMBER}"></div>',
+        "📈": f'<div style="border:.5mm solid {NAVY};border-radius:1mm;padding:.4mm 1mm;font-size:6.5pt;font-weight:800;background:{AMBER}">3/5</div>',
+    }
+    html1 = markdown.markdown(essentiel, extensions=["tables"])
+    for k, v in sym.items():
+        html1 = html1.replace(k, f'<div style="display:flex;justify-content:center">{v}</div>')
+    # 2. le cycle en 6 temps devient un schéma
+    etapes = [("1", "Brief", "Vera donne les nouvelles du cycle", f'<img src="{PORT["vera"]}">'),
+              ("2", "Planning", "Trier le feedback, choisir, noter le risque", icone("bulle", 9)),
+              ("3", "Build", "Prompt pour PIX, efforts des humains", f'<img src="{PORT["pix"]}">'),
+              ("4", "Test", "Relire, SCAN, playtest, corriger", f'<img src="{PORT["scan"]}">'),
+              ("5", "Release", "On publie : les cartes Test cachées se révèlent", etoile(9)),
+              ("6", "Review", "Joueurs × note = score", f'<div class="t" style="font-size:20pt;line-height:1">×</div>')]
+    sch = '<div class="cycle">'
+    for i, (n, t, d, ic) in enumerate(etapes):
+        sch += (f'<div class="et"><div class="rond">{ic}<span class="num">{n}</span></div>'
+                f'<div class="t" style="font-size:9.5pt;margin-top:1.2mm">{t}</div><div class="ph" style="font-size:7.3pt;font-style:normal">{d}</div></div>')
+        if i < len(etapes) - 1:
+            sch += '<div class="fl">→</div>'
+    sch += '</div><div class="ph" style="text-align:center;font-size:7.5pt;margin-top:1mm">… puis on recommence : c\'est l\'orbite d\'itération.</div>'
+    html1 = re.sub(r"(<h2>Un cycle en 6 temps</h2>)\s*<ol>.*?</ol>", lambda m: m.group(1) + sch, html1, flags=re.S)
+    # 3. comment lire une carte Fonctionnalité
+    ex = next(f for f in feats if f["id"] == "F14")
+    lire = f"""<h2>Lire une carte Fonctionnalité</h2><div style="display:flex;gap:6mm;align-items:center">
+<div style="width:63mm;height:88mm;flex:none"><div class="carte" style="padding:0;width:63mm;height:88mm">{c_feat(ex)}</div></div>
+<div class="txt" style="font-size:9.6pt;line-height:1.6"><b>① En haut :</b> la catégorie et le numéro.<br><b>② Le nom</b> de la fonctionnalité.<br>
+<b>③ Taille :</b> {ex['blocs']} cases grises = {ex['blocs']} efforts à faire. Chaque effort fait reçoit un pion Effort.<br>
+<b>④ Valeur :</b> {ex['etoiles']} étoiles = {ex['etoiles'] * 25} joueurs, dès qu'elle est publiée sans bug.<br>
+<b>⑤ En bas :</b> qui en est responsable (il la fait, la relit et la corrige).<br>
+<span class="ph">La priorité n'est pas écrite : à vous de deviner ce qui est essentiel.</span></div></div>"""
+    regles = (f'<div class="feuille regles" style="padding:9mm 13mm"><div class="lab" style="color:{TEAL_T}">Règles · recto : l\'essentiel</div>{html1}{lire}</div>'
+              f'<div class="feuille regles" style="padding:9mm 13mm"><div class="lab" style="color:{TEAL_T}">Règles · verso : le détail</div>'
+              f'<h1>Le détail, temps par temps</h1><div class="verso">{markdown.markdown(detail, extensions=['tables'])}</div></div>')
     css += f"""
-.regles h1{{font-family:'Bricolage Grotesque';font-weight:800;font-size:19pt;margin-bottom:1.5mm}}
-.regles h2{{font-family:'Bricolage Grotesque';font-weight:800;font-size:11.5pt;margin:2.6mm 0 1mm;color:{TEAL_T}}}
-.regles p,.regles li{{font-size:9.4pt;line-height:1.32}}
-.regles ul,.regles ol{{padding-left:5mm}} .regles li{{margin:.4mm 0}}
-.regles ol>li{{margin-top:1.2mm}}
+.regles h1{{font-family:'Bricolage Grotesque';font-weight:800;font-size:19pt;margin:1mm 0 1.5mm}}
+.regles h2{{font-family:'Bricolage Grotesque';font-weight:800;font-size:12pt;margin:3mm 0 1.5mm;color:{TEAL_T}}}
+.regles h3{{font-family:'Bricolage Grotesque';font-weight:800;font-size:11pt;margin:3mm 0 1mm}}
+.regles p,.regles li{{font-size:9.4pt;line-height:1.35}}
+.regles ul,.regles ol{{padding-left:5mm}} .regles li{{margin:.6mm 0}}
+.regles table{{width:100%;border-collapse:collapse}}
+.regles td,.regles th{{border-bottom:.3mm solid {SAGE};padding:1.1mm 1.5mm;font-size:8.8pt;text-align:left;vertical-align:middle;line-height:1.3}}
+.regles th{{font-size:7pt;text-transform:uppercase;letter-spacing:.05em;color:{MUTED}}}
+.regles td:first-child{{width:10mm}} .regles td:nth-child(2){{width:34mm}}
+.cycle{{display:flex;align-items:flex-start;justify-content:space-between;gap:1mm;margin-top:1mm}}
+.et{{width:25mm;text-align:center}}
+.rond{{position:relative;width:15mm;height:15mm;margin:0 auto;border-radius:50%;border:.7mm solid {NAVY};background:{BG};display:flex;align-items:center;justify-content:center}}
+.rond img{{width:11mm;height:11mm;image-rendering:pixelated}}
+.num{{position:absolute;top:-1.5mm;left:-1.5mm;width:5.5mm;height:5.5mm;border-radius:50%;background:{TEAL};border:.5mm solid {NAVY};font-size:7pt;font-weight:800;display:flex;align-items:center;justify-content:center}}
+.verso p,.verso li{{font-size:9pt;line-height:1.3}} .verso h3{{margin:2.2mm 0 .8mm}}
+.verso td{{font-size:8pt;padding:.8mm 1.2mm}} .verso td:first-child,.verso td:nth-child(3){{width:17mm}} .verso td:nth-child(2){{width:auto}}
+.fl{{font-size:14pt;font-weight:800;margin-top:4mm;color:{MUTED}}}
 """
-    rep = [("Éviter", "Ne pas prendre le risque", "Faire produire par un humain : jamais de défaut, mais 1 bloc par cycle"),
-           ("Réduire", "Rendre le risque moins probable", "Brief détaillé : le risque de défaut passe de 40 % à 16 %"),
+    rep = [("Éviter", "Ne pas prendre le risque", "Faire le travail par un humain : jamais de problème, mais 1 effort par cycle"),
+           ("Réduire", "Rendre le risque moins probable", "Prompt détaillé : le risque de problème passe de 40 % à 16 %"),
            ("Détecter", "Le trouver avant qu'il ne frappe", "SCAN, relecture, playtest, avant la release"),
-           ("Accepter", "Le prendre en connaissance de cause", "Publier sans vérifier, ou garder des crédits en réserve")]
+           ("Accepter", "Le prendre en connaissance de cause", "Publier sans tester, ou garder des tokens en réserve")]
     lignes_rep = "".join(f"<tr><td><b>{a}</b><br><span class='ph'>{b}</span></td><td>{c}</td><td></td></tr>" for a, b, c in rep)
     debrief = f"""<div class="feuille" style="padding:14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:24pt">Débrief</div><div class="lab">Helioso Orbit · une feuille par équipe</div></div>
@@ -594,7 +660,7 @@ def construire():
 
     corps = ""
     lot_items = defauts
-    corps += feuilles([c_defaut(d) for d in defauts], "Défauts", dos=lambda d: DOS_DEFAUT)
+    corps += feuilles([c_defaut(d) for d in defauts], "Cartes Test", dos=lambda d: DOS_DEFAUT)
     lot_items = feedbacks
     corps += feuilles([c_feedback(f) for f in feedbacks], "Feedback", dos=lambda f: DOS_FEEDBACK)
     lot_items = events

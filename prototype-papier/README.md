@@ -7,7 +7,7 @@ Le kit à imprimer pour la première partie test. Style **B2 flat**, thème clai
 | `plateau-A2.pdf` | Le plateau de l'orbite d'itération | A2 paysage, 100 %, en reprographie |
 | `plateau-4xA4.pdf` | Le même plateau en 4 morceaux (échelle 90 %, 12 mm de recouvrement) | A4 paysage, « taille réelle », puis scotcher |
 | `cartes-recto.pdf` | Fonctionnalités F01–F20 et messages de Vera V0–V5 | A4, recto seul, 250 g |
-| `cartes-recto-verso.pdf` | Défauts D01–D20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos | A4, **recto verso, bord long**, 250 g |
+| `cartes-recto-verso.pdf` | Cartes Test T01–T20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos | A4, **recto verso, bord long**, 250 g |
 | `livret.pdf` | Guide d'impression, 3 fiches de rôle A5 (une par joueur), l'explication des jetons, feuille de score, leaderboard et déroulé de l'animateur, planche de jetons | A4, recto seul |
 
 Cartes de 63 × 88 mm (format des protège-cartes standard), 9 par page, jointives : on coupe sur les traits gris.

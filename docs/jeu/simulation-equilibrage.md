@@ -28,7 +28,7 @@ Ces équipes ne suivent pas une stratégie fixe comme les robots de la version 1
 
 ## Les scores (règles simplifiées, version 0.11)
 
-| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Joueurs | Note | Premier jouable au cycle 0 | Bugs publiés | Crédits restants |
+| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Joueurs | Note | Premier jouable au cycle 0 | Bugs publiés | Tokens restants |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Les fonceurs | 1 950 | 875 | 1 800 | 3 412 | 0 | 5 000 | 916 | 2,13 | 6 % | 2,3 | 5,0 |
 | Les élèves sérieux | 4 054 | 3 062 | 4 250 | 4 750 | 0 | 5 375 | 905 | 4,48 | 37 % | 0,6 | 3,2 |

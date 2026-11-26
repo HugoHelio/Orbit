@@ -1,30 +1,30 @@
-# Cartes d'Orbit : Studio — règles de base, version 5
+# Cartes d'Orbit : Studio — règles de base, version 6
 
-*Cartes du prototype papier — version 5 du 26 novembre 2026 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un bloc humain par cycle, 2 blocs humains au cycle 0, plus de bonus « release sans défaut », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du premier jouable, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.11, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
+*Cartes du prototype papier — version 6 du 26 novembre 2026 : passe sur le vocabulaire (bloc → effort, point d'action → heure, carte Défaut → carte Test avec OK / Bug / Pas fun, brief à PIX → prompt, premier jouable → MVP, cycle Brief, Planning, Build, Test, Release, Review). Version 5 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un effort humain par cycle, 2 efforts humains au cycle 0, plus de bonus « release sans problème », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du MVP, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.14, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
 
-*Chaque carte a un identifiant (F01, D01, FB01, E01, V0…) : c'est sa clé pour la traduction anglaise et pour le jeu numérique.*
+*Chaque carte a un identifiant (F01, T01, FB01, E01, V0…) : c'est sa clé pour la traduction anglaise et pour le jeu numérique.*
 
 ---
 
 ## 1. Les actions (reprises sur les fiches de rôle)
 
-Chaque humain a **3 points d'action (PA) par cycle**. L'équipe a **20 crédits IA pour toute la partie**.
+Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a **20 tokens IA pour toute la partie**.
 
 | Action | Coût | Qui |
 |---|---|---|
-| Trier 2 cartes Feedback | 1 PA | Chef de projet |
-| Écrire un brief **simple** pour une fonctionnalité entière (1 carte Défaut tirée par bloc de PIX) | 1 PA | Chef de projet ou designer |
-| Écrire un brief **détaillé** pour une fonctionnalité entière (2 cartes Défaut tirées par bloc, on garde la meilleure) | 2 PA | Chef de projet ou designer |
-| Produire 1 bloc soi-même (aucune carte Défaut ; **1 bloc par cycle au maximum**, 2 au cycle 0) | 1 PA | Le responsable de la fonctionnalité |
-| Relire 1 bloc produit par PIX (révèle sa carte Défaut) | 1 PA | Le responsable de la fonctionnalité |
-| Faire un playtest d'une fonctionnalité (révèle un « Pas fun » sur tous ses blocs) | 1 PA | Designer |
-| Corriger un défaut révélé | 1 PA | Le responsable de la fonctionnalité |
-| Faire produire 1 bloc par PIX (3 par cycle ; les blocs en trop attendent au cycle suivant) | 1 crédit | — |
-| Faire tester 1 bloc par SCAN (révèle un « Bug », jamais un « Pas fun ») | 1 crédit | — |
+| Trier 2 cartes Feedback | 1 heure | Chef de projet |
+| Écrire un prompt **simple** pour une fonctionnalité entière (1 carte Test tirée par effort de PIX) | 1 heure | Chef de projet ou designer |
+| Écrire un prompt **détaillé** pour une fonctionnalité entière (2 cartes Test tirées par effort, on garde la meilleure) | 2 heures | Chef de projet ou designer |
+| Faire 1 effort soi-même (aucune carte Test ; **1 effort par cycle au maximum**, 2 au cycle 0) | 1 heure | Le responsable de la fonctionnalité |
+| Relire 1 effort produit par PIX (révèle sa carte Test) | 1 heure | Le responsable de la fonctionnalité |
+| Faire un playtest d'une fonctionnalité (révèle un « Pas fun » sur tous ses efforts) | 1 heure | Designer |
+| Corriger un problème révélé | 1 heure | Le responsable de la fonctionnalité |
+| PIX fait 1 effort (3 par cycle ; les efforts en trop attendent le cycle suivant) | 1 token | — |
+| SCAN teste 1 effort (révèle un « Bug », jamais un « Pas fun ») | 1 token | — |
 
 **Le responsable** d'une fonctionnalité est indiqué sur sa carte : **Prog** = le programmeur ; **Design** et **Art** = le designer.
 
-**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les joueurs demandent** : +0,5 par carte Feedback traitée (+1 pour Nova). **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu en ligne × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans premier jouable, il n'y a pas de joueurs : le score vaut 0.
+**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les joueurs demandent** : +0,5 par carte Feedback traitée (+1 pour Nova). **Elle reste entre 1 et 5.** **Joueurs = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = joueurs × note.** Sans MVP, il n'y a pas de joueurs : le score vaut 0.
 
 ---
 
@@ -34,40 +34,40 @@ Chaque humain a **3 points d'action (PA) par cycle**. L'équipe a **20 crédits 
 
 | Id | Fiche | Mission | Ses actions | Phrase |
 |---|---|---|---|---|
-| R1 | **Chef(fe) de projet** | Choisit les tâches, gère les crédits IA, décide de la release | Trier le feedback ; écrire les briefs ; décider des actions de PIX et de SCAN | « Tout le monde a une idée. Moi, j'ai un planning. » |
-| R2 | **Designer** | Responsable des fonctionnalités Design et Art ; garant du fun | Écrire les briefs ; produire, relire et corriger ses fonctionnalités ; faire les playtests (seul à pouvoir le faire) | « Ça marche, d'accord. Mais est-ce que c'est fun ? » |
+| R1 | **Chef(fe) de projet** | Choisit les tâches, gère les tokens IA, décide de la release | Trier le feedback ; écrire les prompts ; décider des actions de PIX et de SCAN | « Tout le monde a une idée. Moi, j'ai un planning. » |
+| R2 | **Designer** | Responsable des fonctionnalités Design et Art ; garant du fun | Écrire les prompts ; produire, relire et corriger ses fonctionnalités ; faire les playtests (seul à pouvoir le faire) | « Ça marche, d'accord. Mais est-ce que c'est fun ? » |
 | R3 | **Programmeur(se)** | Responsable des fonctionnalités Prog ; garant du code | Produire, relire et corriger ses fonctionnalités | « Qui a écrit ça ? Ah. PIX. » |
 
 **Les agents IA ne sont pas des cartes** : leurs règles sont imprimées sur le plateau, avec leur portrait.
 
 | Id | Agent | Capacité | Phrase |
 |---|---|---|---|
-| A1 | **PIX, agent codeur** | Produit jusqu'à 3 blocs par cycle, 1 crédit par bloc. Chaque bloc reçoit une carte Défaut face cachée | « Terminé ! Tout fonctionne parfaitement. » |
-| A2 | **SCAN, agent testeur** | Teste jusqu'à 4 blocs par cycle, 1 crédit par test. Révèle les « Bug », jamais les « Pas fun » | « Aucun défaut détecté. Le joueur meurt en 4 secondes, conformément au code. » |
+| A1 | **PIX, agent codeur** | Produit jusqu'à 3 efforts par cycle, 1 token par effort. Chaque effort reçoit une carte Test face cachée | « Terminé ! Tout fonctionne parfaitement. » |
+| A2 | **SCAN, agent testeur** | Teste jusqu'à 4 efforts par cycle, 1 token par test. Révèle les « Bug », jamais les « Pas fun » | « Aucun bug détecté. Le joueur meurt en 4 secondes, conformément au code. » |
 
 ### Les jetons et les marqueurs
 
 | Matériel | Nombre | À quoi ça sert |
 |---|---|---|
-| **Jeton point d'action (PA)** | 9 (3 par joueur) | Au début du cycle, chaque joueur pose ses 3 jetons sur son emplacement du poste de pilotage. Pour agir, il prend un jeton et le pose sur la station où il agit (Brief, Production, Test…). En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
-| **Jeton bloc** | 15 | Un bloc, c'est un morceau de fonctionnalité produit. On pose un jeton bloc sur un carré de la carte Fonctionnalité dès qu'il est produit (par un humain ou par PIX). Quand tous les carrés sont couverts, la fonctionnalité est prête. À sa release, ses jetons reviennent dans la réserve. |
-| **Marqueur** | 3 | Un pion pour chaque piste du plateau : crédits IA (départ 20), note (départ 3) et cycle (départ 0). |
+| **Jeton Heure** | 9 (3 par joueur) | Au début du cycle, chaque joueur pose ses 3 jetons sur son emplacement du poste de pilotage. Pour agir, il prend un jeton et le pose sur la station où il agit (Prompt, Build, Test…). En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
+| **Pion Effort** | 15 | Un effort, c'est une part du travail d'une fonctionnalité. On pose un pion Effort sur une case grise de la carte Fonctionnalité dès que cet effort est fait (par un humain ou par PIX). Quand toutes les cases sont couvertes, la fonctionnalité est prête pour la release. Après sa release, ses pions reviennent dans la réserve. |
+| **Marqueur** | 3 | Un pion pour chaque piste du plateau : tokens IA (départ 20), note (départ 3) et cycle (départ 0). |
 
 ---
 
 ## 3. Les 20 cartes Fonctionnalité (la master feature list de SpacePlan)
 
-**Taille :** charge *Low* = 1 bloc, *Medium* = 2 blocs, *High* = 3 blocs. **Valeur :** *Must* = 2 étoiles, *Should* = 3 étoiles, *Could* = 2 étoiles. **Chaque étoile livrée = 25 joueurs.**
+**Taille :** charge *Low* = 1 effort, *Medium* = 2 efforts, *High* = 3 efforts. **Valeur :** *Must* = 2 étoiles, *Should* = 3 étoiles, *Could* = 2 étoiles. **Chaque étoile livrée = 25 joueurs.**
 
-### La règle du premier jouable
+### La règle du MVP (premier jouable)
 
 - **Tant que les 5 fonctionnalités Must ne sont pas toutes livrées, et sans bug révélé, le jeu ne rapporte aucun joueur.** Un jeu où l'on ne peut ni bouger, ni tirer, ni toucher un alien n'a pas de joueurs, même avec de superbes explosions.
-- Les étoiles des autres fonctionnalités déjà livrées sont **en attente** : elles comptent dès que le premier jouable est atteint.
-- Si un bug est révélé plus tard sur une fonctionnalité Must, le premier jouable est **cassé** : le jeu retombe à 0 joueur jusqu'à la correction.
+- Les étoiles des autres fonctionnalités déjà livrées sont **en attente** : elles comptent dès que le MVP est atteint.
+- Si un bug est révélé plus tard sur une fonctionnalité Must, le MVP est **cassé** : le jeu retombe à 0 joueur jusqu'à la correction.
 - **La priorité (Must, Should, Could) n'est pas imprimée sur les cartes.** Les équipes doivent retrouver les 5 Must à partir du message de Vera (V0). C'est le premier exercice de priorisation. Les Should valent plus d'étoiles que les Must : c'est un piège voulu (la valeur n'est pas la nécessité).
 - Les numéros suivent les catégories, pas les priorités : on ne peut pas deviner les Must à leur numéro.
 
-| Id | Fonctionnalité | Catégorie | Blocs | Étoiles | Responsable | Priorité (non imprimée) | Phrase d'ambiance |
+| Id | Fonctionnalité | Catégorie | Efforts | Étoiles | Responsable | Priorité (non imprimée) | Phrase d'ambiance |
 |---|---|---|---|---|---|---|---|
 | F01 | 3 types de vaisseaux | Joueur | 1 | ★★ | Design | Could | « Rapide, solide ou équilibré ? » |
 | F02 | Apparition du vaisseau | Joueur | 1 | ★★ | Prog | Must | « Sans vaisseau, c'est un fond d'écran. » |
@@ -90,40 +90,40 @@ Chaque humain a **3 points d'action (PA) par cycle**. L'équipe a **20 crédits 
 | F19 | Rencontrer SpaceTron | Immersion | 3 | ★★ | Art | Could | « Il était temps qu'on se présente. » |
 | F20 | Visuels, univers et ton | Immersion | 3 | ★★★ | Design | Should | « Un jeu, c'est d'abord une ambiance. » |
 
-**Les 5 Must (la solution, pour l'animateur) :** F02 Apparition du vaisseau, F07 Contrôles, F09 Grille d'aliens, F06 Collision missile, F13 Défaite et redémarrage, soit 6 blocs et 10 étoiles (250 joueurs).
+**Les 5 Must (la solution, pour l'animateur) :** F02 Apparition du vaisseau, F07 Contrôles, F09 Grille d'aliens, F06 Collision missile, F13 Défaite et redémarrage, soit 6 efforts et 10 étoiles (250 joueurs).
 
-**Repères pour l'équilibrage :** 37 blocs au total (6 pour les Must, 23 pour les Should, 8 pour les Could) et 51 étoiles au maximum (1 275 joueurs). Une équipe ne peut pas tout faire en 4 cycles : **elle doit choisir**.
+**Repères pour l'équilibrage :** 37 efforts au total (6 pour les Must, 23 pour les Should, 8 pour les Could) et 51 étoiles au maximum (1 275 joueurs). Une équipe ne peut pas tout faire en 4 cycles : **elle doit choisir**.
 
 ---
 
-## 4. Le paquet de cartes Défaut (20 cartes)
+## 4. Le paquet de cartes Test (20 cartes)
 
-Pour chaque bloc produit par PIX, une carte Défaut est glissée **face cachée** sous la carte Fonctionnalité (le bloc lui-même est marqué d'un jeton bloc). Brief simple : on tire 1 carte. Brief détaillé : on en tire 2 et on garde la meilleure (l'autre retourne sous le paquet). **Quand la pioche est vide, on mélange la défausse pour la reformer.**
+Pour chaque effort produit par PIX, une carte Test est glissée **face cachée** sous la carte Fonctionnalité (l'effort lui-même est marqué d'un pion Effort). Prompt simple : on tire 1 carte. Prompt détaillé : on en tire 2 et on garde la meilleure (l'autre retourne sous le paquet). **Quand la pioche est vide, on mélange la défausse pour la reformer.**
 
 | Id | Type | Nombre | Révélé par | Effet s'il part en release |
 |---|---|---|---|---|
-| D01 – D12 | **Aucun défaut** | 12 | Relecture, test, playtest ou release | — |
-| D13 – D17 | **Bug** | 5 | SCAN, relecture ou release | La fonctionnalité ne rapporte **aucun joueur** tant qu'elle n'est pas corrigée, et la note baisse de 0,5 |
-| D18 – D20 | **Pas fun** | 3 | Playtest du designer, relecture ou release (**jamais par SCAN**) | La fonctionnalité **perd 1 étoile** tant qu'elle n'est pas corrigée |
+| T01 – T12 | **OK** | 12 | Relecture, test, playtest ou release | — |
+| T13 – T17 | **Bug** | 5 | SCAN, relecture ou release | La fonctionnalité ne rapporte **aucun joueur** tant qu'elle n'est pas corrigée, et la note baisse de 0,5 |
+| T18 – T20 | **Pas fun** | 3 | Playtest du designer, relecture ou release (**jamais par SCAN**) | La fonctionnalité **perd 1 étoile** tant qu'elle n'est pas corrigée |
 
-**Corriger un défaut révélé** coûte 1 PA au responsable de la fonctionnalité. La carte Défaut est alors défaussée.
+**Corriger un problème révélé** coûte 1 heure au responsable de la fonctionnalité. La carte Test est alors défaussée.
 
 **Phrases d'ambiance**
-- *Aucun défaut :* « PIX : "Je vous l'avais dit." » / « Propre. Suspect, mais propre. » / « Rien à signaler, capitaine. »
+- *OK :* « PIX : "Je vous l'avais dit." » / « Propre. Suspect, mais propre. » / « Rien à signaler, capitaine. »
 - *Bug :* « PIX : "C'est impossible, j'ai tout vérifié." » / « Le vaisseau traverse les aliens. Comme un fantôme. » / « Le jeu se fige quand on tire trop vite. » / « Le score affiche −12. » / « L'alien touché ne disparaît pas. »
 - *Pas fun :* « SCAN : "Fonctionnement conforme." Sam : "J'ai fermé le jeu." » / « Techniquement parfait. Humainement ennuyeux. » / « On gagne en 13 secondes. »
 
-*Probabilités pour l'équilibrage : un bloc a 40 % de risque de défaut avec un brief simple, environ 16 % avec un brief détaillé.*
+*Probabilités pour l'équilibrage : un effort a 40 % de risque de problème avec un prompt simple, environ 16 % avec un prompt détaillé.*
 
 ---
 
 ## 5. Les 24 cartes Feedback
 
-Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque palier de 100 joueurs atteint pour la première fois** (une équipe à 250 joueurs en a pioché 2 en tout), placée dans la file **Feedback → Backlog**. Le chef de projet les trie (1 PA pour 2 cartes).
+Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque palier de 100 joueurs atteint pour la première fois** (une équipe à 250 joueurs en a pioché 2 en tout), placée dans la file **Feedback → Backlog**. Le chef de projet les trie (1 heure pour 2 cartes).
 
 **Effet du tri (une seule règle pour Bug, Idée et Pas fun) :** on pose la carte sur la fonctionnalité citée.
-- Si la fonctionnalité est **déjà sortie**, il faut produire **1 bloc de travail** dessus (correction ou amélioration). Quand ce travail sort, **la note monte de 0,5** (+1 pour Nova).
-- Si la fonctionnalité **n'est pas encore sortie**, la carte attend : la note monte quand la fonctionnalité sort.
+- Si la fonctionnalité est **déjà publiée**, il faut produire **1 effort de plus** dessus (correction ou amélioration). Quand ce travail est publié, **la note monte de 0,5** (+1 pour Nova).
+- Si la fonctionnalité **n'est pas encore publiée**, la carte attend : la note monte quand la fonctionnalité est publiée.
 - **Hors liste / Compliment :** on l'écarte. Savoir dire non, c'est aussi du pilotage.
 
 **À la release, s'il reste plus de 4 cartes Feedback non triées, la note baisse de 0,5** : « la communauté se sent ignorée ».
@@ -166,11 +166,11 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | Id | Type (recto) | Cycle | Événement (verso) | Effet |
 |---|---|---|---|---|
 | E1 | Communauté | 1 | **Les premiers joueurs arrivent.** Les forums s'animent. | Si votre jeu a des joueurs, piochez 2 cartes Feedback de plus ce cycle |
-| E2 | Technique | 2 | **Mise à jour du modèle de PIX.** Plus rapide, toujours aussi sûr de lui. | Ce cycle, PIX peut produire 4 blocs au lieu de 3 |
-| E3 | Éditeur | 3 | **Vera veut une démo pour ses investisseurs.** | À la release de ce cycle, si une fonctionnalité du premier jouable a un bug, la note baisse de 0,5 de plus |
+| E2 | Technique | 2 | **Mise à jour du modèle de PIX.** Plus rapide, toujours aussi sûr de lui. | Ce cycle, PIX peut produire 4 efforts au lieu de 3 |
+| E3 | Éditeur | 3 | **Vera veut une démo pour ses investisseurs.** | À la release de ce cycle, si une fonctionnalité du MVP a un bug, la note baisse de 0,5 de plus |
 | E4 | Communauté | 4 | **Nova joue en direct au festival.** Des milliers de spectateurs. | Ce cycle, chaque bug publié fait baisser la note de 1 au lieu de 0,5 |
 | E5 | Technique | Rechange | **SCAN est en maintenance.** | Ce cycle, SCAN ne peut faire aucun test |
-| E6 | Éditeur | Rechange | **Les crédits IA augmentent.** | Ce cycle, chaque action d'un agent coûte 2 crédits |
+| E6 | Éditeur | Rechange | **Les tokens IA augmentent.** | Ce cycle, chaque action d'un agent coûte 2 tokens |
 
 *Pour les premières parties, l'ordre est fixe (E1 à E4). E5 et E6 servent à varier les parties suivantes.*
 
@@ -180,7 +180,7 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 
 | Id | Moment | Message |
 |---|---|---|
-| V0 | Cycle 0 | « Bienvenue chez Nébuleuse Games. Avant de signer, je veux un premier jouable : un vaisseau qui apparaît, qui bouge et qui tire, des aliens en face, un missile qui les touche, et une partie qu'on peut perdre et recommencer. Rien de plus. Tant que ce n'est pas jouable, personne n'y jouera. » |
+| V0 | Cycle 0 | « Bienvenue chez Nébuleuse Games. Avant de signer, je veux un MVP : un vaisseau qui apparaît, qui bouge et qui tire, des aliens en face, un missile qui les touche, et une partie qu'on peut perdre et recommencer. Rien de plus. Tant que ce n'est pas jouable, personne n'y jouera. » |
 | V1 | Cycle 1 | « Les premiers joueurs arrivent. Écoutez-les… mais pas tous. Prochain événement : Technique. » |
 | V2 | Cycle 2 | « PIX a été mis à jour. Plus vite, ce n'est pas forcément mieux. Prochain événement : Éditeur. » |
 | V3 | Cycle 3 | « Mes investisseurs veulent une démo. Pas de bug sur l'essentiel, s'il vous plaît. Prochain événement : Communauté. » |
@@ -189,12 +189,12 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 
 ---
 
-## 8. Le cycle 0 (libre, sans défaut)
+## 8. Le cycle 0 (libre, sans carte Test)
 
 - Les **20 cartes Fonctionnalité** sont posées dans le Backlog, **mélangées**, sans indication de priorité.
 - L'animateur lit le message de Vera (V0). Les équipes doivent en déduire les 5 Must.
-- Les actions sont les actions normales (PA, briefs, PIX), avec deux exceptions pour ce cycle : **aucune carte Défaut** et **aucun coût en crédits IA**. Pas d'événement ni de feedback.
-- Capacité du cycle 0 : PIX produit jusqu'à 3 blocs (si le chef de projet écrit les briefs) et, comme il n'y a rien à vérifier ni à trier, **chaque humain peut produire 2 blocs** sur ses fonctionnalités. Soit 7 blocs pour les 6 blocs des Must : ils tiennent, **à condition de ne pas se disperser**.
+- Les actions sont les actions normales (heures, prompts, PIX), avec deux exceptions pour ce cycle : **aucune carte Test** et **aucun coût en tokens IA**. Pas d'événement ni de feedback.
+- Capacité du cycle 0 : PIX produit jusqu'à 3 efforts (si le chef de projet écrit les prompts) et, comme il n'y a rien à tester ni à trier, **chaque humain peut produire 2 efforts** sur ses fonctionnalités. Soit 7 efforts pour les 6 efforts des Must : ils tiennent, **à condition de ne pas se disperser**.
 - Release : si les 5 Must sont livrés, 10 étoiles = **250 joueurs**, et le score du cycle vaut 250 × 3 (la note de départ) = 750. Sinon : **0 joueur et 0 point**, et l'animateur le fait remarquer au leaderboard.
 - Au cycle 1, une équipe à 250 joueurs pioche **2 cartes Feedback**, plus 2 avec l'événement E1. Une équipe à 0 joueur ne pioche rien : personne ne parle d'un jeu qui n'existe pas.
 
@@ -207,10 +207,10 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | Plateau A2 de l'orbite d'itération | 1 |
 | Fiches de rôle A5 (R1 à R3) | 3 |
 | Cartes Fonctionnalité (F01 à F20) | 20 |
-| Cartes Défaut (D01 à D20) | 20 |
+| Cartes Test (T01 à T20) | 20 |
 | Cartes Feedback (FB01 à FB24) | 24 |
-| Jetons point d'action | 9 |
-| Jetons bloc | 15 |
-| Marqueurs (crédits, note, cycle) | 3 |
+| Jetons Heure | 9 |
+| Pions Effort | 15 |
+| Marqueurs (tokens, note, cycle) | 3 |
 | Feuille de score | 1 |
 | **Pour l'animateur :** cartes Événement (E1 à E6) et messages de Vera (V0 à V5) | 1 jeu |
