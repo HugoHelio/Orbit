@@ -75,13 +75,15 @@
     t = traduire;
     cadrer();
     svg.innerHTML = "";
-    vu.station = null; vu.posees = {}; vu.utilisees = {}; vu.files = {}; vu.choisi = null;
+    vu.station = null; vu.posees = {}; vu.files = {}; vu.choisi = null;
+    vu.sortes = {}; vu.pris = {};
+    S.roles.forEach((r) => { vu.sortes[r] = sortesDuCycle(0); vu.pris[r] = vu.sortes[r].map(() => false); });
     for (const f in tickets) delete tickets[f];
 
     definitions();
     calques = {};
     ["ciel", "orbite", "liens", "zones", "pioches", "evenement", "files", "stations", "soleil", "planetes",
-     "satellites", "jetons", "idees", "tickets", "bulles", "loupe", "glisse"].forEach((nom) => {
+     "satellites", "jetons", "idees", "tickets", "panneaux", "bulles", "loupe", "glisse"].forEach((nom) => {
       calques[nom] = el("g", { class: "calque-" + nom }, svg);
     });
 
@@ -221,6 +223,11 @@
       markerWidth: 6, markerHeight: 6, orient: "auto-start-reverse"
     }, defs);
     el("path", { d: "M0,0 L10,5 L0,10 Z", class: "pointe-equipe" }, m2);
+    const m3 = el("marker", {
+      id: "pointe-retour", viewBox: "0 0 10 10", refX: 8, refY: 5,
+      markerWidth: 4.5, markerHeight: 4.5, orient: "auto-start-reverse"
+    }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 Z", class: "pointe-retour" }, m3);
 
     // Un cercle de découpe pour les portraits.
     const clip = el("clipPath", { id: "rond", clipPathUnits: "objectBoundingBox" }, defs);
@@ -252,8 +259,19 @@
     el("ellipse", { cx: G.cx, cy: G.cy, rx: G.rx, ry: G.ry, class: "orbite-flux" }, g);
     el("ellipse", { cx: G.cx, cy: G.cy, rx: COULOIR.rx, ry: COULOIR.ry, class: "couloir" }, g);
 
+    // Les deux aiguillages (GDD 0.21) : à la sortie du Backlog (qui produit ?)
+    // et à la sortie du Test (corriger ou publier quand même ?).
+    AIGUILLAGES.forEach((a) => {
+      const p = surOrbite(a.angle);
+      const ga = el("g", { class: "aiguillage-repere", "data-aiguillage": a.id, transform: `translate(${p.x},${p.y})` }, g);
+      el("circle", { r: 17, class: "aiguillage-rond" }, ga);
+      el("path", { d: "M0,10 V1 M0,1 L-7,-8 M0,1 L7,-8", class: "aiguillage-icone" }, ga);
+      el("text", { x: a.x, y: a.y, class: "aiguillage-nom", "text-anchor": a.ancre, texte: t("aiguillage.repere") }, ga);
+      el("title", { texte: t("aiguillage." + a.id + ".aide") }, ga);
+    });
+
     // Des chevrons qui indiquent le sens du flux, entre les stations sans file.
-    [-120, 60, 120].forEach((angle) => {
+    [120].forEach((angle) => {
       const p = surOrbite(angle);
       const a = (angle * Math.PI) / 180;
       const dir = (Math.atan2(G.ry * Math.cos(a), -G.rx * Math.sin(a)) * 180) / Math.PI;
@@ -262,6 +280,15 @@
         transform: `translate(${p.x},${p.y}) rotate(${dir})`
       }, g);
     });
+  }
+
+  const AIGUILLAGES = [
+    { id: "backlog", angle: -120, x: -24, y: -14, ancre: "end" },
+    { id: "test", angle: 60, x: 24, y: 24, ancre: "start" }
+  ];
+  function activerAiguillage(id, oui) {
+    const g = svg.querySelector(`.aiguillage-repere[data-aiguillage="${id}"]`);
+    if (g) g.classList.toggle("actif", !!oui);
   }
 
   function dessinerFiles() {
@@ -317,11 +344,72 @@
       if (S.portraitsRoles && S.portraitsRoles[role]) portrait(ligne, S.portraitsRoles[role], -98, 0, 22, "equipe");
       el("text", { x: -68, y: -1, class: "role-nom", texte: t("role." + role) }, ligne);
       if (S.equipe && S.equipe[role]) el("text", { x: -68, y: 15, class: "role-personne", texte: t("nom." + S.equipe[role]) }, ligne);
-      for (let j = 0; j < S.heuresParRole; j++) {
-        // Un jeton Heure qui reste au pilotage : la même pastille ambre que sur les stations.
-        badgeRole(ligne, role, 52 + j * 30, 0, 14, "jeton-soleil").dataset.index = j;
-      }
+      el("g", { class: "jetons-role", "data-role": role }, ligne);
+      dessinerJetons(role);
     });
+  }
+
+  // Les jetons d'un rôle au pilotage : 3 par cycle, dont le jeton ⚒ Prod (GDD 0.21).
+  // Un jeton parti laisse sa place vide (il est posé sur une station).
+  // change : les places dont la sorte vient de changer (elles s'animent).
+  function dessinerJetons(role, change) {
+    const g = svg.querySelector(`.jetons-role[data-role="${role}"]`);
+    if (!g) return;
+    g.innerHTML = "";
+    vu.sortes[role].forEach((sorte, j) => {
+      const classe = "jeton-soleil" + (vu.pris[role][j] ? " utilise" : "") + (change && change[j] ? " change" : "");
+      jeton(g, role, 52 + j * 30, 0, 14, classe, sorte === "prod").dataset.index = j;
+    });
+  }
+
+  // Un jeton : la pastille du rôle (sa lettre). Le jeton Prod est corail, avec un petit marteau en dessous.
+  function jeton(parent, role, x, y, r, classe, prod) {
+    const b = badgeRole(parent, role, x, y, r, (classe || "") + (prod ? " prod" : ""));
+    if (prod) {
+      const m = el("g", { class: "marteau", transform: `translate(0,${(r * 0.95).toFixed(1)})` }, b);
+      el("circle", { r: r * 0.52, class: "marteau-fond" }, m);
+      el("text", { x: 0, y: r * 0.24, class: "marteau-texte", "text-anchor": "middle", style: `font-size:${(r * 0.7).toFixed(1)}px`, texte: "⚒" }, m);
+    }
+    return b;
+  }
+
+  // Les sortes de jetons d'un cycle : « heure » ou « prod ».
+  function sortesDuCycle(cycle) {
+    const J = S.jetons;
+    if (!J) return Array(S.heuresParRole).fill("heure");
+    return (J.parCycle[cycle] || J.defaut).slice();
+  }
+  // Un nouveau cycle : les sortes de jetons changent (l'élan du lancement, le sprint final).
+  function donnerJetons(cycle) {
+    S.roles.forEach((r) => {
+      const avant = vu.sortes[r] || [];
+      vu.sortes[r] = sortesDuCycle(cycle);
+      if (!vu.pris[r] || vu.pris[r].length !== vu.sortes[r].length) vu.pris[r] = vu.sortes[r].map(() => false);
+      dessinerJetons(r, vu.sortes[r].map((x, j) => !!avant[j] && avant[j] !== x));
+    });
+  }
+  // Prendre un jeton au pilotage : le plus à droite de la sorte demandée.
+  // Un jeton Prod peut servir d'heure ordinaire, l'inverse non. Renvoie null s'il n'y en a plus.
+  function prendreJeton(role, sorte) {
+    const s = vu.sortes[role], p = vu.pris[role];
+    const chercher = (k) => { for (let j = s.length - 1; j >= 0; j--) if (!p[j] && s[j] === k) return j; return -1; };
+    let j = sorte === "prod" ? chercher("prod") : chercher("heure");
+    if (j < 0 && sorte !== "prod") j = chercher("prod");
+    if (j < 0) return null;
+    p[j] = true;
+    dessinerJetons(role);
+    return { index: j, prod: s[j] === "prod" };
+  }
+  function libererJetons() {
+    S.roles.forEach((r) => { vu.pris[r] = vu.sortes[r].map(() => false); dessinerJetons(r); });
+  }
+  function jetonsLibres(role, sorte) {
+    return vu.sortes[role].filter((x, j) => !vu.pris[role][j] && (!sorte || x === sorte)).length;
+  }
+  function etatJetons() {
+    const o = {};
+    S.roles.forEach((r) => (o[r] = { sortes: vu.sortes[r].slice(), pris: vu.pris[r].slice() }));
+    return o;
   }
 
   function portrait(parent, fichier, x, y, r, classe) {
@@ -417,7 +505,7 @@
   // --- Les fonctions d'état (appelées par la vitrine, puis par le script) ----
 
   // Ce que le plateau montre en ce moment (pour que les animations partent du bon endroit).
-  const vu = { station: null, posees: {}, utilisees: {}, files: {} };
+  const vu = { station: null, posees: {}, files: {}, sortes: {}, pris: {} };
 
   function illuminerStation(id) {
     vu.station = id;
@@ -448,12 +536,10 @@
     }
   }
 
+  // L'état de départ (vitrine) : n jetons de ce rôle sont déjà partis, en partant de la droite.
   function utiliserHeures(role, n) {
-    vu.utilisees[role] = n;
-    const g = svg.querySelector(`.role[data-role="${role}"]`);
-    // Les jetons partent de la droite : ceux qui restent sont à gauche.
-    // Un jeton parti laisse une place vide : il est posé sur une station.
-    g.querySelectorAll(".jeton-soleil").forEach((c) => c.classList.toggle("utilise", +c.dataset.index >= S.heuresParRole - n));
+    vu.pris[role] = vu.sortes[role].map((x, j) => j >= vu.sortes[role].length - n);
+    dessinerJetons(role);
   }
 
   // Où se trouve un jeton Heure au pilotage (index 0 à 2, de gauche à droite).
@@ -464,25 +550,29 @@
   // Où se pose le i-ème jeton Heure sur une station : comme une petite lune sur le bord de la planète.
   // En haut, l'étiquette est au-dessus de la planète : les jetons vont sur sa droite.
   // Sur Build, ils vont à gauche, pour ne pas croiser le lien de PIX.
-  const DEPART_JETONS = { build: 195 };
+  // Sur Build, ils descendent (pas négatif) pour ne pas cacher le nom de la station.
+  const DEPART_JETONS = { build: 200 }, PAS_JETONS = { build: -36 };
   function posHeurePosee(stationId, i) {
     const p = surOrbite(station(stationId).angle);
     const depart = DEPART_JETONS[stationId] !== undefined ? DEPART_JETONS[stationId] : p.y < G.cy ? -30 : -130;
-    const a = ((depart + i * 34) * Math.PI) / 180;
+    const pas = PAS_JETONS[stationId] !== undefined ? PAS_JETONS[stationId] : 34;
+    const a = ((depart + i * pas) * Math.PI) / 180;
     const r = G.rStation + 4;
     return { x: p.x + r * Math.cos(a), y: p.y + r * Math.sin(a) };
   }
 
   // Les jetons Heure posés sur une station. roles : la liste des propriétaires,
   // par exemple ["chef", "designer"] (un jeton par heure), avec la lettre de chacun.
+  // Un jeton posé vaut { role, prod, depuis } (depuis : sa place au pilotage) ; un simple nom de rôle suffit aussi.
   function poserHeures(stationId, roles) {
-    vu.posees[stationId] = (roles || []).slice();
+    const liste = (roles || []).map((x) => (typeof x === "string" ? { role: x, prod: false, depuis: null } : Object.assign({}, x)));
+    vu.posees[stationId] = liste;
     calques.jetons.querySelectorAll(`[data-station="${stationId}"]`).forEach((e) => e.remove());
-    if (!roles || !roles.length) return;
+    if (!liste.length) return;
     const g = el("g", { class: "jetons-poses", "data-station": stationId }, calques.jetons);
-    roles.forEach((role, i) => {
+    liste.forEach((j, i) => {
       const p = posHeurePosee(stationId, i);
-      badgeRole(g, role, p.x, p.y, 16, "heure-posee").dataset.index = i;
+      jeton(g, j.role, p.x, p.y, 16, "heure-posee", j.prod).dataset.index = i;
     });
   }
   function elementHeurePosee(stationId, i) {
@@ -561,20 +651,33 @@
     }
   }
 
+  // La définition d'une fonctionnalité. Un ticket correctif (« F06-c », GDD 0.21) reprend sa fonctionnalité :
+  // 1 effort, pas d'étoile de plus (elle est déjà live).
+  function def(f) {
+    const base = S.fonctionnalites[idBase(f)];
+    if (!estCorrectif(f)) return base;
+    return Object.assign({}, base, { efforts: 1, etoiles: 0, correctif: true, ideeGamer: false });
+  }
+  function estCorrectif(f) { return /-c$/.test(f); }
+  function idBase(f) { return f.replace(/-c$/, ""); }
+  function nomF(f) {
+    return estCorrectif(f) ? t("ticket.correctif.nom").replace("{nom}", t("f." + idBase(f))) : t("f." + f);
+  }
+
   // Une tuile : une fonctionnalité pas encore lancée (dans les Idées ou le Backlog).
   function tuile(parent, f, x, y, l, classe) {
-    const def = S.fonctionnalites[f];
-    const g = el("g", { class: "tuile " + classe + (def.ideeGamer ? " idee-gamer" : ""), "data-f": f, transform: `translate(${x},${y})`, tabindex: 0, role: "button" }, parent);
+    const d = def(f);
+    const g = el("g", { class: "tuile " + classe + (d.ideeGamer ? " idee-gamer" : "") + (d.correctif ? " correctif" : ""), "data-f": f, transform: `translate(${x},${y})`, tabindex: 0, role: "button" }, parent);
     el("rect", { x: 0, y: 0, width: l, height: TUILE.h, rx: 8, class: "tuile-fond" }, g);
-    el("path", { d: `M8,0 H32 V${TUILE.h} H8 Q0,${TUILE.h} 0,${TUILE.h - 8} V8 Q0,0 8,0 Z`, class: "tuile-talon" + (def.ideeGamer ? " gamer" : "") }, g);
-    el("text", { x: 16, y: 17, class: "tuile-id", "text-anchor": "middle", texte: f }, g);
-    el("text", { x: 16, y: 32, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + def.resp + ".court") }, g);
-    el("text", { x: 39, y: 17, class: "tuile-nom", texte: abreger(t("f." + f), l > 150 ? 17 : 15) }, g);
-    for (let i = 0; i < def.etoiles; i++) {
+    el("path", { d: `M8,0 H32 V${TUILE.h} H8 Q0,${TUILE.h} 0,${TUILE.h - 8} V8 Q0,0 8,0 Z`, class: "tuile-talon" + (d.ideeGamer ? " gamer" : "") + (d.correctif ? " correctif" : "") }, g);
+    el("text", { x: 16, y: 17, class: "tuile-id", "text-anchor": "middle", texte: idBase(f) }, g);
+    el("text", { x: 16, y: 32, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + d.resp + ".court") }, g);
+    el("text", { x: 39, y: 17, class: "tuile-nom", texte: abreger(nomF(f), l > 150 ? 17 : 15) }, g);
+    for (let i = 0; i < d.etoiles; i++) {
       el("path", { d: "M0,-5 L1.5,-1.6 L5,-1.6 L2.2,0.7 L3.2,4.2 L0,2.1 L-3.2,4.2 L-2.2,0.7 L-5,-1.6 L-1.5,-1.6 Z", class: "ticket-etoile", transform: `translate(${44 + i * 11},29)` }, g);
     }
-    for (let i = 0; i < def.efforts; i++) {
-      el("rect", { x: l - 12 - (def.efforts - i) * 15, y: 25, width: 12, height: 6, rx: 3, class: "case-effort" }, g);
+    for (let i = 0; i < d.efforts; i++) {
+      el("rect", { x: l - 12 - (d.efforts - i) * 15, y: 25, width: 12, height: 6, rx: 3, class: "case-effort" }, g);
     }
     return g;
   }
@@ -639,7 +742,7 @@
   const COMPACT = { l: 132, h: 36, talon: 30 };
   function poserTicket(v, index) {
     tickets[v.f] = { v, index };
-    const def = S.fonctionnalites[v.f];
+    const def = Plateau.def(v.f);
     const p = placeCouloir(v.station, index);
     const g = el("g", {
       class: "ticket compact" + (vu.choisi === v.f ? " choisi" : ""), "data-f": v.f,
@@ -647,12 +750,12 @@
     }, calques.tickets);
     const L = -COMPACT.l / 2, R = COMPACT.l / 2, H = COMPACT.h / 2, T = L + COMPACT.talon;
     el("rect", { x: L, y: -H, width: COMPACT.l, height: COMPACT.h, rx: 8, class: "ticket-fond" }, g);
-    el("path", { d: `M${L + 8},${-H} H${T} V${H} H${L + 8} Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`, class: "ticket-talon" + (def.ideeGamer ? " gamer" : "") }, g);
+    el("path", { d: `M${L + 8},${-H} H${T} V${H} H${L + 8} Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`, class: "ticket-talon" + (def.ideeGamer ? " gamer" : "") + (def.correctif ? " correctif" : "") }, g);
     el("rect", { x: L, y: -H, width: COMPACT.l, height: COMPACT.h, rx: 8, class: "ticket-contour" }, g);
-    el("text", { x: (L + T) / 2, y: -2, class: "ticket-id compact", "text-anchor": "middle", texte: v.f }, g);
+    el("text", { x: (L + T) / 2, y: -2, class: "ticket-id compact", "text-anchor": "middle", texte: idBase(v.f) }, g);
     el("text", { x: (L + T) / 2, y: 13, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + def.resp + ".court") }, g);
     const x0 = T + 7;
-    el("text", { x: x0, y: -3, class: "ticket-nom compact", texte: abreger(t("f." + v.f), 14) }, g);
+    el("text", { x: x0, y: -3, class: "ticket-nom compact", texte: abreger(nomF(v.f), 14) }, g);
     const lc = EFFORT.compact, ecart = 3;
     for (let i = 0; i < def.efforts; i++) {
       const qui = (v.efforts || [])[i];
@@ -662,7 +765,29 @@
       }, g);
     }
     poserCartesTest(g, v, x0, lc, ecart, H, true);
+    poserAttente(g, v, R, H);
     return g;
+  }
+
+  // Ce qu'attend un ticket (GDD 0.21) : PIX (un prompt, puis des tokens), le jeton ⚒ Prod
+  // de son responsable, ou une vérification au Test (la loupe). Rien : il peut avancer.
+  function attente(v) {
+    const d = def(v.f);
+    const faits = (v.efforts || []).filter(Boolean).length;
+    if (v.enCorrection) return "corr";
+    if ((v.station === "prompt" || v.station === "build") && faits < d.efforts && v.par) return v.par === "pix" ? "pix" : "prod";
+    if (v.station === "test" && (v.cartesTest || []).some((c) => !c.revelee)) return "verif";
+    return null;
+  }
+  function poserAttente(g, v, R, H) {
+    const a = attente(v);
+    if (!a) return;
+    const b = el("g", { class: "attente attente-" + a, transform: `translate(${R - 6},${-H - 3})` }, g);
+    el("circle", { r: 11, class: "attente-fond" }, b);
+    if (a === "pix") el("text", { x: 0, y: 3.5, class: "attente-texte code", "text-anchor": "middle", texte: "</>" }, b);
+    else if (a === "prod" || a === "corr") el("text", { x: 0, y: 4.5, class: "attente-texte", "text-anchor": "middle", texte: "⚒" }, b);
+    else el("path", { d: ICONES.test, class: "attente-icone", transform: "scale(0.42)" }, b);
+    el("title", { texte: t("ticket.attend." + a) }, b);
   }
 
   // La loupe : le ticket complet, dessiné par-dessus le ticket compact survolé.
@@ -677,7 +802,7 @@
   function cacherLoupe() { calques.loupe.innerHTML = ""; }
 
   function dessinerTicketComplet(g, v) {
-    const def = S.fonctionnalites[v.f];
+    const def = Plateau.def(v.f);
     g.classList.add("ticket");
     const { g: L, d: R, h: H, talon: T } = TICKET;
 
@@ -689,23 +814,23 @@
     el("path", {
       d: `M${L + 8},${-H} H${T - 6} A6,6 0 0,0 ${T},${-H + 6} V${H - 6} A6,6 0 0,0 ${T - 6},${H} H${L + 8}
         Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`,
-      class: "ticket-talon" + (def.ideeGamer ? " gamer" : "")
+      class: "ticket-talon" + (def.ideeGamer ? " gamer" : "") + (def.correctif ? " correctif" : "")
     }, g);
     el("line", { x1: T, y1: -H + 8, x2: T, y2: H - 8, class: "ticket-decoupe" }, g);
     el("path", { d: forme, class: "ticket-contour" }, g);
-    el("text", { x: (L + T) / 2, y: -9, class: "ticket-id", "text-anchor": "middle", texte: v.f }, g);
-    // La lettre du responsable : c'est lui qui la produit, relit le travail de PIX et corrige.
+    el("text", { x: (L + T) / 2, y: -9, class: "ticket-id", "text-anchor": "middle", texte: idBase(v.f) }, g);
+    // La lettre du responsable : c'est lui qui la produit et la corrige.
     if (def.resp) badgeRole(g, def.resp, (L + T) / 2, 12, 11, "ticket");
 
     const x0 = T + 9;
-    el("text", { x: x0, y: -11, class: "ticket-nom", texte: abreger(t("f." + v.f), 17) }, g);
+    el("text", { x: x0, y: -11, class: "ticket-nom", texte: abreger(nomF(v.f), 17) }, g);
     for (let i = 0; i < def.etoiles; i++) {
       el("path", {
         d: "M0,-6 L1.8,-1.9 L6,-1.9 L2.6,0.8 L3.8,5 L0,2.5 L-3.8,5 L-2.6,0.8 L-6,-1.9 L-1.8,-1.9 Z",
         class: "ticket-etoile", transform: `translate(${x0 + 6 + i * 14},6)`
       }, g);
     }
-    const faits = (v.efforts || []).length;
+    const faits = (v.efforts || []).filter(Boolean).length;
     el("text", {
       x: R - 9, y: 10, class: "ticket-effort", "text-anchor": "end",
       texte: t("ticket.effort").replace("{n}", faits).replace("{total}", def.efforts)
@@ -753,6 +878,38 @@
     el("rect", { x: -8, y: -10, width: 16, height: 21, rx: 3, class: "carte-test-fond" }, c);
     const lettre = etat === "cachee" ? t("carte.test.cachee") : etat === "ok" ? "✓" : "!";
     el("text", { x: 0, y: 4.5, class: "carte-test-texte", "text-anchor": "middle", texte: lettre }, c);
+  }
+
+  // Les trois vérifications du Test (GDD 0.21), près de la station : qui, ce que ça coûte, ce que ça trouve.
+  // actif : la vérification en cours ("scan", "review", "playtest"), null pour aucune, false pour cacher le panneau.
+  function montrerVerifications(actif) {
+    calques.panneaux.querySelectorAll(".verifs").forEach((e) => e.remove());
+    if (actif === false) return;
+    const l = 250, h = 32 + 3 * 26;
+    const g = el("g", { class: "verifs", transform: "translate(724,648)" }, calques.panneaux);
+    el("rect", { x: 0, y: 0, width: l, height: h, rx: 12, class: "verifs-fond" }, g);
+    el("text", { x: 12, y: 20, class: "verifs-titre", texte: t("verif.titre") }, g);
+    [["scan", null], ["review", "programmeur"], ["playtest", "designer"]].forEach(([id, role], i) => {
+      const y = 28 + i * 26;
+      const r = el("g", { class: "verif" + (actif === id ? " active" : ""), "data-verif": id, transform: `translate(0,${y})` }, g);
+      el("rect", { x: 6, y: 0, width: l - 12, height: 23, rx: 7, class: "verif-fond" }, r);
+      if (role) badgeRole(r, role, 20, 11.5, 8.5, "verif-badge");
+      else {
+        el("circle", { cx: 20, cy: 11.5, r: 8.5, class: "verif-agent" }, r);
+        el("text", { x: 20, y: 15, class: "verif-agent-texte", "text-anchor": "middle", texte: "S" }, r);
+      }
+      el("text", { x: 36, y: 16, class: "verif-texte", texte: t("verif." + id) }, r);
+    });
+  }
+
+  // La flèche rouge de la petite boucle : le ticket recule (du Test au Build), entre le couloir et l'orbite.
+  function flecheRetour(de, vers) {
+    const a1 = station(de).angle - 8, a2 = station(vers).angle + 8, pts = [];
+    for (let k = 0; k <= 24; k++) {
+      const a = ((a1 + (a2 - a1) * (k / 24)) * Math.PI) / 180;
+      pts.push(`${(G.cx + (COULOIR.rx + 85) * Math.cos(a)).toFixed(1)},${(G.cy + (COULOIR.ry + 70) * Math.sin(a)).toFixed(1)}`);
+    }
+    return el("path", { d: "M" + pts.join(" L"), class: "fleche-retour", "marker-end": "url(#pointe-retour)" }, calques.panneaux);
   }
 
   // La fonctionnalité choisie (clic sur son ticket) : le banc d'essai, puis le joueur, agissent sur elle.
@@ -812,11 +969,11 @@
 
   // Le coin haut-gauche d'une tuile dans les Idées (rang i) ou dans le Backlog (rang i),
   // ou d'une tuile posée sur la place d'un ticket du couloir (pour la faire voler).
-  function cibleTuile(zone, i) {
+  function cibleTuile(zone, i, stationId) {
     const zi = ZONES.idees, zb = ZONES.backlog;
     if (zone === "backlog") return { x: zb.x + 26, y: zb.y + 50 + i * TUILE.pas };
     if (zone === "idees") return { x: zi.x + 9 + (i % 2) * (TUILE.l + 8), y: zi.y + 74 + Math.floor(i / 2) * TUILE.pas };
-    const p = placeCouloir("prompt", i);
+    const p = placeCouloir(stationId || "prompt", i);
     return { x: p.x - COMPACT.l / 2, y: p.y - TUILE.h / 2 };
   }
 
@@ -913,14 +1070,16 @@
     elementTuile, elementPileCachees,
     // Pour les animations (js/animations.js) : l'état visible et la géométrie.
     placerTicket, rangerTicket, rangTicket, reserverTicket, animerCase, elementHeurePosee, cibleTuile, bulleVera,
+    def, nomF, estCorrectif, idBase, donnerJetons, prendreJeton, libererJetons, jetonsLibres, jetons: etatJetons,
+    activerAiguillage, montrerVerifications, flecheRetour,
     stationActive: () => vu.station,
     choisir, choisi: () => vu.choisi,
     heuresPosees: (st) => (vu.posees[st] || []).slice(),
     toutesHeuresPosees: () => JSON.parse(JSON.stringify(vu.posees)),
-    heuresUtilisees: () => Object.assign({}, vu.utilisees),
+    heuresUtilisees: () => { const o = {}; S.roles.forEach((r) => (o[r] = vu.pris[r].filter(Boolean).length)); return o; },
     niveauFile: (id) => vu.files[id] || 0,
     outils: {
-      el, badgeRole, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
+      el, badgeRole, jeton, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
       angleStation: (id) => station(id).angle,
       surOrbite, G, COULOIR, decalageCouloir, places: () => G.places, calque: (nom) => calques[nom]
     }

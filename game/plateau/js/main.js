@@ -57,6 +57,8 @@
     // Une copie fraîche : les pioches et le lecteur la font évoluer pendant la démo.
     const V = JSON.parse(JSON.stringify(modeVitrine ? window.VITRINE : window.DEMO_SCRIPT.depart));
     Plateau.init(document.getElementById("plateau"), S, t);
+    // Les jetons du cycle : 2 Heure et 1 ⚒ Prod, ou 1 Heure et 2 Prod au cycle 0 et au cycle 4 (GDD 0.21).
+    Plateau.donnerJetons(V.cycle);
     TableauDeBord.init(document.getElementById("tableau"), S, t);
 
     // Les pioches : on mélange, puis on donne une vraie carte à chaque carte Test de la vitrine.
@@ -64,6 +66,7 @@
       scenario: S, traduire: t, etat: V,
       cadre: document.querySelector(".plateau-cadre"), couche: document.getElementById("couche-cartes")
     });
+    Aiguillage.init({ scenario: S, traduire: t, couche: document.getElementById("couche-cartes") });
     // Les cartes Feedback de la file sont de vraies cartes : on les retire de la pioche.
     V.fileFeedback.forEach((id) => Pioches.tirerSilencieux("feedback", null, id));
     V.files["feedback-backlog"] = V.fileFeedback.length;
@@ -102,12 +105,13 @@
     TableauDeBord.afficherGamers(V.gamers);
     TableauDeBord.afficherNote(V.note);
     TableauDeBord.afficherScore(V.score);
-    TableauDeBord.afficherHeures(heuresUtilisees);
+    TableauDeBord.afficherHeures(Plateau.jetons());
     TableauDeBord.afficherTokens(V.tokensRestants);
     TableauDeBord.afficherMvp(V.mvp);
-    TableauDeBord.afficherPubliees(V.publiees);
+    TableauDeBord.afficherPubliees(V.publiees, V.signalees);
     TableauDeBord.afficherBoucles(V.bouclesFaites, V.cycle);
 
+    Actions.init({ scenario: S, traduire: t, etat: V });
     // Le banc d'essai de l'étape 2 : un bouton par brique animée.
     // Le banc d'essai : avec la vitrine, ou sur demande (index.html?banc=1). La démo reste propre.
     if (modeVitrine || url.get("banc") === "1") Banc.init({ scenario: S, traduire: t, etat: V, cadre: document.querySelector(".plateau-cadre") });

@@ -41,6 +41,7 @@
 | `--sun-text` (texte ambre lisible) | `#8A5A00` | `#FBAB00` |
 | `--danger` | `#E5484D` | `#F87171` |
 | `--queue` (files d'attente) | `#F26B5B` | `#FBAB00` |
+| `--prod` (le jeton ⚒ Prod, GDD 0.21) | `#F26B5B` | `#FF7A66` |
 
 **Contraste :** sur fond clair, ne jamais écrire en sarcelle `#23C2AA` ou en ambre `#FBAB00` (trop pâles) : utiliser `--accent-text` et `--sun-text`.
 

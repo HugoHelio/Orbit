@@ -61,23 +61,23 @@
   // Mélanger deux décalages (p de 0 à 1).
   function entre(d1, d2, p) { return { x: d1.x + (d2.x - d1.x) * p, y: d1.y + (d2.y - d1.y) * p }; }
 
-  // --- 1. Un jeton Heure vole du pilotage vers une station ---------------------
-  // Le jeton part de la droite de la ligne du rôle et laisse sa place vide.
-  // Renvoie false si la personne n'a plus d'heure.
+  // --- 1. Un jeton vole du pilotage vers une station ---------------------------
+  // sorte : "heure" (par défaut) ou "prod" (le jeton ⚒ Prod, le seul qui produit un effort).
+  // Le jeton part de sa place au pilotage et la laisse vide.
+  // Renvoie false si la personne n'a plus de jeton de cette sorte.
 
-  async function envolerHeure(role, stationId) {
+  async function envolerHeure(role, stationId, sorte) {
     const O = Plateau.outils;
-    const n = Plateau.heuresUtilisees()[role] || 0;
-    if (n >= S().heuresParRole) return false;
-    const depart = O.posJetonSoleil(role, S().heuresParRole - 1 - n);
+    const pris = Plateau.prendreJeton(role, sorte || "heure");
+    if (!pris) return false;
+    const depart = O.posJetonSoleil(role, pris.index);
     const posees = Plateau.heuresPosees(stationId);
     const arrivee = O.posHeurePosee(stationId, posees.length);
     const c = controle(depart, arrivee, 0.22);
 
-    Plateau.utiliserHeures(role, n + 1);
     const glisse = O.calque("glisse");
-    const trace = O.el("path", { d: `M${depart.x},${depart.y} Q${c.x},${c.y} ${arrivee.x},${arrivee.y}`, class: "trace-vol" }, glisse);
-    const vol = O.badgeRole(glisse, role, depart.x, depart.y, 14, "heure-posee en-vol");
+    const trace = O.el("path", { d: `M${depart.x},${depart.y} Q${c.x},${c.y} ${arrivee.x},${arrivee.y}`, class: "trace-vol" + (pris.prod ? " prod" : "") }, glisse);
+    const vol = O.jeton(glisse, role, depart.x, depart.y, 14, "heure-posee en-vol", pris.prod);
     await tween(800, (p) => {
       const q = bezier(depart, c, arrivee, p);
       const echelle = (1 + 0.45 * Math.sin(Math.PI * p)) * (1 + p / 7);
@@ -86,7 +86,7 @@
     vol.remove();
     setTimeout(() => trace.remove(), duree(900));
 
-    Plateau.poserHeures(stationId, posees.concat(role));
+    Plateau.poserHeures(stationId, posees.concat({ role, prod: pris.prod, depuis: pris.index }));
     rejouer(Plateau.elementHeurePosee(stationId, posees.length), "atterrit");
     return true;
   }
@@ -100,14 +100,15 @@
     const retour = {};
     const vols = [];
     for (const st in posees) {
-      posees[st].forEach((role, i) => {
+      posees[st].forEach((j, i) => {
+        const role = j.role;
         const n = utilisees[role] || 0;
         retour[role] = (retour[role] || 0) + 1;
-        // Les jetons reviennent dans les places vides, de gauche à droite.
+        // Chaque jeton revient à sa place ; sans place connue, dans les places vides, de gauche à droite.
         const depart = O.posHeurePosee(st, i);
-        const arrivee = O.posJetonSoleil(role, S().heuresParRole - n + retour[role] - 1);
+        const arrivee = O.posJetonSoleil(role, j.depuis !== null && j.depuis !== undefined ? j.depuis : S().heuresParRole - n + retour[role] - 1);
         const c = controle(depart, arrivee, -0.18);
-        const vol = O.badgeRole(glisse, role, depart.x, depart.y, 16, "heure-posee en-vol");
+        const vol = O.jeton(glisse, role, depart.x, depart.y, 16, "heure-posee en-vol", j.prod);
         vols.push(tween(900, (p) => {
           const q = bezier(depart, c, arrivee, p);
           vol.setAttribute("transform", `translate(${q.x},${q.y}) scale(${1 - p * 0.12})`);
@@ -116,7 +117,7 @@
       Plateau.poserHeures(st, []);
     }
     await Promise.all(vols);
-    S().roles.forEach((r) => Plateau.utiliserHeures(r, 0));
+    Plateau.libererJetons();
   }
 
   // --- 2. Une station s'illumine -----------------------------------------------
@@ -182,6 +183,35 @@
     return true;
   }
 
+  // La petite boucle : un problème trouvé au Test, et le ticket recule (au Build) dans le couloir.
+  // Une flèche rouge montre le retour ; elle reste jusqu'à ce que le ticket revienne (on la renvoie).
+  async function reculerTicket(f, vers) {
+    const O = Plateau.outils;
+    const v = Plateau.ticket(f);
+    if (!v) return null;
+    const de = v.station;
+    const i1 = Plateau.rangTicket(f), i2 = Plateau.ticketsA(vers).length;
+    const a1 = O.angleStation(de), a2 = O.angleStation(vers);
+    const d1 = O.decalageCouloir(de, i1), d2 = O.decalageCouloir(vers, i2);
+    const fleche = Plateau.flecheRetour(de, vers);
+    rejouer(fleche, "apparait");
+    Plateau.reserverTicket(f, vers, i2);
+    Plateau.cacherLoupe();
+    const e = Plateau.elementTicket(f);
+    e.parentNode.appendChild(e);
+    e.classList.add("en-voyage", "recule");
+    await tween(1100, (p) => {
+      const q = pointCouloir(a1 + (a2 - a1) * p, entre(d1, d2, p));
+      Plateau.placerTicket(f, q.x, q.y);
+    });
+    e.classList.remove("en-voyage", "recule");
+    Plateau.rangerTicket(f, vers, i2);
+    Plateau.majTicket(f, () => {});
+    rejouer(Plateau.elementTicket(f), "arrive");
+    await resserrer(de);
+    return fleche;
+  }
+
   // Les tickets restés à une station reprennent les premières places (ils glissent).
   function resserrer(stationId) {
     const O = Plateau.outils, a = O.angleStation(stationId);
@@ -222,12 +252,12 @@
 
   // Une tuile vole des Idées au Backlog, ou du Backlog au couloir. La règle du déplacement
   // (et le redessin des zones) reste dans Pioches.deplacer : ici, on ne fait que le vol.
-  async function volerTuile(f, zone, index) {
+  async function volerTuile(f, zone, index, stationId) {
     const O = Plateau.outils;
     const tuile = Plateau.elementTuile(f);
     if (!tuile) return;
     const m = tuile.transform.baseVal.consolidate().matrix;
-    const de = { x: m.e, y: m.f }, vers = Plateau.cibleTuile(zone, index);
+    const de = { x: m.e, y: m.f }, vers = Plateau.cibleTuile(zone, index, stationId);
     const fantome = Plateau.creerFantome(tuile);
     tuile.classList.add("en-deplacement");
     const c = controle(de, vers, 0.12);
@@ -238,19 +268,70 @@
     Plateau.viderFantome();
   }
 
+  // Une tuile qui vient d'arriver dans les zones (déjà dessinée à sa place) vole depuis un point du plateau :
+  // le ticket correctif part de la Communauté vers le Backlog (la grande boucle).
+  async function arriverTuile(f, de) {
+    const tuile = Plateau.elementTuile(f);
+    if (!tuile) return;
+    const m = tuile.transform.baseVal.consolidate().matrix;
+    const vers = { x: m.e, y: m.f };
+    const fantome = Plateau.creerFantome(tuile);
+    tuile.classList.add("en-deplacement");
+    const c = controle(de, vers, -0.2);
+    await tween(1100, (p) => {
+      const q = bezier(de, c, vers, p);
+      fantome.setAttribute("transform", `translate(${q.x},${q.y}) scale(${0.5 + p / 2})`);
+    });
+    Plateau.viderFantome();
+    tuile.classList.remove("en-deplacement");
+    rejouer(tuile, "nouvelle");
+  }
+
   // --- 4. Un effort se remplit sur un ticket ------------------------------------
   // qui : "humain" (case ambre, 1 heure) ou "pix" (case cyan, 1 token).
 
-  function remplirEffort(f, qui) {
+  // i (facultatif) : la case à remplir (une case vidée par une correction) ; sinon la première libre.
+  function remplirEffort(f, qui, i) {
     const v = Plateau.ticket(f);
-    const def = S().fonctionnalites[f];
-    if (!v || (v.efforts || []).length >= def.efforts) return false;
-    const i = (v.efforts || []).length;
-    Plateau.majTicket(f, (x) => { x.efforts = (x.efforts || []).concat(qui); });
+    const def = Plateau.def(f);
+    if (!v) return false;
+    const efforts = (v.efforts || []).slice();
+    if (i === undefined) {
+      i = efforts.findIndex((x) => !x);
+      if (i < 0) i = efforts.length;
+    }
+    if (i >= def.efforts) return false;
+    efforts[i] = qui;
+    Plateau.majTicket(f, (x) => { x.efforts = efforts; });
     Plateau.animerCase(f, i);
     // Le ticket est complet : son contour brille.
-    if (i + 1 === def.efforts) rejouer(Plateau.elementTicket(f), "complet");
+    if (efforts.filter(Boolean).length === def.efforts) rejouer(Plateau.elementTicket(f), "complet");
     return true;
+  }
+
+  // Une vérification humaine : une loupe (code review) ou une manette (playtest) au-dessus du ticket.
+  // Renvoie une fonction pour arrêter.
+  function examiner(f, sorte) {
+    const O = Plateau.outils;
+    const v = Plateau.ticket(f);
+    if (!v) return () => {};
+    const p = O.placeCouloir(v.station, Plateau.rangTicket(f));
+    const g = O.el("g", { class: "examen examen-" + sorte, transform: `translate(${p.x + 6},${p.y - 44})` }, O.calque("bulles"));
+    O.el("circle", { r: 19, class: "examen-fond" }, g);
+    if (sorte === "review") {
+      O.el("path", { d: "M-3,-3 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0 M3,3 L11,11", class: "examen-icone" }, g);
+    } else {
+      O.el("path", { d: "M-13,-6 H13 Q17,-6 17,-2 V6 Q17,10 13,10 H8 L5,6 H-5 L-8,10 H-13 Q-17,10 -17,6 V-2 Q-17,-6 -13,-6 Z", class: "examen-icone" }, g);
+      O.el("path", { d: "M-10,2 H-4 M-7,-1 V5", class: "examen-trait" }, g);
+      O.el("circle", { cx: 7, cy: 0, r: 1.8, class: "examen-point" }, g);
+      O.el("circle", { cx: 11, cy: 4, r: 1.8, class: "examen-point" }, g);
+    }
+    Plateau.elementTicket(f).classList.add("examine");
+    return () => {
+      g.remove();
+      const e = Plateau.elementTicket(f);
+      if (e) e.classList.remove("examine");
+    };
   }
 
   // --- 5. Un agent au travail ---------------------------------------------------
@@ -309,8 +390,8 @@
   }
 
   Object.assign(Anim, {
-    tween, pause, envolerHeure, rappelerHeures, allumerStation, avancerTicket, publierTicket, volerTuile,
-    remplirEffort, travailler, changerFile
+    tween, pause, envolerHeure, rappelerHeures, allumerStation, avancerTicket, reculerTicket, publierTicket, volerTuile,
+    arriverTuile, remplirEffort, examiner, travailler, changerFile, rejouer
   });
   window.Anim = Anim;
 })();

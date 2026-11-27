@@ -9,15 +9,27 @@
 
   function pause(ms) { return Anim.pause(ms); }
 
+  // K6 change de message : sa bulle s'anime, pour qu'on la regarde.
+  function guide(cle) {
+    const e = document.getElementById("guide-texte");
+    e.textContent = t(cle);
+    Anim.rejouer(e.closest(".guide-bulle"), "nouveau");
+  }
+
   // --- Ce que fait chaque étape --------------------------------------------------
 
   const FAIRE = {
     async temps(e) {
-      if (e.cycle !== undefined) etat.cycle = e.cycle;
+      if (e.cycle !== undefined && e.cycle !== etat.cycle) {
+        // Un nouveau cycle : les jetons changent (fin de l'élan du lancement, sprint final…).
+        etat.cycle = e.cycle;
+        Plateau.donnerJetons(etat.cycle);
+        TableauDeBord.afficherHeures(Plateau.jetons());
+      }
       if (e.temps) etat.temps = e.temps;
       TableauDeBord.afficherTemps(document.getElementById("temps"), etat.cycle, etat.temps);
       TableauDeBord.afficherBoucles(etat.bouclesFaites, etat.cycle);
-      if (e.guide) document.getElementById("guide-texte").textContent = t(e.guide);
+      if (e.guide) guide(e.guide);
       if (e.station === null) Plateau.illuminerStation(null);
       else if (e.station) await Actions.station(e.station);
       await pause(700);
@@ -30,9 +42,15 @@
 
     attendre(e) { return pause(e.ms); },
 
+    // K6 explique un geste, la première fois qu'il arrive (ms : le temps de lire).
+    async guide(e) {
+      guide(e.texte);
+      await pause(e.ms || 3500);
+    },
+
     async station(e) { await Actions.station(e.id); },
 
-    async heure(e) { await Actions.heure(e.role, e.station); },
+    async heure(e) { await Actions.heure(e.role, e.station, e.sorte); },
 
     async rappel() { await Actions.rappelerHeures(); },
 
@@ -43,6 +61,18 @@
         await Anim.volerTuile(f, "backlog", rang);
         Pioches.deplacer(f, "idees", { zone: "backlog", index: rang });
       }
+    },
+
+    // L'aiguillage : le panneau de décision, puis les tickets partent par la voie choisie.
+    // Sortie du Backlog : "pix" (arrêt au Prompt) ou "resp" (droit au Build) ; sans choix, le ticket attend au Backlog.
+    async aiguiller(e) {
+      await Aiguillage.montrer(e);
+      if (e.sortie !== "backlog") return;
+      for (const l of e.lignes) {
+        if (!l.choix) continue;
+        await Actions.lancer(l.f, l.choix === "pix" ? "pix" : "humain");
+      }
+      await pause(300);
     },
 
     // Du Backlog au couloir du cycle (station Prompt), une par une.
@@ -78,6 +108,13 @@
 
     async corriger(e) { await Actions.corriger(e.f, e.carte); },
 
+    async codeReview(e) { await Actions.codeReview(e.f, e.carte); await pause(400); },
+
+    async playtest(e) { await Actions.playtest(e.f, e.carte); await pause(400); },
+
+    // Le panneau des trois vérifications du Test : actif ("scan", "review", "playtest"), null, ou false pour le cacher.
+    async verifs(e) { Plateau.montrerVerifications(e.actif === undefined ? null : e.actif); await pause(e.ms || 300); },
+
     async reveler(e) { await Pioches.reveler(e.carte); await pause(400); },
 
     async file(e) { Actions.file(e.id, e.n); await pause(500); },
@@ -86,7 +123,7 @@
     async publier(e) {
       await Promise.all(e.f.map((f, k) => pause(k * 180).then(() => Anim.publierTicket(f))));
       etat.publiees = etat.publiees.concat(e.f);
-      TableauDeBord.afficherPubliees(etat.publiees);
+      TableauDeBord.afficherPubliees(etat.publiees, etat.signalees);
       await pause(400);
     },
 

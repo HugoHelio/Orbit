@@ -9,21 +9,35 @@
   let S, t, etat, occupe = false, verrou = false, panneau = null, ligneChoix = null, prochainRole = 0;
 
   function ordre() { return S.stations.map((s) => s.id); }
-  function majHeures() { TableauDeBord.afficherHeures(Plateau.heuresUtilisees()); }
+  function majHeures() { TableauDeBord.afficherHeures(Plateau.jetons()); }
   function majTokens() { TableauDeBord.afficherTokens(etat.tokensRestants); }
   function avis(cle, f) { Pioches.avis(t(cle).replace("{f}", f || "")); }
-  function libre(f) { return (Plateau.ticket(f).efforts || []).length < S.fonctionnalites[f].efforts; }
+  function libre(f) { return (Plateau.ticket(f).efforts || []).filter(Boolean).length < Plateau.def(f).efforts; }
+  function carteDe(id) { return S.cartes.test.find((c) => c.id === id); }
 
   // --- Les actions (réutilisées par le script de l'étape 3) --------------------
 
   const Actions = {
-    // Un jeton Heure de ce rôle vole vers la station (par défaut : la station active).
-    async heure(role, stationId) {
+    // Un jeton de ce rôle vole vers la station (par défaut : la station active).
+    // sorte : "heure" (par défaut) ou "prod" (le jeton ⚒ Prod, pour produire un effort).
+    async heure(role, stationId, sorte) {
       const st = stationId || Plateau.stationActive() || "build";
-      const ok = await Anim.envolerHeure(role, st);
-      if (!ok) Pioches.avis(t("avis.heures.role").replace("{role}", t("role." + role)));
+      const ok = await Anim.envolerHeure(role, st, sorte);
+      if (!ok) Pioches.avis(t(sorte === "prod" ? "avis.prod.role" : "avis.heures.role").replace("{role}", t("role." + role)));
       majHeures();
       return ok;
+    },
+
+    // L'aiguillage à la sortie du Backlog : le ticket entre dans le cycle.
+    // par "pix" : il s'arrête au Prompt (il attend un prompt, puis PIX).
+    // par "humain" : il saute le Prompt et file au Build (il attend le jeton ⚒ Prod de son responsable).
+    async lancer(f, par) {
+      await Anim.volerTuile(f, "cycle", Plateau.ticketsA("prompt").length);
+      Pioches.deplacer(f, "backlog", { zone: "cycle", par });
+      if (par !== "pix") {
+        await Anim.pause(250);
+        await Anim.avancerTicket(f, "build");
+      }
     },
 
     async rappelerHeures() {
@@ -44,10 +58,11 @@
       return Anim.avancerTicket(f, vers);
     },
 
-    // Le responsable du ticket passe 1 heure sur Build : son jeton vole, puis un effort se remplit (ambre).
+    // Le responsable du ticket produit 1 effort sur Build avec son jeton ⚒ Prod : le jeton vole,
+    // puis un effort se remplit (ambre).
     async effortHumain(f) {
-      const role = S.fonctionnalites[f].resp;
-      if (!(await Actions.heure(role, "build"))) return false;
+      const role = Plateau.def(f).resp;
+      if (!(await Actions.heure(role, "build", "prod"))) return false;
       return Anim.remplirEffort(f, "humain");
     },
 
@@ -68,14 +83,63 @@
       return true;
     },
 
-    // Le responsable corrige un problème trouvé (1 heure, sur la station Test) : la carte Test est défaussée.
+    // « Corriger » (la petite boucle, GDD 0.21) : le ticket recule au Build (flèche rouge), la carte Test
+    // est défaussée, l'effort fautif se vide, le responsable le refait (1 heure, jamais PIX, hors jeton Prod),
+    // puis le ticket revient au Test.
     async corriger(f, idCarte) {
-      const role = S.fonctionnalites[f].resp;
-      if (!(await Actions.heure(role, Plateau.ticket(f).station))) return false;
-      Plateau.majTicket(f, (v) => { v.cartesTest = (v.cartesTest || []).filter((c) => c.id !== idCarte); });
-      const e = Plateau.elementTicket(f);
-      if (e) { e.classList.remove("complet"); void e.getBoundingClientRect(); e.classList.add("complet"); }
+      const role = Plateau.def(f).resp;
+      if (!Plateau.jetonsLibres(role)) {
+        Pioches.avis(t("avis.heures.role").replace("{role}", t("role." + role)));
+        return false;
+      }
+      const v = Plateau.ticket(f);
+      const retour = v.station;
+      const effortsPix = (v.efforts || []).map((q, i) => (q === "pix" ? i : -1)).filter((i) => i >= 0);
+      const k = (v.cartesTest || []).findIndex((c) => c.id === idCarte);
+      const i = effortsPix[k] !== undefined ? effortsPix[k] : k;
+      Plateau.majTicket(f, (x) => { x.enCorrection = true; });
+      const fleche = await Anim.reculerTicket(f, "build");
+      // La carte fautive part à la défausse, l'effort se vide.
+      const mini = Plateau.elementCarteTest(idCarte);
+      if (mini) {
+        mini.classList.add("defaussee");
+        await Anim.pause(600);
+      }
+      Plateau.majTicket(f, (x) => {
+        x.cartesTest = (x.cartesTest || []).filter((c) => c.id !== idCarte);
+        x.efforts = (x.efforts || []).map((q, j) => (j === i ? null : q));
+      });
+      await Anim.pause(500);
+      if (!(await Actions.heure(role, "build"))) return false;
+      Plateau.majTicket(f, (x) => { delete x.enCorrection; });
+      Anim.remplirEffort(f, "humain", i);
       Plateau.afficherBulle("pix", false);
+      await Anim.pause(700);
+      await Anim.avancerTicket(f, retour);
+      if (fleche) fleche.remove();
+      return true;
+    },
+
+    // La code review (GDD 0.22) : le programmeur, garant du code, relit 1 effort de PIX (1 heure).
+    // Elle trouve tout : la carte Test se retourne.
+    async codeReview(f, idCarte) {
+      Plateau.montrerVerifications("review");
+      if (!(await Actions.heure("programmeur", "test"))) return false;
+      const arreter = Anim.examiner(f, "review");
+      await Anim.pause(1300);
+      arreter();
+      await Pioches.reveler(idCarte);
+      return true;
+    },
+
+    // Le playtest : le designer, garant du fun, joue à la fonctionnalité (1 heure). Il trouve les Pas fun.
+    async playtest(f, idCarte) {
+      Plateau.montrerVerifications("playtest");
+      if (!(await Actions.heure("designer", "test"))) return false;
+      const arreter = Anim.examiner(f, "playtest");
+      await Anim.pause(1500);
+      arreter();
+      await Pioches.reveler(idCarte);
       return true;
     },
 
@@ -86,6 +150,7 @@
       const v = Plateau.ticket(f);
       const carte = (v.cartesTest || []).find((c) => (idCarte ? c.id === idCarte : !c.revelee && !c.testee));
       if (!carte) return false;
+      Plateau.montrerVerifications("scan");
       const arreter = Anim.travailler("scan", f);
       Plateau.afficherBulle("scan", false);
       await Anim.pause(1500);
@@ -109,6 +174,13 @@
     file(id, n) {
       etat.files[id] = Math.max(0, n);
       Anim.changerFile(id, etat.files[id]);
+    },
+
+    // Les actions servent au banc d'essai et au lecteur de la démo : on les branche sur l'état à chaque redessin.
+    init(options) {
+      S = options.scenario;
+      t = options.traduire;
+      etat = options.etat;
     }
   };
 

@@ -250,7 +250,7 @@
   // PIX travaille sur la fonctionnalité donnée, sinon sur celle qu'on a choisie (si elle est en Build),
   // sinon sur la première de Build qui a encore un effort à faire.
   async function piocherTest(id, f) {
-    const libre = (v) => v && v.station === "build" && (v.efforts || []).length < S.fonctionnalites[v.f].efforts;
+    const libre = (v) => v && v.station === "build" && (v.efforts || []).filter(Boolean).length < Plateau.def(v.f).efforts;
     const choisie = Plateau.ticket(f || Plateau.choisi());
     const cible = libre(choisie) ? choisie : f ? null : Plateau.ticketsA("build").find(libre);
     if (!cible) {
@@ -345,7 +345,9 @@
       etat.idees.push(f);
     } else if (cible.zone === "cycle" && depuis === "backlog") {
       etat.backlog = etat.backlog.filter((x) => x !== f);
+      // par : qui le produit (l'aiguillage) : "pix" ou "humain".
       const v = { f, station: "prompt", efforts: [] };
+      if (cible.par) v.par = cible.par;
       etat.tickets.push(v);
       Plateau.poserTicket(v, Plateau.ticketsA("prompt").length).classList.add("nouveau");
     } else {
@@ -410,6 +412,20 @@
     await attendreClic();
 
     const cible = carte.cible;
+    if (carte.type === "bug" && etat.publiees.includes(cible)) {
+      // La grande boucle (GDD 0.21) : un bug sur une fonctionnalité live. Elle reste live, marquée
+      // « bug signalé », et un ticket correctif part de la Communauté vers le Backlog.
+      await voler(el, centreCadre(), Object.assign(centreDe(Plateau.elementPlanete("communaute")), { l: 40 }), 650, 0.2);
+      el.remove();
+      etat.signalees = Object.assign({}, etat.signalees, { [cible]: "bug" });
+      TableauDeBord.afficherPubliees(etat.publiees, etat.signalees);
+      const ticketCorrectif = cible + "-c";
+      etat.backlog = etat.backlog.concat(ticketCorrectif);
+      Plateau.poserBacklog(etat.backlog);
+      if (window.Anim) await Anim.arriverTuile(ticketCorrectif, { x: 150, y: 860 });
+      occupe = false;
+      return;
+    }
     if (cible.startsWith("F") && etat.ideesCachees.includes(cible)) {
       // Une idée de gamer : elle sort de la pile cachée et rejoint les Idées.
       await voler(el, centreCadre(), Object.assign(centreDe(Plateau.elementPileCachees()), { l: 40 }), 600, 0.2);
@@ -466,5 +482,5 @@
   // Le mode automatique : la démo se joue toute seule, les cartes n'attendent pas de clic.
   function modeAuto(oui) { auto = oui; }
 
-  window.Pioches = { avis, init, modeAuto, tirerSilencieux, piocher, reveler, deplacer, trier };
+  window.Pioches = { avis, init, modeAuto, estAuto: () => auto, tirerSilencieux, piocher, reveler, deplacer, trier };
 })();

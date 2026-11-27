@@ -59,7 +59,7 @@
     h("div", "note-valeur", "3", ligne).id = "valeur-note";
 
 
-    // La banque d'heures : le temps de l'équipe, 3 heures par personne et par cycle.
+    // Les jetons de l'équipe : 3 par personne et par cycle, dont le jeton ⚒ Prod (GDD 0.21).
     const heures = bloc(t("tableau.heures"), "bloc-heures");
     S.roles.forEach((role) => {
       const ligne = h("div", "heures-ligne", undefined, heures);
@@ -121,14 +121,18 @@
       t("tableau.tokens.aide").replace("{n}", restants).replace("{total}", S.tokensIA);
   }
 
-  // utilisees : { chef: 2, designer: 1, … } (heures déjà dépensées ce cycle)
-  function afficherHeures(utilisees) {
+  // jetons : { chef: { sortes: ["heure", "heure", "prod"], pris: [false, false, true] }, … } (Plateau.jetons())
+  function afficherHeures(jetons) {
     let reste = 0;
     S.roles.forEach((role) => {
-      const n = utilisees[role] || 0;
-      reste += S.heuresParRole - n;
-      document.querySelectorAll(`.heures-ligne[data-role="${role}"] .heure`).forEach((e, i) =>
-        e.classList.toggle("depensee", i >= S.heuresParRole - n));
+      const j = jetons[role] || { sortes: [], pris: [] };
+      document.querySelectorAll(`.heures-ligne[data-role="${role}"] .heure`).forEach((e, i) => {
+        const prod = j.sortes[i] === "prod";
+        e.classList.toggle("prod", prod);
+        e.classList.toggle("depensee", !!j.pris[i]);
+        e.textContent = prod ? "⚒" : "";
+        if (!j.pris[i]) reste++;
+      });
     });
     const total = S.roles.length * S.heuresParRole;
     document.getElementById("valeur-heures").textContent =
@@ -136,12 +140,15 @@
   }
 
   // Les fonctionnalités publiées de Star Squadron (leurs numéros).
-  function afficherPubliees(liste) {
+  // signalees : { F06: "bug" } : une fonctionnalité live qui a un ticket correctif en route (la grande boucle).
+  function afficherPubliees(liste, signalees) {
     const l = document.getElementById("liste-publiees");
     l.innerHTML = "";
     liste.forEach((f) => {
-      const p = h("span", "puce-publiee", f, l);
-      p.title = t("f." + f);
+      const marque = signalees && signalees[f];
+      const p = h("span", "puce-publiee" + (marque ? " signalee" : ""), f, l);
+      p.title = marque ? t("tableau.signale." + marque).replace("{f}", f + " · " + t("f." + f)) : t("f." + f);
+      if (marque) h("span", "puce-marque", "!", p);
     });
     document.getElementById("aide-publiees").textContent =
       t("tableau.live.aide").replace("{n}", liste.length).replace("{total}", Object.keys(S.fonctionnalites).length);
