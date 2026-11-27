@@ -43,23 +43,31 @@ Le plateau reprend le Whiteboard (`docs/whiteboard/plateau-orbite.json`) et la d
 
 Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit des règles (1 étoile = 25 gamers, score = gamers × note), sans calcul réel.
 
-**Boucle 1 : le cycle 0, « le pitch »** *(pas de carte Test, pas de token, pas d'événement ni de feedback ; chaque humain peut faire 2 efforts)*
-1. *Brief* : Vera (message V0) : un jeu en pixel art dans l'esprit de Space Invaders ; « avant de signer, montrez-moi un premier jouable ».
-2. *Planning* : la station Backlog s'allume. Les 5 *Must* passent des Idées au Backlog (F02, F07, F09, F06, F13 : 5 places, pile ce qu'il faut), puis partent dans le couloir, à la station Prompt.
-3. *Build* : la station Prompt s'allume ; la cheffe de projet passe 2 heures à écrire les prompts de F09 et F13. La station Build s'allume ; PIX fait les 3 efforts de F09 et F13 (sans carte Test ni token au cycle 0) ; le programmeur fait F02 et F07 (2 heures), le designer F06 (1 heure). 6 efforts : les 5 *Must* sont prêts.
+*Script v2 (GDD 0.21, proposé le 27 nov. 2026, à valider) : il montre une fois chaque geste des nouvelles règles : les deux aiguillages, le jeton Prod, le goulot de PIX, SCAN, le playtest, « Corriger » (le ticket recule au Build), « Publier quand même » et le ticket correctif d'une fonctionnalité live. K6 explique chaque geste la première fois qu'il arrive.*
+
+**Boucle 1 : le cycle 0, « le pitch »** *(pas de carte Test, pas de token, pas d'événement ni de feedback ; « l'élan du lancement » : chacun a 2 jetons Prod et 1 jeton Heure)*
+1. *Brief* : Vera (message V0) : un jeu en pixel art dans l'esprit de Space Invaders ; « avant de signer, montrez-moi un premier jouable ». K6 présente les jetons : « 3 jetons chacun. Le marteau, c'est le jeton Prod : le seul qui produit. Aujourd'hui, élan du lancement : vous en avez deux. »
+2. *Planning* : la station Backlog s'allume. Les 5 *Must* passent des Idées au Backlog (F02, F07, F09, F06, F13). **Premier aiguillage** (K6 : « Qui le fait ? PIX, vite mais avec un risque, ou le responsable, lent mais sûr. ») : F09 et F13 → **PIX** (voie du haut, vers le Prompt) ; F02 et F07 → **P** ; F06 → **D** (voie du bas, directement au Build). Chaque ticket porte ce qu'il attend : l'icône PIX ou le marteau.
+3. *Build* : la station Prompt s'allume ; la cheffe de projet passe 2 heures à écrire les prompts de F09 et F13 (badge PIX). La station Build s'allume ; PIX fait les 3 efforts de F09 et F13 (sans carte Test ni token au cycle 0) ; les 2 jetons Prod du programmeur vont sur F02 et F07, 1 jeton Prod du designer sur F06. Les 5 *Must* sont prêts.
 4. *Test* : rien à tester au cycle 0 ; les tickets passent la station Test.
-5. *Release* : les 5 tickets partent vers la communauté ; ils rejoignent les « Fonctionnalités live » de Star Squadron ; le MVP est publié.
-6. *Review* : 10 étoiles, soit **250 gamers** ; note 3 ; **score 750** ; le premier anneau de boucle s'allume ; les heures reviennent au pilotage.
+5. *Release* : les 5 tickets partent vers la communauté et rejoignent les « Fonctionnalités live » ; le MVP est publié.
+6. *Review* : 10 étoiles, soit **250 gamers** ; note 3 ; **score 750** ; le premier anneau s'allume ; les jetons reviennent au pilotage (désormais 2 Heure et 1 Prod chacun).
 
 **Boucle 2 : le cycle 1, « l'accès anticipé »**
 1. *Brief* : Vera (message V1) : « Les premiers gamers arrivent. Écoutez-les… mais pas tous. » L'animateur retourne l'événement **E1** (2 cartes Feedback de plus, car le jeu a des gamers).
-2. *Planning* : **4 cartes Feedback** arrivent dans la file Feedback → Backlog (2 pour les paliers de 100 et 200 gamers, 2 pour E1) : FB18 (des explosions !), FB19 (l'espace est statique), FB07 (le score plafonne) et FB16 (un compliment). La cheffe de projet les trie (2 heures, 1 heure pour 2 cartes) : trois **idées de gamers apparaissent** (F17 Explosions, F18 Fond étoilé défilant, F14 Système de score), le compliment s'écarte. Les trois passent au Backlog puis dans le couloir.
-3. *Build* : prompts de F17 (la cheffe de projet, 1 heure) et de F14 (le designer, 1 heure). PIX fait les **3 efforts de F17** (3 tokens, 3 cartes Test cachées) : il a fini sa capacité, **le prompt de F14 attend** dans la file Prompt → Build (le goulot). Le designer fait F18 (1 heure).
-4. *Test* : SCAN teste 2 efforts de F17 (2 tokens) : un OK, **un Bug trouvé** (PIX proteste) ; le designer le corrige (1 heure). Le troisième effort n'est pas testé.
-5. *Release* : la carte non testée se retourne **devant les gamers** : OK, soulagement. F17 et F18 sont publiées ; F14 reste en Prompt, pas finie.
-6. *Review* : 6 étoiles de plus, soit **400 gamers** ; les 2 cartes Feedback livrées (FB18 avec F17, FB19 avec F18) font monter la note de 3 à **4** ; **score 1 600** ; le deuxième anneau s'allume. Deux nouvelles cartes Feedback arrivent (paliers de 300 et 400 gamers) : la file grossit, **le succès crée sa propre charge**.
+2. *Planning* : **4 cartes Feedback** arrivent (2 pour les paliers de 100 et 200 gamers, 2 pour E1) : FB18 (des explosions !), FB19 (l'espace est statique), **FB02 (« J'ai touché l'alien et il n'a pas disparu », un bug sur F06, qui est live)** et FB16 (un compliment). La cheffe de projet les trie (2 heures) : F17 Explosions et F18 Fond étoilé défilant **apparaissent** ; le compliment s'écarte ; **FB02 crée un ticket correctif** « F06 · correctif », qui part de la Communauté vers le Backlog, et F06 est marquée « bug signalé » dans les Fonctionnalités live (K6 explique la grande boucle). Au Backlog : F17, F18, F06 correctif, et F10 (Grille qui descend), choisie dans les idées.
+   **Aiguillage** : F17 → **PIX** ; F18 → **D** ; F10 → **P** ; F06 correctif : le bouton D est grisé (le designer a déjà engagé son jeton Prod sur F18), et plus personne n'a d'heure pour un prompt : **le correctif reste au Backlog**, F06 garde sa marque. On voit le prix du succès.
+3. *Build* : prompt de F17 (la cheffe de projet, sa 3e heure). PIX fait les **3 efforts de F17** (3 tokens, 3 cartes Test cachées : T03, T13, T18). Le jeton Prod du designer fait F18 ; celui du programmeur fait **1 des 2 efforts de F10**, qui reste au Build (K6 : « Un humain, c'est un effort par cycle. »).
+4. *Test* : F17 et F18 passent au Test. SCAN teste 2 efforts de F17 (2 tokens) : T03 OK, **T13 Bug bloquant**. Le designer fait un **playtest** de F17 (1 heure, une manette sur le ticket) : **T18 Pas fun** se révèle (K6 : « SCAN ne sait pas si c'est fun. Pour ça, il faut un humain qui joue. »).
+   **Aiguillage de sortie** : F17 a un bug bloquant → **« Corriger »** : le jeton du designer vole, F17 **recule au Build** (flèche rouge), l'effort fautif se vide et se remplit en ambre, F17 revient au Test. Il reste le Pas fun, et le designer n'a plus d'heure → **« Publier quand même »** : F17 part vers la Release avec son Pas fun.
+5. *Release* : F17 (avec son Pas fun) et F18 sont publiées.
+6. *Review* : F17 rapporte 2 étoiles au lieu de 3 (Pas fun), F18 3 étoiles : 15 étoiles, soit **375 gamers** ; FB18 et FB19 sont livrées : la note monte de 3 à **4** ; **score 1 500** ; le deuxième anneau s'allume. Une nouvelle carte Feedback arrive (palier de 300 gamers, FB12) : **le succès crée sa propre charge**, et le correctif de F06 attend toujours.
 
-*Bilan des heures au cycle 1 : cheffe de projet 3 (tri 2, prompt 1), designer 3 (prompt, effort, correction), programmeur 0 : ses fonctionnalités ne sont pas au programme ce cycle. Tokens : 20 → 15.*
+*Bilan des jetons au cycle 1 : cheffe de projet 3 (tri 2, prompt 1) ; designer 3 (Prod sur F18, playtest, correction) ; programmeur 1 (Prod sur F10), 2 heures libres. Tokens : 20 → 15.*
+
+*Ce que le script v2 ne montre plus :* la carte Test cachée qui se retourne à la Release devant les gamers (toutes les cartes de F17 sont vérifiées avant) ; la code review (personne n'a d'heure pour la faire sur F17 ; voir la question ouverte ci-dessous).
+
+*Question ouverte :* la code review revient aujourd'hui au **responsable** de la fonctionnalité. Si elle revenait au **programmeur, garant du code** (comme le playtest revient au designer, garant du fun), les rôles seraient plus nets (la cheffe de projet décide, le designer juge le fun, le programmeur vérifie le code), le programmeur aurait du travail au cycle 1, et la démo pourrait montrer une code review sur F17. Changement de règle : à passer au simulateur.
 
 *Correspondance entre les temps du cycle et les stations (décidée le 27 nov. 2026) :* Brief → aucune station (Vera parle) ; Planning → Backlog ; Build → Prompt (les prompts), puis Build ; Test → Test ; Release → Release ; Review → Feedback.
 
