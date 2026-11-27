@@ -113,6 +113,19 @@ Trois changements testés l'un après l'autre (1 500 parties par profil, même g
 
 **Ce qu'on en retient :** les scores montent de 3 à 8 %, surtout grâce au sprint final ; **le classement des profils ne change pas** (l'équipe experte devant, les fonceurs et le chef de projet débordé derrière). Les bugs mineurs adoucissent un peu la punition des équipes qui vérifient peu, sans les sauver. Le jeton Prod ne change rien aux chiffres : il rend visible une règle qui existait déjà (1 effort humain par cycle). La correction d'un problème trouvé au Test reste 1 heure, hors jeton Prod, comme avant.
 
+**GDD 0.22 : la code review au programmeur.** Même étude (1 500 parties par profil, même graine), règles 0.21 puis code review faite par le programmeur au lieu du responsable :
+
+| Profil | Règles 0.21 | Code review au programmeur (règles 0.22) |
+|---|---|---|
+| Les fonceurs | 1 713 | 1 711 |
+| Les élèves sérieux | 3 516 | 3 523 |
+| Les perfectionnistes | 3 443 | 3 496 |
+| Le chef de projet débordé | 1 787 | 1 797 |
+| Les artistes | 2 646 | 2 673 |
+| L'équipe experte | 3 931 | 3 958 |
+
+Effet neutre (0 à +1,5 %) : le programmeur a souvent des heures libres quand PIX produit, et le designer garde les siennes pour le playtest. Le classement ne change pas.
+
 ## Historique : la version 1 de l'étude
 
 La première étude utilisait des robots à stratégie fixe et a conduit à 4 réglages :

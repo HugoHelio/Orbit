@@ -117,7 +117,7 @@ window.SCENARIO = {
   cycles: [0, 1, 2, 3, 4],
 
   // Les 20 fonctionnalités (docs/jeu/cartes-orbit-studio.md). La priorité n'est pas affichée.
-  // resp : le rôle responsable (il la produit, relit le travail de PIX et corrige).
+  // resp : le rôle responsable (il la produit et la corrige ; la code review revient au programmeur).
   // ideeGamer : cachée au départ ; elle apparaît quand une carte Feedback triée la cite (GDD 0.19).
   fonctionnalites: {
     F01: { efforts: 1, etoiles: 2, resp: "designer" }, F02: { efforts: 1, etoiles: 2, resp: "programmeur" },

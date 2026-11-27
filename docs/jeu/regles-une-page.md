@@ -1,6 +1,6 @@
 # Orbit : Studio — les règles
 
-*Version 5 du 27 novembre 2026 : jeton Prod, code review, deux sortes de bugs, deux aiguillages (qui produit ; corriger ou publier quand même), ticket correctif pour une fonctionnalité live. Version 4 du 26 novembre 2026 : passe sur le vocabulaire (effort, heure, carte Test, MVP, prompt, cycle Brief → Review). Recto « l'essentiel en images », verso « le détail ». Elle découle du GDD (version 0.14, section 0) et des cartes (`docs/jeu/cartes-orbit-studio.md`), et a été vérifiée par simulation (`docs/jeu/simulation-equilibrage.md`). Dans le livret, les symboles sont remplacés par les vrais visuels du jeu.*
+*Version 6 du 27 novembre 2026 : la code review revient au programmeur, garant du code (comme le playtest revient au designer, garant du fun). Version 5 du 27 novembre 2026 : jeton Prod, code review, deux sortes de bugs, deux aiguillages (qui produit ; corriger ou publier quand même), ticket correctif pour une fonctionnalité live. Version 4 du 26 novembre 2026 : passe sur le vocabulaire (effort, heure, carte Test, MVP, prompt, cycle Brief → Review). Recto « l'essentiel en images », verso « le détail ». Elle découle du GDD (version 0.14, section 0) et des cartes (`docs/jeu/cartes-orbit-studio.md`), et a été vérifiée par simulation (`docs/jeu/simulation-equilibrage.md`). Dans le livret, les symboles sont remplacés par les vrais visuels du jeu.*
 
 ## Le but
 
@@ -62,7 +62,7 @@ Trois façons de vérifier, qui ne trouvent pas les mêmes choses :
 | Vérification | Qui, et ce que ça coûte | Ce qu'elle trouve |
 |---|---|---|
 | **SCAN** (tests automatiques) | L'agent, 1 token par effort, jusqu'à 4 par cycle | Les Bug, **jamais les Pas fun** |
-| **Code review** | Le responsable, 1 heure par effort de PIX | Tout : on retourne la carte Test |
+| **Code review** | Le programmeur (garant du code), 1 heure par effort de PIX | Tout : on retourne la carte Test |
 | **Playtest** | Le designer, 1 heure pour toute la fonctionnalité | Les Pas fun |
 
 **Un problème trouvé ? (l'aiguillage à la sortie du Test)**
@@ -104,5 +104,5 @@ L'équipe choisit les fonctionnalités prêtes qu'elle publie. Les cartes Test e
 | **Prompt** | La consigne écrite que l'on donne à une IA | **Feedback** | Ce que les gamers disent du jeu |
 | **Gamer** | Un joueur de votre jeu vidéo, Star Squadron (à ne pas confondre avec vous, les joueurs d'Helioso Orbit) | | |
 | **Backlog** | La liste des fonctionnalités à faire | **MVP** | La plus petite version du jeu qui mérite des gamers |
-| **Code review** | Un humain relit le travail de PIX | **Playtest** | Un humain joue pour juger si c'est fun |
+| **Code review** | Le programmeur relit le travail de PIX | **Playtest** | Un humain joue pour juger si c'est fun |
 | **Ticket** | Une fonctionnalité en route sur l'orbite | **Ticket correctif** | Le travail de plus sur une fonctionnalité déjà live |

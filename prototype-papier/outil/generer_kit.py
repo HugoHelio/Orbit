@@ -604,7 +604,7 @@ def livret():
 <div class="txt" style="font-size:9.6pt;line-height:1.6"><b>① En haut :</b> la catégorie et le numéro.<br><b>② Le nom</b> de la fonctionnalité.<br>
 <b>③ Taille :</b> {ex['blocs']} cases grises = {ex['blocs']} efforts à faire. Chaque effort fait reçoit un pion Effort.<br>
 <b>④ Valeur :</b> {ex['etoiles']} étoiles = {ex['etoiles'] * 25} gamers, dès qu'elle est publiée sans bug bloquant.<br>
-<b>⑤ En bas :</b> qui en est responsable (il la produit, en fait la code review et la corrige).<br>
+<b>⑤ En bas :</b> qui en est responsable (il la produit et la corrige).<br>
 <span class="ph">La priorité n'est pas écrite : à vous de deviner ce qui est essentiel.</span></div></div>"""
     regles = (f'<div class="feuille regles" style="padding:9mm 13mm"><div class="lab" style="color:{TEAL_T}">Règles · recto : l\'essentiel</div>{html1}{lire}</div>'
               f'<div class="feuille regles" style="padding:9mm 13mm"><div class="lab" style="color:{TEAL_T}">Règles · verso : le détail</div>'
