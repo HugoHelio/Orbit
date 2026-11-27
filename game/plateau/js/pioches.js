@@ -203,10 +203,12 @@
     recto.classList.add("recto-test", "test-" + c.type);
     bande(recto, t("pioche.test"), c.id, "bande-" + c.type);
     const corps = h("div", "carte-corps", undefined, recto);
-    h("div", "carte-verdict", t("carte.type." + c.type), corps);
+    // Un bug est bloquant ou mineur (GDD 0.21) : son titre et son effet le disent.
+    const k = c.gravite ? c.type + "." + c.gravite : c.type;
+    h("div", "carte-verdict", t("carte.type." + k), corps);
     h("div", "carte-citation", t("carte.phrase." + c.type + "." + c.phrase), corps);
     const bas = h("div", "carte-bas", undefined, corps);
-    h("div", "carte-effet", t("carte.test.effet." + c.type), bas);
+    h("div", "carte-effet", t("carte.test.effet." + k), bas);
   }
 
   // --- Piocher ---------------------------------------------------------------

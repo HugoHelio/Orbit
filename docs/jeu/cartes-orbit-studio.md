@@ -1,6 +1,6 @@
-# Cartes d'Orbit : Studio — règles de base, version 6
+# Cartes d'Orbit : Studio — règles de base, version 7
 
-*Cartes du prototype papier — version 9 du 27 novembre 2026 : **12 fonctionnalités au départ, 8 idées de gamers** révélées par le feedback trié (colonne « Origine »). Version 8 : les joueurs de Star Squadron s'appellent **gamers** (les étudiants sont les joueurs d'Helioso Orbit) ; la catégorie « Joueur » devient « Vaisseau ». Version 7 : les cartes Feedback sont **anonymes** (la voix de la communauté) et toutes valent +0,5 de note ; Max, Sam et Nora sont les fondateurs du studio. Version 6 du 26 novembre 2026 : passe sur le vocabulaire (bloc → effort, point d'action → heure, carte Défaut → carte Test avec OK / Bug / Pas fun, brief à PIX → prompt, premier jouable → MVP, cycle Brief, Planning, Build, Test, Release, Review). Version 5 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un effort humain par cycle, 2 efforts humains au cycle 0, plus de bonus « release sans problème », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du MVP, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.14, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
+*Cartes du prototype papier — version 10 du 27 novembre 2026 : **jeton Prod** (1 par cycle, 2 au cycle 0 et au cycle 4), **code review** (au lieu de « relire »), **deux sortes de bugs** (bloquant, mineur), **ticket correctif** pour une fonctionnalité live, **deux aiguillages** (qui produit ; corriger ou publier quand même). Version 9 du 27 novembre 2026 : **12 fonctionnalités au départ, 8 idées de gamers** révélées par le feedback trié (colonne « Origine »). Version 8 : les joueurs de Star Squadron s'appellent **gamers** (les étudiants sont les joueurs d'Helioso Orbit) ; la catégorie « Joueur » devient « Vaisseau ». Version 7 : les cartes Feedback sont **anonymes** (la voix de la communauté) et toutes valent +0,5 de note ; Max, Sam et Nora sont les fondateurs du studio. Version 6 du 26 novembre 2026 : passe sur le vocabulaire (bloc → effort, point d'action → heure, carte Défaut → carte Test avec OK / Bug / Pas fun, brief à PIX → prompt, premier jouable → MVP, cycle Brief, Planning, Build, Test, Release, Review). Version 5 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un effort humain par cycle, 2 efforts humains au cycle 0, plus de bonus « release sans problème », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du MVP, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.14, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
 
 *Chaque carte a un identifiant (F01, T01, FB01, E01, V0…) : c'est sa clé pour la traduction anglaise et pour le jeu numérique.*
 
@@ -8,23 +8,29 @@
 
 ## 1. Les actions (reprises sur les fiches de rôle)
 
-Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a **20 tokens IA pour toute la partie**.
+Chaque humain a **3 jetons par cycle : 2 jetons Heure et 1 jeton Prod** (soit 15 jetons sur les 5 cycles de la partie). Le **jeton Prod** est le seul qui peut produire un effort au Build ; il peut aussi servir d'heure ordinaire. **Au cycle 0 (« l'élan du lancement ») et au cycle 4 (« le sprint final »), chacun a 2 jetons Prod et 1 jeton Heure.** L'équipe a **20 tokens IA pour toute la partie**.
+
+*Pourquoi un jeton Prod : produire soi-même demande une longue plage de concentration. Dans un cycle, entre les réunions, les code reviews et les tests, chacun n'en trouve qu'une. PIX, lui, produit jusqu'à 3 efforts par cycle.*
 
 | Action | Coût | Qui |
 |---|---|---|
 | Trier 2 cartes Feedback | 1 heure | Chef de projet |
 | Écrire un prompt **simple** pour une fonctionnalité entière (1 carte Test tirée par effort de PIX) | 1 heure | Chef de projet ou designer |
 | Écrire un prompt **détaillé** pour une fonctionnalité entière (2 cartes Test tirées par effort, on garde la meilleure) | 2 heures | Chef de projet ou designer |
-| Faire 1 effort soi-même (aucune carte Test ; **1 effort par cycle au maximum**, 2 au cycle 0) | 1 heure | Le responsable de la fonctionnalité |
-| Relire 1 effort produit par PIX (révèle sa carte Test) | 1 heure | Le responsable de la fonctionnalité |
+| Faire 1 effort soi-même (aucune carte Test) | **le jeton Prod** (2 au cycle 0 et au cycle 4) | Le responsable de la fonctionnalité |
+| Faire la **code review** d'1 effort produit par PIX (révèle sa carte Test, quelle qu'elle soit) | 1 heure | Le responsable de la fonctionnalité |
 | Faire un playtest d'une fonctionnalité (révèle un « Pas fun » sur tous ses efforts) | 1 heure | Designer |
-| Corriger un problème révélé | 1 heure | Le responsable de la fonctionnalité |
+| Corriger un problème révélé (le ticket recule au Build ; jamais PIX) | 1 heure (pas le jeton Prod obligatoirement) | Le responsable de la fonctionnalité |
 | PIX fait 1 effort (3 par cycle ; les efforts en trop attendent le cycle suivant) | 1 token | — |
 | SCAN teste 1 effort (révèle un « Bug », jamais un « Pas fun ») | 1 token | — |
 
 **Le responsable** d'une fonctionnalité est indiqué sur sa carte : **Prog** = le programmeur ; **Design** et **Art** = le designer.
 
-**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié, et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les gamers demandent** : +0,5 par carte Feedback traitée. **Elle reste entre 1 et 5.** **Gamers = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = gamers × note.** Sans MVP, il n'y a pas de gamers : le score vaut 0.
+**Les deux aiguillages** (deux décisions de pilotage sur l'orbite) :
+- **À la sortie du Backlog : qui produit ?** « PIX » : le ticket va à la station Prompt, où l'on écrit son prompt, puis PIX produit. « Le responsable » : le ticket saute le Prompt et va au Build, où le responsable produit avec son jeton Prod.
+- **À la sortie du Test, si un problème est trouvé : corriger ou publier ?** « Corriger » : 1 heure du responsable, le ticket recule au Build, l'effort fautif est refait, puis il revient au Test ; sans heure libre, il attend au Build le cycle suivant. « Publier quand même » : il part à la Release avec son défaut, et l'effet s'applique.
+
+**La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié (bloquant ou mineur), et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les gamers demandent** : +0,5 par carte Feedback traitée. **Elle reste entre 1 et 5.** **Gamers = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = gamers × note.** Sans MVP, il n'y a pas de gamers : le score vaut 0.
 
 ---
 
@@ -35,8 +41,8 @@ Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a 
 | Id | Fiche | Mission | Ses actions | Phrase |
 |---|---|---|---|---|
 | R1 | **Chef(fe) de projet** | Choisit les tâches, gère les tokens IA, décide de la release | Trier le feedback ; écrire les prompts ; décider des actions de PIX et de SCAN | « Tout le monde a une idée. Moi, j'ai un planning. » |
-| R2 | **Designer** | Responsable des fonctionnalités Design et Art ; garant du fun | Écrire les prompts ; produire, relire et corriger ses fonctionnalités ; faire les playtests (seul à pouvoir le faire) | « Ça marche, d'accord. Mais est-ce que c'est fun ? » |
-| R3 | **Programmeur(se)** | Responsable des fonctionnalités Prog ; garant du code | Produire, relire et corriger ses fonctionnalités | « Qui a écrit ça ? Ah. PIX. » |
+| R2 | **Designer** | Responsable des fonctionnalités Design et Art ; garant du fun | Écrire les prompts ; produire ses fonctionnalités, en faire la code review et les corriger ; faire les playtests (seul à pouvoir le faire) | « Ça marche, d'accord. Mais est-ce que c'est fun ? » |
+| R3 | **Programmeur(se)** | Responsable des fonctionnalités Prog ; garant du code | Produire ses fonctionnalités, en faire la code review et les corriger | « Qui a écrit ça ? Ah. PIX. » |
 
 **Les agents IA ne sont pas des cartes** : leurs règles sont imprimées sur le plateau, avec leur portrait.
 
@@ -49,7 +55,7 @@ Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a 
 
 | Matériel | Nombre | À quoi ça sert |
 |---|---|---|
-| **Jeton Heure** | 9 (3 par joueur) | Au début du cycle, chaque joueur pose ses 3 jetons sur son emplacement du poste de pilotage. Pour agir, il prend un jeton et le pose sur la station où il agit (Prompt, Build, Test…). En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
+| **Jeton Heure** et **jeton Prod** | 6 de chaque (2 + 2 par joueur) | Au début du cycle, chaque joueur pose sur son emplacement du poste de pilotage 2 jetons Heure et 1 jeton Prod (1 jeton Heure et 2 jetons Prod au cycle 0 et au cycle 4). Pour agir, il prend un jeton et le pose sur la station où il agit (Prompt, Build, Test…). Seul le jeton Prod produit un effort au Build. En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
 | **Pion Effort** | 15 | Un effort, c'est une part du travail d'une fonctionnalité. On pose un pion Effort sur une case grise de la carte Fonctionnalité dès que cet effort est fait (par un humain ou par PIX). Quand toutes les cases sont couvertes, la fonctionnalité est prête pour la release. Après sa release, ses pions reviennent dans la réserve. |
 | **Marqueur** | 3 | Un pion pour chaque piste du plateau : tokens IA (départ 20), note (départ 3) et cycle (départ 0). |
 
@@ -61,9 +67,9 @@ Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a 
 
 ### La règle du MVP (premier jouable)
 
-- **Tant que les 5 fonctionnalités Must ne sont pas toutes livrées, et sans bug révélé, le jeu ne rapporte aucun gamer.** Un jeu où l'on ne peut ni bouger, ni tirer, ni toucher un alien n'a pas de gamers, même avec de superbes explosions.
+- **Tant que les 5 fonctionnalités Must ne sont pas toutes livrées, et sans bug bloquant révélé, le jeu ne rapporte aucun gamer.** Un jeu où l'on ne peut ni bouger, ni tirer, ni toucher un alien n'a pas de gamers, même avec de superbes explosions.
 - Les étoiles des autres fonctionnalités déjà livrées sont **en attente** : elles comptent dès que le MVP est atteint.
-- Si un bug est révélé plus tard sur une fonctionnalité Must, le MVP est **cassé** : le jeu retombe à 0 gamer jusqu'à la correction.
+- Si un bug bloquant est révélé plus tard sur une fonctionnalité Must, le MVP est **cassé** : le jeu retombe à 0 gamer jusqu'à la publication de son ticket correctif. Un bug mineur, lui, ne casse pas le MVP.
 - **La priorité (Must, Should, Could) n'est pas imprimée sur les cartes.** Vera ne demande qu'un jeu en pixel art dans l'esprit de Space Invaders (V0) : les équipes doivent retrouver elles-mêmes les 5 Must, en se demandant **ce qui rend un jeu de ce genre jouable**. C'est le premier exercice de priorisation. Les Should valent plus d'étoiles que les Must : c'est un piège voulu (la valeur n'est pas la nécessité).
 - Les numéros suivent les catégories, pas les priorités : on ne peut pas deviner les Must à leur numéro.
 
@@ -109,15 +115,17 @@ Pour chaque effort produit par PIX, une carte Test est glissée **face cachée**
 
 | Id | Type | Nombre | Révélé par | Effet s'il part en release |
 |---|---|---|---|---|
-| T01 – T12 | **OK** | 12 | Relecture, test, playtest ou release | — |
-| T13 – T17 | **Bug** | 5 | SCAN, relecture ou release | La fonctionnalité ne rapporte **aucun gamer** tant qu'elle n'est pas corrigée, et la note baisse de 0,5 |
-| T18 – T20 | **Pas fun** | 3 | Playtest du designer, relecture ou release (**jamais par SCAN**) | La fonctionnalité **perd 1 étoile** tant qu'elle n'est pas corrigée |
+| T01 – T12 | **OK** | 12 | Code review, test, playtest ou release | — |
+| T13 – T14 | **Bug bloquant** | 2 | SCAN, code review ou release | Elle ne marche pas : **0 étoile** et −0,5 de note. Sur un Must : **MVP cassé** |
+| T15 – T17 | **Bug mineur** | 3 | SCAN, code review ou release | On peut jouer : elle garde ses étoiles, mais **−0,5 de note** |
+| T18 – T20 | **Pas fun** | 3 | Playtest du designer, code review ou release (**jamais par SCAN**) | La fonctionnalité **perd 1 étoile** tant qu'elle n'est pas corrigée |
 
-**Corriger un problème révélé** coûte 1 heure au responsable de la fonctionnalité. La carte Test est alors défaussée.
+**Corriger un problème révélé** coûte 1 heure au responsable de la fonctionnalité (jamais PIX) : le ticket recule au Build, l'effort fautif est refait, puis la carte Test est défaussée et le ticket revient au Test. Une fonctionnalité déjà publiée avec son défaut se corrige par un **ticket correctif** (voir la section 5).
 
 **Phrases d'ambiance** *(neutres : aucun personnage ne parle sur une carte Test, car elle peut être révélée par SCAN, par un humain ou par les gamers ; elle décrit ce qu'on voit à l'écran)*
 - *OK :* « Ça marche. Vraiment. » / « Propre. Suspect, mais propre. » / « Rien à signaler. On peut publier. »
-- *Bug :* « Le jeu plante au deuxième niveau. » / « Le vaisseau traverse les aliens. Comme un fantôme. » / « Le jeu se fige quand on tire trop vite. » / « Le score affiche −12. » / « L'alien touché ne disparaît pas. »
+- *Bug bloquant :* « Le jeu plante au deuxième niveau. » / « Le jeu se fige quand on tire trop vite. »
+- *Bug mineur :* « Le score se fige, puis repart n'importe comment. » / « L'alien touché met une seconde à disparaître. » / « Le vaisseau traverse parfois les aliens. Comme un fantôme. »
 - *Pas fun :* « Tout fonctionne. Le gamer ferme le jeu au bout de 30 secondes. » / « Techniquement parfait. Humainement ennuyeux. » / « On gagne en 13 secondes. »
 
 *Probabilités pour l'équilibrage : un effort a 40 % de risque de problème avec un prompt simple, environ 16 % avec un prompt détaillé.*
@@ -129,7 +137,7 @@ Pour chaque effort produit par PIX, une carte Test est glissée **face cachée**
 Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque palier de 100 gamers atteint pour la première fois** (une équipe à 250 gamers en a pioché 2 en tout), placée dans la file **Feedback → Backlog**. Le chef de projet les trie (1 heure pour 2 cartes).
 
 **Effet du tri (une seule règle pour Bug, Idée et Pas fun) :** on pose la carte sur la fonctionnalité citée.
-- Si la fonctionnalité est **déjà publiée**, il faut produire **1 effort de plus** dessus (correction ou amélioration). Quand ce travail est publié, **la note monte de 0,5**.
+- Si la fonctionnalité est **déjà publiée**, un **ticket correctif** (1 effort, avec la carte Feedback) part de la Communauté vers le Backlog et refait tout le chemin : aiguillage, Prompt ou non, Build, Test, Release. La fonctionnalité **reste live** pendant ce temps (les gamers jouent à l'ancienne version), marquée « bug signalé » ou « amélioration demandée ». Quand le correctif est publié, **la note monte de 0,5**.
 - Si la fonctionnalité **n'est pas encore publiée**, la carte attend : la note monte quand la fonctionnalité est publiée.
 - **Hors liste / Compliment :** on l'écarte. Savoir dire non, c'est aussi du pilotage.
 

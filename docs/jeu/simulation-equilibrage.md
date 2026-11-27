@@ -95,6 +95,24 @@ Pour mesurer la chance, on compare les 10 % de parties où l'équipe a tiré le 
 
 **À surveiller :** les bonnes équipes approchent la note maximale de 5. Si la partie test le confirme, la note de départ pourra passer à 2,5.
 
+## Étude v3 : les règles du GDD 0.21 (27 novembre 2026)
+
+Trois changements testés l'un après l'autre (1 500 parties par profil, même graine) :
+- **B** : les 5 cartes Bug deviennent 2 Bug bloquants (0 étoile, MVP cassé sur un Must) et 3 Bug mineurs (−0,5 de note, les étoiles restent) ;
+- **C** : « le sprint final », 2 jetons Prod au cycle 4 ;
+- **D** : le travail demandé par un feedback sur une fonctionnalité live est un effort, qui prend le jeton Prod (le ticket correctif).
+
+| Profil | A : règles 0.20 | B : bugs 2 + 3 | C : + sprint final | D : + correctif = Prod (règles 0.21) |
+|---|---|---|---|---|
+| Les fonceurs | 1 574 | 1 632 | 1 702 | 1 713 |
+| Les élèves sérieux | 3 281 | 3 372 | 3 516 | 3 516 |
+| Les perfectionnistes | 3 218 | 3 245 | 3 463 | 3 443 |
+| Le chef de projet débordé | 1 733 | 1 716 | 1 790 | 1 787 |
+| Les artistes | 2 429 | 2 500 | 2 641 | 2 646 |
+| L'équipe experte | 3 767 | 3 781 | 3 929 | 3 931 |
+
+**Ce qu'on en retient :** les scores montent de 3 à 8 %, surtout grâce au sprint final ; **le classement des profils ne change pas** (l'équipe experte devant, les fonceurs et le chef de projet débordé derrière). Les bugs mineurs adoucissent un peu la punition des équipes qui vérifient peu, sans les sauver. Le jeton Prod ne change rien aux chiffres : il rend visible une règle qui existait déjà (1 effort humain par cycle). La correction d'un problème trouvé au Test reste 1 heure, hors jeton Prod, comme avant.
+
 ## Historique : la version 1 de l'étude
 
 La première étude utilisait des robots à stratégie fixe et a conduit à 4 réglages :

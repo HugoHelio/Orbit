@@ -18,13 +18,17 @@ FEATS = [dict(id=f["id"], blocs=f["blocs"], etoiles=f["etoiles"], must=f["prio"]
               resp="P" if f["resp"] == "Prog" else "D") for f in K.feats]
 FB = [dict(id=f["id"], type=f["type"], cible=f["cible"] if f["cible"].startswith("F") else None)
       for f in K.feedbacks]
-DECK0 = ["none"] * 12 + ["bug"] * 5 + ["pasfun"] * 3
-RANG = {"none": 0, "pasfun": 1, "bug": 2}
+# Cartes Test (GDD 0.21) : 12 OK, 2 Bug bloquants, 3 Bug mineurs, 3 Pas fun.
+DECK0 = ["none"] * 12 + ["bugB"] * 2 + ["bugM"] * 3 + ["pasfun"] * 3
+BUGS = ("bugB", "bugM")
+RANG = {"none": 0, "pasfun": 1, "bugM": 2, "bugB": 3}
 
 # ------------------------------------------------------------------ règles
 REGLES = dict(
     cycles=5,             # cycles 0 à 4
     humain_max=1, humain_c0=2, pix_cap=3,
+    humain_c4=2,          # GDD 0.21 : « le sprint final », 2 jetons Prod au dernier cycle
+    feedback_prod=True,   # GDD 0.21 : le travail demandé par un feedback est un effort (il prend le jeton Prod)
     note_depart=3.0, note_min=1.0, note_max=5.0,
     fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
     pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)
@@ -102,7 +106,7 @@ class Partie:
         return len(f["blocks"]) >= f["blocs"]
 
     def etoiles(self, f):
-        if any(b["c"] == "bug" for b in f["blocks"]):
+        if any(b["c"] == "bugB" for b in f["blocks"]):
             return 0
         s = f["etoiles"]
         if any(b["c"] == "pasfun" for b in f["blocks"]):
@@ -110,7 +114,7 @@ class Partie:
         return s + f["bonus"]
 
     def jouable(self):
-        return all(f["rel"] and not any(b["c"] == "bug" for b in f["blocks"]) for f in self.f.values() if f["must"])
+        return all(f["rel"] and not any(b["c"] == "bugB" for b in f["blocks"]) for f in self.f.values() if f["must"])
 
     def gamers(self):
         return 25 * sum(self.etoiles(f) for f in self.f.values() if f["rel"]) if self.jouable() else 0
@@ -147,7 +151,7 @@ class Partie:
         self.temps = D["vera"] + D["planif"] + (D["decouverte_c0"] if c == 0 else 0) + D["retro"]
         pa = {"CP": 3, "D": 3, "P": 3}
         pixcap = 4 if c == 2 else R["pix_cap"]
-        hmax = R["humain_c0"] if c == 0 else R["humain_max"]
+        hmax = R["humain_c0"] if c == 0 else (R["humain_c4"] if c == 4 else R["humain_max"])
         faits = {"D": 0, "P": 0}
         cout = 0 if c == 0 else 1
         # 1. tri du feedback
@@ -177,7 +181,8 @@ class Partie:
         # 2. corrections connues et travail demandé par les gamers
         for f in self.f.values():
             self.corriger(pa, f)
-            while f["travail"] and pa[f["resp"]] > 0:
+            while f["travail"] and pa[f["resp"]] > 0 and (not R["feedback_prod"] or faits[f["resp"]] < hmax):
+                faits[f["resp"]] += 1
                 if self.agit(pa, f["resp"]):
                     f["travail"] -= 1; self.temps += D["bloc_humain"]
                     if f.get("bonus_att"):
@@ -226,7 +231,7 @@ class Partie:
                 for b in f["blocks"]:
                     if b["by"] == "PIX" and not b["s"] and tests < 4 and self.credits > 1 and self.r.random() < p["scan"]:
                         b["s"] = True; tests += 1; self.credits -= 1; self.temps += D["scan"]; self.log["tests_scan"] += 1
-                        if b["c"] == "bug":
+                        if b["c"] in BUGS:
                             b["k"] = True
             for f in prets:
                 for b in f["blocks"]:
@@ -247,13 +252,13 @@ class Partie:
         for f in self.f.values():
             if f["rel"] or not self.done(f):
                 continue
-            if any(b["c"] == "bug" and b["k"] for b in f["blocks"]) and self.r.random() < p["garder_bug"]:
+            if any(b["c"] in BUGS and b["k"] for b in f["blocks"]) and self.r.random() < p["garder_bug"]:
                 continue
             f["rel"] = True; sortis += 1
             for b in f["blocks"]:
                 if b["c"] != "none" and not b["k"]:
                     b["k"] = True; reveles += 1
-                if b["c"] == "bug":
+                if b["c"] in BUGS:
                     bugs += 1
                     self.note -= 1.0 if c == 4 else 0.5
                     if c == 3 and f["must"]:
