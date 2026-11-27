@@ -61,14 +61,13 @@
   // Mélanger deux décalages (p de 0 à 1).
   function entre(d1, d2, p) { return { x: d1.x + (d2.x - d1.x) * p, y: d1.y + (d2.y - d1.y) * p }; }
 
-  // --- 1. Un jeton vole du pilotage vers une station ---------------------------
-  // sorte : "heure" (par défaut) ou "prod" (le jeton ⚒ Prod, le seul qui produit un effort).
+  // --- 1. Un jeton Heure vole du pilotage vers une station ----------------------
   // Le jeton part de sa place au pilotage et la laisse vide.
-  // Renvoie false si la personne n'a plus de jeton de cette sorte.
+  // Renvoie false si la personne n'a plus d'heure.
 
-  async function envolerHeure(role, stationId, sorte) {
+  async function envolerHeure(role, stationId) {
     const O = Plateau.outils;
-    const pris = Plateau.prendreJeton(role, sorte || "heure");
+    const pris = Plateau.prendreJeton(role);
     if (!pris) return false;
     const depart = O.posJetonSoleil(role, pris.index);
     const posees = Plateau.heuresPosees(stationId);
@@ -76,8 +75,8 @@
     const c = controle(depart, arrivee, 0.22);
 
     const glisse = O.calque("glisse");
-    const trace = O.el("path", { d: `M${depart.x},${depart.y} Q${c.x},${c.y} ${arrivee.x},${arrivee.y}`, class: "trace-vol" + (pris.prod ? " prod" : "") }, glisse);
-    const vol = O.jeton(glisse, role, depart.x, depart.y, 14, "heure-posee en-vol", pris.prod);
+    const trace = O.el("path", { d: `M${depart.x},${depart.y} Q${c.x},${c.y} ${arrivee.x},${arrivee.y}`, class: "trace-vol" }, glisse);
+    const vol = O.badgeRole(glisse, role, depart.x, depart.y, 12, "heure-posee en-vol");
     await tween(800, (p) => {
       const q = bezier(depart, c, arrivee, p);
       const echelle = (1 + 0.45 * Math.sin(Math.PI * p)) * (1 + p / 7);
@@ -86,7 +85,7 @@
     vol.remove();
     setTimeout(() => trace.remove(), duree(900));
 
-    Plateau.poserHeures(stationId, posees.concat({ role, prod: pris.prod, depuis: pris.index }));
+    Plateau.poserHeures(stationId, posees.concat({ role, depuis: pris.index }));
     rejouer(Plateau.elementHeurePosee(stationId, posees.length), "atterrit");
     return true;
   }
@@ -108,7 +107,7 @@
         const depart = O.posHeurePosee(st, i);
         const arrivee = O.posJetonSoleil(role, j.depuis !== null && j.depuis !== undefined ? j.depuis : S().heuresParRole - n + retour[role] - 1);
         const c = controle(depart, arrivee, -0.18);
-        const vol = O.jeton(glisse, role, depart.x, depart.y, 16, "heure-posee en-vol", j.prod);
+        const vol = O.badgeRole(glisse, role, depart.x, depart.y, 14, "heure-posee en-vol");
         vols.push(tween(900, (p) => {
           const q = bezier(depart, c, arrivee, p);
           vol.setAttribute("transform", `translate(${q.x},${q.y}) scale(${1 - p * 0.12})`);

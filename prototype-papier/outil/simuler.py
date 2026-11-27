@@ -26,12 +26,12 @@ RANG = {"none": 0, "pasfun": 1, "bugM": 2, "bugB": 3}
 # ------------------------------------------------------------------ règles
 REGLES = dict(
     cycles=5,             # cycles 0 à 4
-    humain_max=1, humain_c0=2, pix_cap=3,
-    humain_c4=2,          # GDD 0.21 : « le sprint final », 2 jetons Prod au dernier cycle
+    humain_max=4, humain_c0=4, pix_cap=3,   # GDD 0.23 : plus de plafond d'efforts humains (le coût de 2 heures suffit)
+    humain_c4=4,
     feedback_prod=True,
     review_par_P=True,    # GDD 0.22 : la code review revient au programmeur (garant du code), pas au responsable
-    heures=3,             # jetons (heures) par joueur et par cycle
-    effort_humain=1,      # piste : heures pour un effort humain (2 = « produire prend 2 heures », sans jeton Prod)
+    heures=4,             # GDD 0.23 : 4 heures par joueur et par cycle, toutes égales
+    effort_humain=2,      # GDD 0.23 : coder un effort soi-même prend 2 heures (plus de jeton Prod)
     note_depart=3.0, note_min=1.0, note_max=5.0,
     fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
     pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)

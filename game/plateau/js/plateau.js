@@ -76,8 +76,8 @@
     cadrer();
     svg.innerHTML = "";
     vu.station = null; vu.posees = {}; vu.files = {}; vu.choisi = null;
-    vu.sortes = {}; vu.pris = {};
-    S.roles.forEach((r) => { vu.sortes[r] = sortesDuCycle(0); vu.pris[r] = vu.sortes[r].map(() => false); });
+    vu.pris = {};
+    S.roles.forEach((r) => { vu.pris[r] = Array(S.heuresParRole).fill(false); });
     for (const f in tickets) delete tickets[f];
 
     definitions();
@@ -349,66 +349,33 @@
     });
   }
 
-  // Les jetons d'un rôle au pilotage : 3 par cycle, dont le jeton ⚒ Prod (GDD 0.21).
+  // Les jetons Heure d'un rôle au pilotage : 4 par cycle, tous égaux (GDD 0.23).
   // Un jeton parti laisse sa place vide (il est posé sur une station).
-  // change : les places dont la sorte vient de changer (elles s'animent).
-  function dessinerJetons(role, change) {
+  const JETON = { x0: 47, pas: 23, r: 11 };
+  function dessinerJetons(role) {
     const g = svg.querySelector(`.jetons-role[data-role="${role}"]`);
     if (!g) return;
     g.innerHTML = "";
-    vu.sortes[role].forEach((sorte, j) => {
-      const classe = "jeton-soleil" + (vu.pris[role][j] ? " utilise" : "") + (change && change[j] ? " change" : "");
-      jeton(g, role, 52 + j * 30, 0, 14, classe, sorte === "prod").dataset.index = j;
+    vu.pris[role].forEach((pris, j) => {
+      badgeRole(g, role, JETON.x0 + j * JETON.pas, 0, JETON.r, "jeton-soleil" + (pris ? " utilise" : "")).dataset.index = j;
     });
   }
 
-  // Un jeton : la pastille du rôle (sa lettre). Le jeton Prod est corail, avec un petit marteau en dessous.
-  function jeton(parent, role, x, y, r, classe, prod) {
-    const b = badgeRole(parent, role, x, y, r, (classe || "") + (prod ? " prod" : ""));
-    if (prod) {
-      const m = el("g", { class: "marteau", transform: `translate(0,${(r * 0.95).toFixed(1)})` }, b);
-      el("circle", { r: r * 0.52, class: "marteau-fond" }, m);
-      el("text", { x: 0, y: r * 0.24, class: "marteau-texte", "text-anchor": "middle", style: `font-size:${(r * 0.7).toFixed(1)}px`, texte: "⚒" }, m);
+  // Prendre un jeton au pilotage : le plus à droite encore libre. Renvoie null s'il n'y en a plus.
+  function prendreJeton(role) {
+    const p = vu.pris[role];
+    for (let j = p.length - 1; j >= 0; j--) {
+      if (!p[j]) { p[j] = true; dessinerJetons(role); return { index: j }; }
     }
-    return b;
-  }
-
-  // Les sortes de jetons d'un cycle : « heure » ou « prod ».
-  function sortesDuCycle(cycle) {
-    const J = S.jetons;
-    if (!J) return Array(S.heuresParRole).fill("heure");
-    return (J.parCycle[cycle] || J.defaut).slice();
-  }
-  // Un nouveau cycle : les sortes de jetons changent (l'élan du lancement, le sprint final).
-  function donnerJetons(cycle) {
-    S.roles.forEach((r) => {
-      const avant = vu.sortes[r] || [];
-      vu.sortes[r] = sortesDuCycle(cycle);
-      if (!vu.pris[r] || vu.pris[r].length !== vu.sortes[r].length) vu.pris[r] = vu.sortes[r].map(() => false);
-      dessinerJetons(r, vu.sortes[r].map((x, j) => !!avant[j] && avant[j] !== x));
-    });
-  }
-  // Prendre un jeton au pilotage : le plus à droite de la sorte demandée.
-  // Un jeton Prod peut servir d'heure ordinaire, l'inverse non. Renvoie null s'il n'y en a plus.
-  function prendreJeton(role, sorte) {
-    const s = vu.sortes[role], p = vu.pris[role];
-    const chercher = (k) => { for (let j = s.length - 1; j >= 0; j--) if (!p[j] && s[j] === k) return j; return -1; };
-    let j = sorte === "prod" ? chercher("prod") : chercher("heure");
-    if (j < 0 && sorte !== "prod") j = chercher("prod");
-    if (j < 0) return null;
-    p[j] = true;
-    dessinerJetons(role);
-    return { index: j, prod: s[j] === "prod" };
+    return null;
   }
   function libererJetons() {
-    S.roles.forEach((r) => { vu.pris[r] = vu.sortes[r].map(() => false); dessinerJetons(r); });
+    S.roles.forEach((r) => { vu.pris[r] = vu.pris[r].map(() => false); dessinerJetons(r); });
   }
-  function jetonsLibres(role, sorte) {
-    return vu.sortes[role].filter((x, j) => !vu.pris[role][j] && (!sorte || x === sorte)).length;
-  }
+  function jetonsLibres(role) { return vu.pris[role].filter((x) => !x).length; }
   function etatJetons() {
     const o = {};
-    S.roles.forEach((r) => (o[r] = { sortes: vu.sortes[r].slice(), pris: vu.pris[r].slice() }));
+    S.roles.forEach((r) => (o[r] = { pris: vu.pris[r].slice() }));
     return o;
   }
 
@@ -505,7 +472,7 @@
   // --- Les fonctions d'état (appelées par la vitrine, puis par le script) ----
 
   // Ce que le plateau montre en ce moment (pour que les animations partent du bon endroit).
-  const vu = { station: null, posees: {}, files: {}, sortes: {}, pris: {} };
+  const vu = { station: null, posees: {}, files: {}, pris: {} };
 
   function illuminerStation(id) {
     vu.station = id;
@@ -538,13 +505,13 @@
 
   // L'état de départ (vitrine) : n jetons de ce rôle sont déjà partis, en partant de la droite.
   function utiliserHeures(role, n) {
-    vu.pris[role] = vu.sortes[role].map((x, j) => j >= vu.sortes[role].length - n);
+    vu.pris[role] = vu.pris[role].map((x, j) => j >= vu.pris[role].length - n);
     dessinerJetons(role);
   }
 
   // Où se trouve un jeton Heure au pilotage (index 0 à 2, de gauche à droite).
   function posJetonSoleil(role, index) {
-    return { x: G.cx + 52 + index * 30, y: G.cy - 50 + S.roles.indexOf(role) * 52 };
+    return { x: G.cx + JETON.x0 + index * JETON.pas, y: G.cy - 50 + S.roles.indexOf(role) * 52 };
   }
 
   // Où se pose le i-ème jeton Heure sur une station : comme une petite lune sur le bord de la planète.
@@ -556,23 +523,23 @@
     const p = surOrbite(station(stationId).angle);
     const depart = DEPART_JETONS[stationId] !== undefined ? DEPART_JETONS[stationId] : p.y < G.cy ? -30 : -130;
     const pas = PAS_JETONS[stationId] !== undefined ? PAS_JETONS[stationId] : 34;
-    const a = ((depart + i * pas) * Math.PI) / 180;
+    const a = ((depart + i * pas * 0.85) * Math.PI) / 180;
     const r = G.rStation + 4;
     return { x: p.x + r * Math.cos(a), y: p.y + r * Math.sin(a) };
   }
 
   // Les jetons Heure posés sur une station. roles : la liste des propriétaires,
   // par exemple ["chef", "designer"] (un jeton par heure), avec la lettre de chacun.
-  // Un jeton posé vaut { role, prod, depuis } (depuis : sa place au pilotage) ; un simple nom de rôle suffit aussi.
+  // Un jeton posé vaut { role, depuis } (depuis : sa place au pilotage) ; un simple nom de rôle suffit aussi.
   function poserHeures(stationId, roles) {
-    const liste = (roles || []).map((x) => (typeof x === "string" ? { role: x, prod: false, depuis: null } : Object.assign({}, x)));
+    const liste = (roles || []).map((x) => (typeof x === "string" ? { role: x, depuis: null } : Object.assign({}, x)));
     vu.posees[stationId] = liste;
     calques.jetons.querySelectorAll(`[data-station="${stationId}"]`).forEach((e) => e.remove());
     if (!liste.length) return;
     const g = el("g", { class: "jetons-poses", "data-station": stationId }, calques.jetons);
     liste.forEach((j, i) => {
       const p = posHeurePosee(stationId, i);
-      jeton(g, j.role, p.x, p.y, 16, "heure-posee", j.prod).dataset.index = i;
+      badgeRole(g, j.role, p.x, p.y, 14, "heure-posee").dataset.index = i;
     });
   }
   function elementHeurePosee(stationId, i) {
@@ -769,23 +736,24 @@
     return g;
   }
 
-  // Ce qu'attend un ticket (GDD 0.21) : PIX (un prompt, puis des tokens), le jeton ⚒ Prod
-  // de son responsable, ou une vérification au Test (la loupe). Rien : il peut avancer.
+  // Ce qu'attend un ticket : PIX (un prompt, puis des tokens), son responsable (2 heures par effort,
+  // badge à sa lettre), ou une vérification au Test (la loupe). Rien : il peut avancer.
   function attente(v) {
     const d = def(v.f);
     const faits = (v.efforts || []).filter(Boolean).length;
     if (v.enCorrection) return "corr";
-    if ((v.station === "prompt" || v.station === "build") && faits < d.efforts && v.par) return v.par === "pix" ? "pix" : "prod";
+    if ((v.station === "prompt" || v.station === "build") && faits < d.efforts && v.par) return v.par === "pix" ? "pix" : "humain";
     if (v.station === "test" && (v.cartesTest || []).some((c) => !c.revelee)) return "verif";
     return null;
   }
   function poserAttente(g, v, R, H) {
     const a = attente(v);
     if (!a) return;
+    const d = def(v.f);
     const b = el("g", { class: "attente attente-" + a, transform: `translate(${R - 6},${-H - 3})` }, g);
     el("circle", { r: 11, class: "attente-fond" }, b);
     if (a === "pix") el("text", { x: 0, y: 3.5, class: "attente-texte code", "text-anchor": "middle", texte: "</>" }, b);
-    else if (a === "prod" || a === "corr") el("text", { x: 0, y: 4.5, class: "attente-texte", "text-anchor": "middle", texte: "⚒" }, b);
+    else if (a === "humain" || a === "corr") el("text", { x: 0, y: 4, class: "attente-texte", "text-anchor": "middle", texte: t("role." + d.resp + ".court") }, b);
     else el("path", { d: ICONES.test, class: "attente-icone", transform: "scale(0.42)" }, b);
     el("title", { texte: t("ticket.attend." + a) }, b);
   }
@@ -1070,7 +1038,7 @@
     elementTuile, elementPileCachees,
     // Pour les animations (js/animations.js) : l'état visible et la géométrie.
     placerTicket, rangerTicket, rangTicket, reserverTicket, animerCase, elementHeurePosee, cibleTuile, bulleVera,
-    def, nomF, estCorrectif, idBase, donnerJetons, prendreJeton, libererJetons, jetonsLibres, jetons: etatJetons,
+    def, nomF, estCorrectif, idBase, prendreJeton, libererJetons, jetonsLibres, jetons: etatJetons,
     activerAiguillage, montrerVerifications, flecheRetour,
     stationActive: () => vu.station,
     choisir, choisi: () => vu.choisi,
@@ -1079,7 +1047,7 @@
     heuresUtilisees: () => { const o = {}; S.roles.forEach((r) => (o[r] = vu.pris[r].filter(Boolean).length)); return o; },
     niveauFile: (id) => vu.files[id] || 0,
     outils: {
-      el, badgeRole, jeton, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
+      el, badgeRole, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
       angleStation: (id) => station(id).angle,
       surOrbite, G, COULOIR, decalageCouloir, places: () => G.places, calque: (nom) => calques[nom]
     }

@@ -19,7 +19,6 @@
   --sun-text: #8A5A00;
   --danger: #E5484D;
   --queue: #F26B5B;
-  --prod: #F26B5B;              /* le jeton ⚒ Prod (corail), le seul qui produit un effort */
 
   /* Dérivées */
   --ink: #0D2329;               /* encre bleu nuit (contours, texte sur ambre) */
@@ -58,7 +57,6 @@
   --sun-text: #FBAB00;
   --danger: #F87171;
   --queue: #FBAB00;
-  --prod: #FF7A66;
 
   --ink: #0D2329;
   --line: #2E4550;
@@ -819,26 +817,12 @@ html, body {
 .planete.recoit .planete-disque { animation: recoit 0.7s ease-out; transform-box: fill-box; transform-origin: center; }
 @keyframes recoit { 40% { transform: scale(1.15); } }
 
-/* --- Les règles 0.21 dans la démo : jeton Prod, aiguillages, vérifications, boucles --- */
+/* --- Les règles 0.23 dans la démo : aiguillages, vérifications, boucles --- */
 
-/* Le jeton ⚒ Prod : corail, avec un petit marteau. */
-.badge-role.prod .badge-role-fond,
-.badge-role.jeton-soleil.prod .badge-role-fond { fill: var(--prod); }
-.plateau .badge-role.jeton-soleil.prod .badge-role-lettre { fill: var(--ink); }
-.badge-role.jeton-soleil.prod.utilise .badge-role-fond { fill: none; stroke: var(--prod); }
-.badge-role.utilise .marteau { opacity: 0.4; }
-.marteau-fond { fill: var(--prod); stroke: var(--ink); stroke-width: 1.2; }
-.plateau .marteau-texte { fill: var(--ink); font-weight: 900; }
-.badge-role.change .badge-role-fond { animation: atterrit 0.6s ease-out 3; transform-box: fill-box; transform-origin: center; }
-.trace-vol.prod { stroke: var(--prod); }
-.heure { display: grid; place-items: center; font-size: 9px; font-weight: 900; color: var(--ink); line-height: 1; }
-.heure.prod { background: var(--prod); }
-.heure.prod.depensee { background: transparent; border-color: var(--prod); color: var(--text-muted); }
-
-/* Ce qu'attend un ticket : PIX (</>), le jeton Prod (⚒), une vérification (loupe), une correction. */
+/* Ce qu'attend un ticket : PIX (</>), son responsable (sa lettre), une vérification (loupe), une correction. */
 .attente-fond { fill: var(--surface); stroke: var(--ink); stroke-width: 1.8; }
 .attente-pix .attente-fond { fill: var(--agent); }
-.attente-prod .attente-fond { fill: var(--prod); }
+.attente-humain .attente-fond { fill: var(--sun); }
 .attente-corr .attente-fond { fill: var(--danger); }
 .attente-verif .attente-fond { stroke: var(--accent-text); stroke-width: 2.4; animation: attente-clignote 1.6s ease-in-out infinite; }
 @keyframes attente-clignote { 50% { stroke-width: 4.5; } }
@@ -885,7 +869,7 @@ html, body {
 .aig-col strong { font-size: 13.5px; }
 .aig-col small { font-size: 11.5px; line-height: 1.3; color: var(--text-muted); }
 .aig-col-pix { border-top-color: var(--agent); }
-.aig-col-resp { border-top-color: var(--prod); }
+.aig-col-resp { border-top-color: var(--sun); }
 .aig-col-corriger { border-top-color: var(--danger); }
 .aig-col-publier { border-top-color: var(--sun); }
 .aig-ticket { padding: 6px 10px; border-radius: 10px; border: 2px solid var(--line-soft); transition: border-color 0.2s, box-shadow 0.2s; }
@@ -903,7 +887,7 @@ html, body {
 }
 .aig-choix.choisi { border-color: var(--ink); animation: aig-presse 0.4s ease-out forwards; }
 .aig-choix-pix.choisi { background: var(--agent); color: var(--ink); }
-.aig-choix-resp.choisi { background: var(--prod); color: var(--ink); }
+.aig-choix-resp.choisi { background: var(--sun); color: var(--ink); }
 .aig-choix-corriger.choisi { background: var(--danger); color: var(--sur-danger); }
 .aig-choix-publier.choisi { background: var(--sun); color: var(--ink); }
 @keyframes aig-presse { 40% { transform: scale(0.93); } 100% { transform: scale(1.04); } }

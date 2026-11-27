@@ -1,6 +1,6 @@
 # Orbit : Studio — les règles
 
-*Version 6 du 27 novembre 2026 : la code review revient au programmeur, garant du code (comme le playtest revient au designer, garant du fun). Version 5 du 27 novembre 2026 : jeton Prod, code review, deux sortes de bugs, deux aiguillages (qui produit ; corriger ou publier quand même), ticket correctif pour une fonctionnalité live. Version 4 du 26 novembre 2026 : passe sur le vocabulaire (effort, heure, carte Test, MVP, prompt, cycle Brief → Review). Recto « l'essentiel en images », verso « le détail ». Elle découle du GDD (version 0.14, section 0) et des cartes (`docs/jeu/cartes-orbit-studio.md`), et a été vérifiée par simulation (`docs/jeu/simulation-equilibrage.md`). Dans le livret, les symboles sont remplacés par les vrais visuels du jeu.*
+*Version 7 du 27 novembre 2026 : tous les jetons sont égaux : 4 heures par joueur et par cycle, coder un effort prend 2 heures (plus de jeton Prod). Version 6 du 27 novembre 2026 : la code review revient au programmeur, garant du code (comme le playtest revient au designer, garant du fun). Version 5 du 27 novembre 2026 : jeton Prod, code review, deux sortes de bugs, deux aiguillages (qui produit ; corriger ou publier quand même), ticket correctif pour une fonctionnalité live. Version 4 du 26 novembre 2026 : passe sur le vocabulaire (effort, heure, carte Test, MVP, prompt, cycle Brief → Review). Recto « l'essentiel en images », verso « le détail ». Elle découle du GDD (version 0.14, section 0) et des cartes (`docs/jeu/cartes-orbit-studio.md`), et a été vérifiée par simulation (`docs/jeu/simulation-equilibrage.md`). Dans le livret, les symboles sont remplacés par les vrais visuels du jeu.*
 
 ## Le but
 
@@ -16,8 +16,7 @@ Vous dirigez **Orbital Studio**, un petit studio de jeu vidéo qui travaille ave
 |---|---|---|
 | ⭐ | **Étoile** | La valeur d'une fonctionnalité pour les gamers (les joueurs de votre jeu vidéo). **1 étoile = 25 gamers.** |
 | 🟩 | **Effort** | La quantité de travail d'une fonctionnalité : 1 à 3 cases grises sur sa carte. Quand un effort est fait, on pose un **pion Effort** sur une case. |
-| 🟠 | **Heure** | Le temps d'un joueur : **3 jetons par joueur et par cycle**, soit **15 sur la partie** (5 cycles). Chaque action coûte 1 ou 2 heures : on pose ses jetons sur la station où l'on agit. Les heures non utilisées sont perdues. |
-| ⚒ | **Jeton Prod** | Un des 3 jetons est un **jeton Prod** : le seul qui permet de **produire soi-même un effort**. Produire demande une longue plage de concentration ; entre les réunions, les code reviews et les tests, chacun n'en trouve qu'une par cycle. Il peut aussi servir d'heure ordinaire. |
+| 🟠 | **Heure** | Le temps d'un joueur : **4 jetons par joueur et par cycle**, soit **20 sur la partie** (5 cycles). **Coder un effort soi-même prend 2 heures ; toute autre action prend 1 heure.** On pose ses jetons sur la station où l'on agit. Les heures non utilisées sont perdues. |
 | 🔷 | **Token IA** | Le budget IA du studio, comme les tokens que l'on paie pour utiliser une IA : **20 pour toute la partie**. Chaque effort fait par PIX et chaque test de SCAN coûte 1 token. On le suit avec un marqueur sur la piste. |
 | 🟥 | **Carte Test** | Cachée sous chaque effort fait par PIX : elle dit ce que cache son travail, *OK*, *Bug bloquant*, *Bug mineur* ou *Pas fun*. Personne ne la regarde avant de tester. |
 | 🟨 | **Carte Feedback** | Ce que dit la communauté des gamers, de façon anonyme, à trier. |
@@ -44,7 +43,7 @@ L'animateur lit le message de Vera et retourne la carte Événement du cycle. So
 - **Choisir** les fonctionnalités : au départ, 12 idées sont visibles : la première liste de votre équipe. Rangez celles que vous voulez faire dans le Backlog, par priorité, puis choisissez celles du cycle.
 - **Qui produit ? (l'aiguillage à la sortie du Backlog)** Pour chaque fonctionnalité qui part dans le cycle, choisissez :
   - **PIX** : le ticket s'arrête à la station Prompt. Vite (jusqu'à 3 efforts par cycle), pour 1 token par effort, mais avec un risque : une carte Test cachée sous chaque effort.
-  - **Le responsable** (le programmeur pour « Prog », le designer pour « Design » et « Art ») : le ticket saute le Prompt et va au Build. Lent (son jeton Prod : 1 effort par cycle), mais sans risque.
+  - **Le responsable** (le programmeur pour « Prog », le designer pour « Design » et « Art ») : le ticket saute le Prompt et va au Build. Lent (2 heures par effort), mais sans risque.
 - **Idées de gamers :** 8 autres fonctionnalités sont cachées. Quand vous triez une carte Feedback qui cite l'une d'elles, elle apparaît et rejoint vos idées.
 - **Noter le risque du cycle** sur la feuille de score, en une phrase : ce qui pourrait mal tourner, et ce que vous faites contre. Après la release, cochez s'il est arrivé.
 
@@ -52,7 +51,7 @@ L'animateur lit le message de Vera et retourne la carte Événement du cycle. So
 
 - **Écrire un prompt pour PIX** (le chef de projet ou le designer) : un prompt couvre une fonctionnalité entière. Il coûte 1 heure s'il est simple, 2 heures s'il est détaillé.
 - **PIX fait jusqu'à 3 efforts par cycle**, pour 1 token chacun. Pour chaque effort, glissez une carte Test face cachée sous la carte Fonctionnalité. Prompt simple : on tire 1 carte. Prompt détaillé : on en tire 2 et on garde la meilleure. Les efforts en trop attendent le cycle suivant.
-- **Un humain produit un effort avec son jeton Prod** : 1 par cycle (2 au cycle 0 et au cycle 4), et seulement sur ses fonctionnalités. Son travail n'a jamais de problème : pas de carte Test.
+- **Un humain code un effort en 2 heures**, et seulement sur ses fonctionnalités : 2 efforts par cycle au plus, 1 s'il veut aussi vérifier. Son travail n'a jamais de problème : pas de carte Test.
 - Une carte Fonctionnalité dont toutes les cases portent un pion Effort est **prête pour la release**.
 
 ### 4. Test
@@ -88,8 +87,7 @@ L'équipe choisit les fonctionnalités prêtes qu'elle publie. Les cartes Test e
 
 ### Les règles particulières
 
-- **Cycle 0, « l'élan du lancement » :** pas de carte Test, pas de token dépensé, pas d'événement, pas de feedback. L'équipe est motivée et sa vision est claire : **chacun a 2 jetons Prod et 1 jeton Heure**.
-- **Cycle 4, « le sprint final » :** avant le festival, l'équipe donne tout : **chacun a de nouveau 2 jetons Prod et 1 jeton Heure**.
+- **Cycle 0 :** pas de carte Test, pas de token dépensé, pas d'événement, pas de feedback.
 - **Le chrono :** chaque cycle est chronométré, **25 minutes au cycle 0, puis 20 minutes**. À la sonnerie, on passe à la release avec ce qui est prêt.
 - **Les rôles :** le programmeur est responsable des fonctionnalités « Prog », le designer des fonctionnalités « Design » et « Art ». Le chef de projet trie, écrit les prompts et décide des actions des agents.
 - **Pioche Test vide :** on mélange la défausse pour la reformer.

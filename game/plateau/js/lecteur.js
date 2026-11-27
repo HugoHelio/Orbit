@@ -20,12 +20,7 @@
 
   const FAIRE = {
     async temps(e) {
-      if (e.cycle !== undefined && e.cycle !== etat.cycle) {
-        // Un nouveau cycle : les jetons changent (fin de l'élan du lancement, sprint final…).
-        etat.cycle = e.cycle;
-        Plateau.donnerJetons(etat.cycle);
-        TableauDeBord.afficherHeures(Plateau.jetons());
-      }
+      if (e.cycle !== undefined) etat.cycle = e.cycle;
       if (e.temps) etat.temps = e.temps;
       TableauDeBord.afficherTemps(document.getElementById("temps"), etat.cycle, etat.temps);
       TableauDeBord.afficherBoucles(etat.bouclesFaites, etat.cycle);
@@ -50,7 +45,7 @@
 
     async station(e) { await Actions.station(e.id); },
 
-    async heure(e) { await Actions.heure(e.role, e.station, e.sorte); },
+    async heure(e) { await Actions.heure(e.role, e.station); },
 
     async rappel() { await Actions.rappelerHeures(); },
 

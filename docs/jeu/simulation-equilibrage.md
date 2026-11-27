@@ -154,7 +154,7 @@ Quatre variantes (1 500 parties par profil, même graine). On ajoute un profil t
 - **D fonctionne** : scores proches des règles 0.22 (+1 à +16 %), même classement, PIX fait toujours la moitié des efforts, MVP au cycle 0 comme aujourd'hui, même durée de partie (environ 2 heures de jeu simulées). La leçon reste, un peu moins forte : « Sans PIX » perd 20 % face à l'équipe experte (contre 39 % avec le jeton Prod).
 - Avec D, la règle se dit en une phrase : **« 4 heures par cycle. Produire un effort prend 2 heures ; tout le reste prend 1 heure. »** Plus de jeton Prod, plus d'élan du lancement ni de sprint final : le cycle 0 marche tout seul (2 efforts par humain + 3 de PIX = 7, pour 6 efforts de Must).
 
-*Le simulateur garde les deux options (`heures`, `effort_humain`) ; les règles par défaut restent celles du GDD 0.22 tant que la décision n'est pas prise.*
+**Décision (27 nov. 2026, GDD 0.23) : la variante D est adoptée.** Le simulateur la prend par défaut (`heures=4`, `effort_humain=2`, plus de plafond d'efforts humains).
 
 ## Historique : la version 1 de l'étude
 

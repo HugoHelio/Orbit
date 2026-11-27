@@ -18,19 +18,18 @@
   // --- Les actions (réutilisées par le script de l'étape 3) --------------------
 
   const Actions = {
-    // Un jeton de ce rôle vole vers la station (par défaut : la station active).
-    // sorte : "heure" (par défaut) ou "prod" (le jeton ⚒ Prod, pour produire un effort).
-    async heure(role, stationId, sorte) {
+    // Un jeton Heure de ce rôle vole vers la station (par défaut : la station active).
+    async heure(role, stationId) {
       const st = stationId || Plateau.stationActive() || "build";
-      const ok = await Anim.envolerHeure(role, st, sorte);
-      if (!ok) Pioches.avis(t(sorte === "prod" ? "avis.prod.role" : "avis.heures.role").replace("{role}", t("role." + role)));
+      const ok = await Anim.envolerHeure(role, st);
+      if (!ok) Pioches.avis(t("avis.heures.role").replace("{role}", t("role." + role)));
       majHeures();
       return ok;
     },
 
     // L'aiguillage à la sortie du Backlog : le ticket entre dans le cycle.
     // par "pix" : il s'arrête au Prompt (il attend un prompt, puis PIX).
-    // par "humain" : il saute le Prompt et file au Build (il attend le jeton ⚒ Prod de son responsable).
+    // par "humain" : il saute le Prompt et file au Build (il attend son responsable : 2 heures par effort).
     async lancer(f, par) {
       await Anim.volerTuile(f, "cycle", Plateau.ticketsA("prompt").length);
       Pioches.deplacer(f, "backlog", { zone: "cycle", par });
@@ -58,11 +57,15 @@
       return Anim.avancerTicket(f, vers);
     },
 
-    // Le responsable du ticket produit 1 effort sur Build avec son jeton ⚒ Prod : le jeton vole,
+    // Le responsable du ticket code 1 effort sur Build : 2 heures (GDD 0.23). Ses 2 jetons volent,
     // puis un effort se remplit (ambre).
     async effortHumain(f) {
-      const role = Plateau.def(f).resp;
-      if (!(await Actions.heure(role, "build", "prod"))) return false;
+      const role = Plateau.def(f).resp, cout = S.effortHumain || 1;
+      if (Plateau.jetonsLibres(role) < cout) {
+        Pioches.avis(t("avis.heures.effort").replace("{role}", t("role." + role)).replace("{n}", cout));
+        return false;
+      }
+      for (let k = 0; k < cout; k++) await Actions.heure(role, "build");
       return Anim.remplirEffort(f, "humain");
     },
 
@@ -84,7 +87,7 @@
     },
 
     // « Corriger » (la petite boucle, GDD 0.21) : le ticket recule au Build (flèche rouge), la carte Test
-    // est défaussée, l'effort fautif se vide, le responsable le refait (1 heure, jamais PIX, hors jeton Prod),
+    // est défaussée, l'effort fautif se vide, le responsable le refait (1 heure, jamais PIX),
     // puis le ticket revient au Test.
     async corriger(f, idCarte) {
       const role = Plateau.def(f).resp;

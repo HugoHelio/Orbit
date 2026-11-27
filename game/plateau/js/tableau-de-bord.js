@@ -59,7 +59,7 @@
     h("div", "note-valeur", "3", ligne).id = "valeur-note";
 
 
-    // Les jetons de l'équipe : 3 par personne et par cycle, dont le jeton ⚒ Prod (GDD 0.21).
+    // Les heures de l'équipe : 4 jetons par personne et par cycle, tous égaux (GDD 0.23).
     const heures = bloc(t("tableau.heures"), "bloc-heures");
     S.roles.forEach((role) => {
       const ligne = h("div", "heures-ligne", undefined, heures);
@@ -121,16 +121,13 @@
       t("tableau.tokens.aide").replace("{n}", restants).replace("{total}", S.tokensIA);
   }
 
-  // jetons : { chef: { sortes: ["heure", "heure", "prod"], pris: [false, false, true] }, … } (Plateau.jetons())
+  // jetons : { chef: { pris: [false, false, true, true] }, … } (Plateau.jetons())
   function afficherHeures(jetons) {
     let reste = 0;
     S.roles.forEach((role) => {
-      const j = jetons[role] || { sortes: [], pris: [] };
+      const j = jetons[role] || { pris: [] };
       document.querySelectorAll(`.heures-ligne[data-role="${role}"] .heure`).forEach((e, i) => {
-        const prod = j.sortes[i] === "prod";
-        e.classList.toggle("prod", prod);
         e.classList.toggle("depensee", !!j.pris[i]);
-        e.textContent = prod ? "⚒" : "";
         if (!j.pris[i]) reste++;
       });
     });

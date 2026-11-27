@@ -57,8 +57,6 @@
     // Une copie fraîche : les pioches et le lecteur la font évoluer pendant la démo.
     const V = JSON.parse(JSON.stringify(modeVitrine ? window.VITRINE : window.DEMO_SCRIPT.depart));
     Plateau.init(document.getElementById("plateau"), S, t);
-    // Les jetons du cycle : 2 Heure et 1 ⚒ Prod, ou 1 Heure et 2 Prod au cycle 0 et au cycle 4 (GDD 0.21).
-    Plateau.donnerJetons(V.cycle);
     TableauDeBord.init(document.getElementById("tableau"), S, t);
 
     // Les pioches : on mélange, puis on donne une vraie carte à chaque carte Test de la vitrine.

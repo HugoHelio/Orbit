@@ -1,5 +1,5 @@
 // Les aiguillages (GDD 0.21) : les moments où l'équipe décide, rendus visibles.
-// - À la sortie du Backlog : qui produit chaque ticket ? PIX (par le Prompt) ou son responsable (jeton ⚒ Prod).
+// - À la sortie du Backlog : qui produit chaque ticket ? PIX (par le Prompt) ou son responsable (2 heures par effort).
 // - À la sortie du Test : un problème est trouvé. Corriger, ou publier quand même ?
 // Un panneau s'ouvre au-dessus du plateau : une ligne par ticket, une colonne par choix,
 // avec ce que coûte chaque choix. Un choix impossible est grisé, avec sa raison.

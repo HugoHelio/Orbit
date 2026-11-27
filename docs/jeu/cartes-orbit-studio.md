@@ -1,6 +1,6 @@
 # Cartes d'Orbit : Studio — règles de base, version 7
 
-*Cartes du prototype papier — version 11 du 27 novembre 2026 : la **code review** revient au programmeur, garant du code. Version 10 du 27 novembre 2026 : **jeton Prod** (1 par cycle, 2 au cycle 0 et au cycle 4), **code review** (au lieu de « relire »), **deux sortes de bugs** (bloquant, mineur), **ticket correctif** pour une fonctionnalité live, **deux aiguillages** (qui produit ; corriger ou publier quand même). Version 9 du 27 novembre 2026 : **12 fonctionnalités au départ, 8 idées de gamers** révélées par le feedback trié (colonne « Origine »). Version 8 : les joueurs de Star Squadron s'appellent **gamers** (les étudiants sont les joueurs d'Helioso Orbit) ; la catégorie « Joueur » devient « Vaisseau ». Version 7 : les cartes Feedback sont **anonymes** (la voix de la communauté) et toutes valent +0,5 de note ; Max, Sam et Nora sont les fondateurs du studio. Version 6 du 26 novembre 2026 : passe sur le vocabulaire (bloc → effort, point d'action → heure, carte Défaut → carte Test avec OK / Bug / Pas fun, brief à PIX → prompt, premier jouable → MVP, cycle Brief, Planning, Build, Test, Release, Review). Version 5 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un effort humain par cycle, 2 efforts humains au cycle 0, plus de bonus « release sans problème », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du MVP, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.14, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
+*Cartes du prototype papier — version 12 du 27 novembre 2026 : **tous les jetons sont égaux** (4 heures par joueur et par cycle ; coder un effort = 2 heures ; plus de jeton Prod). Version 11 du 27 novembre 2026 : la **code review** revient au programmeur, garant du code. Version 10 du 27 novembre 2026 : **jeton Prod** (1 par cycle, 2 au cycle 0 et au cycle 4), **code review** (au lieu de « relire »), **deux sortes de bugs** (bloquant, mineur), **ticket correctif** pour une fonctionnalité live, **deux aiguillages** (qui produit ; corriger ou publier quand même). Version 9 du 27 novembre 2026 : **12 fonctionnalités au départ, 8 idées de gamers** révélées par le feedback trié (colonne « Origine »). Version 8 : les joueurs de Star Squadron s'appellent **gamers** (les étudiants sont les joueurs d'Helioso Orbit) ; la catégorie « Joueur » devient « Vaisseau ». Version 7 : les cartes Feedback sont **anonymes** (la voix de la communauté) et toutes valent +0,5 de note ; Max, Sam et Nora sont les fondateurs du studio. Version 6 du 26 novembre 2026 : passe sur le vocabulaire (bloc → effort, point d'action → heure, carte Défaut → carte Test avec OK / Bug / Pas fun, brief à PIX → prompt, premier jouable → MVP, cycle Brief, Planning, Build, Test, Release, Review). Version 5 : simplifications issues de l'étude v2 (le feedback livré fait monter la note, un Pas fun coûte 1 étoile, file d'attente sans suivi d'âge, E1 seulement si le jeu a des joueurs). Version 4 : réglages issus de la simulation (un effort humain par cycle, 2 efforts humains au cycle 0, plus de bonus « release sans problème », note entre 1 et 5) et les 8 précisions de règles. Version 3 : fiches de rôle à la place des cartes personnage, jetons simplifiés, portraits (version 2 : règle du MVP, priorités non imprimées, score = joueurs × note). Conforme aux règles de base du GDD (version 0.14, section 0) et aux règles sur une page (`docs/jeu/regles-une-page.md`). Sources : la master feature list et les insights de playtest de SpacePlan (`docs/jeu/reprise-spaceplan.md`).*
 
 *Chaque carte a un identifiant (F01, T01, FB01, E01, V0…) : c'est sa clé pour la traduction anglaise et pour le jeu numérique.*
 
@@ -8,26 +8,26 @@
 
 ## 1. Les actions (reprises sur les fiches de rôle)
 
-Chaque humain a **3 jetons par cycle : 2 jetons Heure et 1 jeton Prod** (soit 15 jetons sur les 5 cycles de la partie). Le **jeton Prod** est le seul qui peut produire un effort au Build ; il peut aussi servir d'heure ordinaire. **Au cycle 0 (« l'élan du lancement ») et au cycle 4 (« le sprint final »), chacun a 2 jetons Prod et 1 jeton Heure.** L'équipe a **20 tokens IA pour toute la partie**.
+Chaque humain a **4 jetons Heure par cycle** (soit 20 sur les 5 cycles de la partie), tous égaux. **Coder un effort soi-même prend 2 heures ; toute autre action prend 1 heure.** L'équipe a **20 tokens IA pour toute la partie**.
 
-*Pourquoi un jeton Prod : produire soi-même demande une longue plage de concentration. Dans un cycle, entre les réunions, les code reviews et les tests, chacun n'en trouve qu'une. PIX, lui, produit jusqu'à 3 efforts par cycle.*
+*Pourquoi 2 heures : coder soi-même demande une longue plage de concentration. Un humain code donc au plus 2 efforts par cycle, et 1 s'il veut aussi vérifier. PIX, lui, produit jusqu'à 3 efforts par cycle.*
 
 | Action | Coût | Qui |
 |---|---|---|
 | Trier 2 cartes Feedback | 1 heure | Chef de projet |
 | Écrire un prompt **simple** pour une fonctionnalité entière (1 carte Test tirée par effort de PIX) | 1 heure | Chef de projet ou designer |
 | Écrire un prompt **détaillé** pour une fonctionnalité entière (2 cartes Test tirées par effort, on garde la meilleure) | 2 heures | Chef de projet ou designer |
-| Faire 1 effort soi-même (aucune carte Test) | **le jeton Prod** (2 au cycle 0 et au cycle 4) | Le responsable de la fonctionnalité |
+| Coder 1 effort soi-même (aucune carte Test) | **2 heures** | Le responsable de la fonctionnalité |
 | Faire la **code review** d'1 effort produit par PIX (révèle sa carte Test, quelle qu'elle soit) | 1 heure | Le programmeur (garant du code) |
 | Faire un playtest d'une fonctionnalité (révèle un « Pas fun » sur tous ses efforts) | 1 heure | Designer |
-| Corriger un problème révélé (le ticket recule au Build ; jamais PIX) | 1 heure (pas le jeton Prod obligatoirement) | Le responsable de la fonctionnalité |
+| Corriger un problème révélé (le ticket recule au Build ; jamais PIX) | 1 heure | Le responsable de la fonctionnalité |
 | PIX fait 1 effort (3 par cycle ; les efforts en trop attendent le cycle suivant) | 1 token | — |
 | SCAN teste 1 effort (révèle un « Bug », jamais un « Pas fun ») | 1 token | — |
 
 **Le responsable** d'une fonctionnalité est indiqué sur sa carte : **Prog** = le programmeur ; **Design** et **Art** = le designer.
 
 **Les deux aiguillages** (deux décisions de pilotage sur l'orbite) :
-- **À la sortie du Backlog : qui produit ?** « PIX » : le ticket va à la station Prompt, où l'on écrit son prompt, puis PIX produit. « Le responsable » : le ticket saute le Prompt et va au Build, où le responsable produit avec son jeton Prod.
+- **À la sortie du Backlog : qui produit ?** « PIX » : le ticket va à la station Prompt, où l'on écrit son prompt, puis PIX produit. « Le responsable » : le ticket saute le Prompt et va au Build, où le responsable le code (2 heures par effort).
 - **À la sortie du Test, si un problème est trouvé : corriger ou publier ?** « Corriger » : 1 heure du responsable, le ticket recule au Build, l'effort fautif est refait, puis il revient au Test ; sans heure libre, il attend au Build le cycle suivant. « Publier quand même » : il part à la Release avec son défaut, et l'effet s'applique.
 
 **La note et le score.** La note du jeu est **sur 5** et commence à **3**. Elle baisse de 0,5 par bug publié (bloquant ou mineur), et quand la communauté se sent ignorée. Elle monte quand l'équipe **livre ce que les gamers demandent** : +0,5 par carte Feedback traitée. **Elle reste entre 1 et 5.** **Gamers = étoiles du jeu publié × 25**, recalculés à chaque release. **Score = gamers × note.** Sans MVP, il n'y a pas de gamers : le score vaut 0.
@@ -55,7 +55,7 @@ Chaque humain a **3 jetons par cycle : 2 jetons Heure et 1 jeton Prod** (soit 15
 
 | Matériel | Nombre | À quoi ça sert |
 |---|---|---|
-| **Jeton Heure** et **jeton Prod** | 6 de chaque (2 + 2 par joueur) | Au début du cycle, chaque joueur pose sur son emplacement du poste de pilotage 2 jetons Heure et 1 jeton Prod (1 jeton Heure et 2 jetons Prod au cycle 0 et au cycle 4). Pour agir, il prend un jeton et le pose sur la station où il agit (Prompt, Build, Test…). Seul le jeton Prod produit un effort au Build. En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
+| **Jeton Heure** | 12 (4 par joueur) | Au début du cycle, chaque joueur pose ses 4 jetons Heure sur son emplacement du poste de pilotage. Pour agir, il prend un jeton (2 pour coder un effort) et le pose sur la station où il agit (Prompt, Build, Test…). En fin de cycle, tous les jetons reviennent au poste de pilotage. Au débrief, on voit où l'équipe a passé son temps. |
 | **Pion Effort** | 15 | Un effort, c'est une part du travail d'une fonctionnalité. On pose un pion Effort sur une case grise de la carte Fonctionnalité dès que cet effort est fait (par un humain ou par PIX). Quand toutes les cases sont couvertes, la fonctionnalité est prête pour la release. Après sa release, ses pions reviennent dans la réserve. |
 | **Marqueur** | 3 | Un pion pour chaque piste du plateau : tokens IA (départ 20), note (départ 3) et cycle (départ 0). |
 
@@ -224,7 +224,7 @@ Après chaque release, l'équipe pioche **1 nouvelle carte Feedback à chaque pa
 | Cartes Fonctionnalité (F01 à F20) | 20 |
 | Cartes Test (T01 à T20) | 20 |
 | Cartes Feedback (FB01 à FB24) | 24 |
-| Jetons Heure | 9 |
+| Jetons Heure | 12 |
 | Pions Effort | 15 |
 | Marqueurs (tokens, note, cycle) | 3 |
 | Feuille de score | 1 |

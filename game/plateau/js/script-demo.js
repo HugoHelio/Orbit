@@ -1,4 +1,4 @@
-// Le script de la démo animée (v2, règles du GDD 0.22) : 2 boucles (cycle 0, puis cycle 1), sans règles derrière.
+// Le script de la démo animée (v2, règles du GDD 0.23) : 2 boucles (cycle 0, puis cycle 1), sans règles derrière.
 // C'est un fichier de données : on peut changer l'ordre, les durées, les chiffres et les cartes
 // sans toucher au code. Les textes affichés sont des clés du fichier du scénario (fr et en).
 // Le récit complet, avec les chiffres justifiés par les règles : docs/jeu/spec-prototype-plateau.md, section 4.
@@ -13,9 +13,9 @@
 //                sans choix le ticket attend au Backlog ; sortie "test" : choix "corriger" ou "publier".
 //                grises : les choix impossibles, avec la clé de leur raison ; detail : une ligne sous le ticket
 //   station    : allume une station
-//   heure      : un jeton vole du pilotage vers une station (sorte: "heure" par défaut, ou "prod")
+//   heure      : un jeton Heure vole du pilotage vers une station
 //   avancer    : des tickets passent à la station suivante (ensemble)
-//   effort     : un effort se remplit (qui: "humain" = le jeton ⚒ Prod du responsable, "pix" = 1 token et une carte Test ;
+//   effort     : un effort se remplit (qui: "humain" = 2 heures du responsable, "pix" = 1 token et une carte Test ;
 //                sansCarte: true au cycle 0) ; carte : la carte Test tirée (pour que la démo soit toujours la même)
 //   evenement, feedback : une carte sort de sa pioche ; trier : la cheffe de projet trie la plus ancienne carte Feedback
 //   verifs     : le panneau des trois vérifications du Test (actif: false pour le cacher)
@@ -48,7 +48,7 @@ window.DEMO_SCRIPT = {
   },
 
   etapes: [
-    // --- Boucle 1 : le cycle 0, « le pitch » (l'élan du lancement : 1 Heure et 2 Prod chacun) ---
+    // --- Boucle 1 : le cycle 0, « le pitch » (4 heures chacun) ---------------------------------
     { faire: "temps", cycle: 0, temps: "brief", station: null, guide: "guide.c0.brief" },
     { faire: "vera", texte: "vera.V0" },
     { faire: "attendre", ms: 4500 },
@@ -69,7 +69,7 @@ window.DEMO_SCRIPT = {
 
     { faire: "temps", temps: "build", station: "prompt", guide: "guide.c0.build" },
     { faire: "heure", role: "chef", station: "prompt" },
-    { faire: "heure", role: "designer", station: "prompt" },
+    { faire: "heure", role: "chef", station: "prompt" },
     { faire: "station", id: "build" },
     { faire: "avancer", f: ["F09", "F13"] },
     { faire: "guide", texte: "guide.c0.pix", ms: 1500 },
@@ -96,7 +96,7 @@ window.DEMO_SCRIPT = {
     { faire: "attendre", ms: 2500 },
     { faire: "rappel" },
 
-    // --- Boucle 2 : le cycle 1, « l'accès anticipé » (2 Heure et 1 Prod chacun) ---------------
+    // --- Boucle 2 : le cycle 1, « l'accès anticipé » (4 heures chacun) ------------------------
     { faire: "temps", cycle: 1, temps: "brief", station: null, guide: "guide.c1.brief" },
     { faire: "attendre", ms: 2500 },
     { faire: "vera", texte: "vera.V1" },
@@ -119,7 +119,7 @@ window.DEMO_SCRIPT = {
       { f: "F17", choix: "pix" },
       { f: "F18", choix: "resp" },
       { f: "F10", choix: "resp" },
-      { f: "F06-c", choix: null, grises: { pix: "aig.raison.prompt", resp: "aig.raison.prod" } }
+      { f: "F06-c", choix: null, detail: "aig.detail.garde", grises: { pix: "aig.raison.pixplein" } }
     ] },
     { faire: "guide", texte: "guide.c1.attente", ms: 4500 },
 

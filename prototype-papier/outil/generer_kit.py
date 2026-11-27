@@ -323,9 +323,9 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
     for j, role in enumerate(("Chef(fe) de projet", "Designer", "Programmeur(se)")):
         y = cy - 6 + j * 12
         s.append(T(cx - 36, y + 1.5, role, 3.4, 700))
-        for i in range(3):
-            s.append(f'<circle cx="{cx + 10 + i * 9}" cy="{y}" r="3.6" fill="#fff" stroke="{NAVY}" stroke-width=".8"/>')
-    s.append(T(cx, cy + 37, "Posez ici vos 3 jetons à chaque cycle : 2 Heure, 1 Prod", 3, 600, "middle"))
+        for i in range(4):
+            s.append(f'<circle cx="{cx + 6 + i * 8}" cy="{y}" r="3.3" fill="#fff" stroke="{NAVY}" stroke-width=".8"/>')
+    s.append(T(cx, cy + 37, "Posez ici vos 4 jetons Heure à chaque cycle", 3, 600, "middle"))
 
     # stations
     stations = [(180, "1", "Backlog", "Idées et demandes", "Les cartes Fonctionnalité à faire"),
@@ -450,7 +450,7 @@ def plateau_svg(vb="0 0 594 420", w="594mm", h="420mm"):
         a_ = math.pi / 2 + k * math.pi / 5
         pts.append(f"{90.5 + r_ * math.cos(a_):.2f},{393.3 - r_ * math.sin(a_):.2f}")
     s.append(f'<circle cx="90.5" cy="370.5" r="2.6" fill="{AMBER}" stroke="{NAVY}" stroke-width=".6"/>')
-    s.append(T(96, 372, "Jeton Heure : le temps d'un joueur · ⚒ Prod : produire", 2.9, 600))
+    s.append(T(96, 372, "Jeton Heure : le temps d'un joueur · coder = 2 heures", 2.9, 600))
     s.append(f'<rect x="88" y="375.5" width="5" height="5" rx="1" fill="{SAGE}" stroke="{NAVY}" stroke-width=".6"/>')
     s.append(T(96, 379.5, "Pion Effort : 1 effort fait", 2.9, 600))
     s.append(f'<circle cx="90.5" cy="385.5" r="2.6" fill="#fff" stroke="{CYAN}" stroke-width="1"/>')
@@ -482,19 +482,19 @@ def livret():
         lig = "".join(f"<tr><td>{gras(a[0])}{' <i>(ses fonctionnalités)</i>' if 'responsable' in a[2].lower() else ''}{' <i>(vous décidez)</i>' if a[2] == '—' else ''}</td><td class='c'><b>{a[1]}</b></td></tr>" for a in actions_de(rid))
         return f"""<div style="height:148.5mm;padding:10mm 14mm;border-bottom:.3mm dashed {MUTED};position:relative">
 <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab" style="color:{TEAL_T}">Fiche de rôle · {rid}</div><div class="t" style="font-size:24pt;margin-top:1mm">{nom}</div></div>
-<div style="display:flex;gap:1.6mm;align-items:center">{''.join(f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER}"></div>' for _ in range(3))}<span class="txt" style="margin-left:1mm"><b>3 jetons par cycle</b><br>dont 1 ⚒ Prod</span></div></div>
+<div style="display:flex;gap:1.6mm;align-items:center">{''.join(f'<div style="width:7mm;height:7mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER}"></div>' for _ in range(4))}<span class="txt" style="margin-left:1mm"><b>4 heures par cycle</b><br>coder = 2 heures</span></div></div>
 <div class="txt" style="margin:2.5mm 0 1mm;font-size:11pt"><b>Votre mission :</b> {mission}.</div>
 <div class="ph" style="margin-bottom:3mm">« {nettoie(phrase)} »</div>
 <div class="lab" style="margin-bottom:1.5mm">Vos actions</div>
 <table class="tab" style="font-size:10.5pt">{lig}</table>
-<div class="txt" style="margin-top:4mm;font-size:9.5pt;line-height:1.4"><b>Pour agir</b>, prenez un de vos jetons au poste de pilotage et posez-le sur la station où vous agissez. Seul le jeton ⚒ Prod produit un effort au Build (2 jetons Prod au cycle 0 et au cycle 4). Ils reviennent au poste de pilotage à la fin du cycle.<br>
+<div class="txt" style="margin-top:4mm;font-size:9.5pt;line-height:1.4"><b>Pour agir</b>, prenez un de vos jetons au poste de pilotage et posez-le sur la station où vous agissez. Coder un effort prend 2 jetons ; toute autre action, 1 jeton. Ils reviennent au poste de pilotage à la fin du cycle.<br>
 <b>MVP :</b> tant que les 5 fonctionnalités essentielles ne sont pas publiées sans bug bloquant, le jeu a 0 gamer. <b>Score</b> = gamers × note.</div></div>"""
 
     jet_expl = f"""<div style="height:148.5mm;padding:10mm 14mm;position:relative">
 <div class="lab" style="color:{TEAL_T}">Le matériel de l'équipe</div><div class="t" style="font-size:22pt;margin:1mm 0 4mm">Les pions, à quoi ça sert ?</div>
 <div style="display:flex;flex-direction:column;gap:4mm">
 <div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border-radius:50%;border:.6mm solid {NAVY};background:{AMBER};flex:none;display:flex;align-items:center;justify-content:center;font-size:5.5pt;font-weight:800">1 h</div>
-<div class="txt"><b>Jetons Heure et jetons ⚒ Prod</b>, 3 par joueur et par cycle (2 Heure et 1 Prod ; 1 Heure et 2 Prod au cycle 0 et au cycle 4) : c'est votre temps de travail, 15 jetons sur la partie. Chaque action coûte 1 ou 2 heures ; seul le jeton Prod produit un effort, car produire demande une longue plage de concentration. Au début du cycle, ils sont au poste de pilotage. Pour agir, posez-en un sur la station où vous agissez. À la fin du cycle, ils reviennent. Au débrief, on voit où l'équipe a passé son temps.</div></div>
+<div class="txt"><b>Jetons Heure</b>, 4 par joueur et par cycle : c'est votre temps de travail, 20 heures sur la partie. Coder un effort soi-même prend 2 heures (une longue plage de concentration) ; toute autre action prend 1 heure. Au début du cycle, ils sont au poste de pilotage. Pour agir, posez-en un sur la station où vous agissez. À la fin du cycle, ils reviennent. Au débrief, on voit où l'équipe a passé son temps.</div></div>
 <div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border:.6mm solid {NAVY};border-radius:1.6mm;background:{SAGE};flex:none"></div>
 <div class="txt"><b>15 pions Effort</b> : le travail fait. Une fonctionnalité demande 1 à 3 efforts (les cases grises sur sa carte). Chaque effort fait, par un humain ou par PIX, se marque d'un pion sur une case. Carte pleine = fonctionnalité prête pour la release. Après la release, les pions reviennent dans la réserve.</div></div>
 <div style="display:flex;gap:4mm;align-items:flex-start"><div style="width:11mm;height:11mm;border-radius:50%;border:.6mm solid {NAVY};background:{NAVY};flex:none"></div>
@@ -528,12 +528,12 @@ def livret():
     def jeton_rond(c, txt, r=13):
         return f'<div style="width:{r}mm;height:{r}mm;border-radius:50%;border:.6mm solid {NAVY};background:{c};display:flex;align-items:center;justify-content:center;font-size:6.5pt;font-weight:800">{txt}</div>'
 
-    pa = "".join(jeton_rond(AMBER, "1 h") for _ in range(6)) + "".join(jeton_rond(CORAL, "⚒ Prod") for _ in range(6))
+    pa = "".join(jeton_rond(AMBER, "1 h") for _ in range(12))
     cr = "".join(jeton_rond(NAVY, f'<span style="color:#fff">{t}</span>') for t in ("IA", "NOTE", "CYCLE"))
     bl = "".join(f'<div style="width:12mm;height:12mm;border:.6mm solid {NAVY};border-radius:1.6mm;background:{SAGE}"></div>' for _ in range(15))
     jetons = f"""<div class="feuille" style="padding:12mm 14mm">
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t" style="font-size:22pt">Jetons à découper</div><div class="lab">À imprimer sur papier épais</div></div>
-<div class="lab" style="margin:5mm 0 2mm">6 jetons Heure et 6 jetons ⚒ Prod (2 + 2 par humain)</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{pa}</div>
+<div class="lab" style="margin:5mm 0 2mm">12 jetons Heure (4 par humain)</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{pa}</div>
 <div class="lab" style="margin:5mm 0 2mm">3 marqueurs : tokens IA, note, cycle</div><div style="display:flex;flex-wrap:wrap;gap:3mm">{cr}</div>
 <div class="lab" style="margin:5mm 0 2mm">15 pions Effort</div><div style="display:flex;flex-wrap:wrap;gap:2.4mm">{bl}</div>
 <div class="txt" style="margin-top:5mm;font-size:8.5pt;color:{MUTED}">Astuce : des cubes de couleur ou des pions de récupération font très bien l'affaire à la place de ces jetons.</div></div>"""
@@ -548,7 +548,7 @@ def livret():
 <tr><td><b>cartes-recto-verso.pdf</b></td><td>Cartes Test T01–T20, Feedback FB01–FB24, Événements E1–E6, avec leurs dos</td><td>A4, <b>recto verso, retournement bord long</b>, 250 g</td></tr>
 <tr><td><b>livret.pdf</b></td><td>Ce guide, les règles (recto : l'essentiel en images ; verso : le détail), les 3 fiches de rôle, l'explication des pions, la feuille de score avec le risque du cycle, la feuille de débrief, le leaderboard, la planche de jetons</td><td>A4, recto seul ; les fiches de rôle se coupent en deux (A5)</td></tr></table>
 <div class="t" style="font-size:15pt;margin:8mm 0 3mm">Par équipe</div>
-<div class="txt">1 plateau · 3 fiches de rôle (une par joueur) · 20 Fonctionnalités · 20 cartes Test · 24 Feedback · 6 jetons Heure · 6 jetons Prod · 15 pions Effort · 3 marqueurs · 1 feuille de score.<br>
+<div class="txt">1 plateau · 3 fiches de rôle (une par joueur) · 20 Fonctionnalités · 20 cartes Test · 24 Feedback · 12 jetons Heure · 15 pions Effort · 3 marqueurs · 1 feuille de score.<br>
 <b>Pour l'animateur :</b> les 6 Événements, les 6 messages de Vera et le leaderboard.</div>
 <div class="t" style="font-size:15pt;margin:8mm 0 3mm">Conseils</div>
 <div class="txt">• Coupez sur les traits gris : les cartes sont jointives, un seul coup de massicot sépare deux cartes.<br>
@@ -628,7 +628,7 @@ def livret():
 .verso td{{font-size:8pt;padding:.8mm 1.2mm}} .verso td:first-child,.verso td:nth-child(3){{width:17mm}} .verso td:nth-child(2){{width:auto}}
 .fl{{font-size:14pt;font-weight:800;margin-top:4mm;color:{MUTED}}}
 """
-    rep = [("Éviter", "Ne pas prendre le risque", "Faire le travail par un humain : jamais de problème, mais 1 effort par cycle (son jeton Prod)"),
+    rep = [("Éviter", "Ne pas prendre le risque", "Faire le travail par un humain : jamais de problème, mais lent (2 heures par effort)"),
            ("Réduire", "Rendre le risque moins probable", "Prompt détaillé : le risque de problème passe de 40 % à 16 %"),
            ("Détecter", "Le trouver avant qu'il ne frappe", "SCAN, code review, playtest, avant la release"),
            ("Accepter", "Le prendre en connaissance de cause", "Publier sans tester, ou garder des tokens en réserve")]
