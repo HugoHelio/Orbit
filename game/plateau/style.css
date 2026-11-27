@@ -711,6 +711,84 @@ html, body {
 .guide-texte { font-size: 14px; font-weight: 600; }
 .lecture-controles { display: flex; align-items: center; gap: 8px; flex: none; }
 
+/* --- Étape 2 : les briques animées ---------------------------------------- */
+
+/* 1. Le jeton Heure qui vole, et sa traînée */
+.trace-vol {
+  fill: none; stroke: var(--sun); stroke-width: 3; stroke-dasharray: 2 8; stroke-linecap: round;
+  animation: trace-fond 0.9s ease-out forwards;
+}
+@keyframes trace-fond { from { opacity: 0.9; } to { opacity: 0; } }
+.heure-posee.en-vol { filter: drop-shadow(0 5px 6px rgba(13, 35, 41, 0.35)); }
+.heure-posee.atterrit .badge-role-fond { animation: atterrit 0.5s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes atterrit { 0% { transform: scale(1.6); } 60% { transform: scale(0.9); } 100% { transform: scale(1); } }
+
+/* 2. La comète qui file sur l'orbite, et la station qui s'allume */
+.comete-point { fill: var(--agent); }
+.comete-point:first-child { filter: drop-shadow(0 0 8px var(--agent)); }
+.station.allumage .station-planete { animation: bosse 0.6s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes bosse { 40% { transform: scale(1.12); } }
+.station.active.allumage .station-halo { animation: onde 0.8s ease-out, pulsation 2.2s ease-in-out 0.8s infinite; }
+@keyframes onde { from { transform: scale(0.8); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+
+/* 3. Le vaisseau (ticket) qui voyage */
+.ticket.en-voyage { filter: drop-shadow(0 0 10px var(--agent)) drop-shadow(0 6px 8px rgba(13, 35, 41, 0.3)); }
+.ticket.arrive .ticket-contour { animation: contour-arrive 0.6s ease-out; }
+@keyframes contour-arrive { 30% { stroke: var(--agent); stroke-width: 5; } }
+
+/* 4. L'effort qui se remplit, et le ticket complet */
+.case-effort.se-remplit { animation: remplit 0.6s cubic-bezier(.2, .8, .2, 1); transform-box: fill-box; transform-origin: left center; }
+@keyframes remplit { from { transform: scaleX(0); } 70% { transform: scaleX(1.08) scaleY(1.5); } to { transform: none; } }
+.ticket.complet .ticket-contour { animation: contour-complet 1s ease-out; }
+@keyframes contour-complet { 30% { stroke: var(--sun); stroke-width: 6; } }
+
+/* 5. Les agents au travail */
+.satellite.travaille image { animation: tape 0.3s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes tape { to { transform: translateY(-3px) rotate(-3deg); } }
+.satellite.travaille .satellite-anneau { animation-duration: 1.2s; }
+.rayon { stroke: var(--agent); stroke-width: 3; stroke-dasharray: 6 8; stroke-linecap: round; animation: rayon 0.5s linear infinite; }
+@keyframes rayon { to { stroke-dashoffset: -28; } }
+.plateau .code-volant { font-family: ui-monospace, Consolas, monospace; font-size: 15px; font-weight: 900; fill: var(--accent-text); }
+.barre-scan { fill: var(--agent); filter: drop-shadow(0 0 6px var(--agent)); }
+
+/* 6. Les files qui grossissent, saturent et débordent */
+.case-file.arrive { animation: case-arrive 0.5s cubic-bezier(.3, 1.6, .5, 1); transform-box: fill-box; transform-origin: center; }
+@keyframes case-arrive { from { transform: scale(0.2); } }
+.file.saturee .file-fond { stroke: var(--queue); stroke-width: 3; animation: sature 1.4s ease-in-out infinite; }
+@keyframes sature { 50% { stroke-width: 6; } }
+.file.deborde { animation: tremble 0.45s; }
+@keyframes tremble { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+/* Le banc d'essai (étape 2) : en bas à gauche du plateau */
+.banc {
+  position: absolute; left: 10px; bottom: 10px; z-index: 1; width: 310px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--ombre); padding: 6px 10px 10px; color: var(--text);
+}
+.banc-entete {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+  background: none; border: 0; padding: 2px 0; cursor: pointer; color: var(--text);
+  font: inherit; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.banc-chevron { transition: transform 0.2s; }
+.banc.ferme .banc-chevron { transform: rotate(-90deg); }
+.banc.ferme .banc-corps { display: none; }
+.banc.ferme { padding-bottom: 6px; }
+.banc-corps { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px; }
+.banc-bouton {
+  font: inherit; font-size: 11.5px; font-weight: 600; line-height: 1.2; text-align: left;
+  padding: 4px 7px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line-soft); border-left: 3px solid var(--line-soft);
+  background: var(--surface-2); color: var(--text);
+}
+/* Un liseré de couleur par famille d'animation. */
+.banc-heures { border-left-color: var(--sun); }
+.banc-flux { border-left-color: var(--accent); }
+.banc-travail { border-left-color: var(--agent); }
+.banc-files { border-left-color: var(--queue); }
+.banc-bouton:hover { border-color: var(--accent); }
+.banc.occupe .banc-bouton { opacity: 0.5; cursor: wait; }
+
 /* --- Écrans étroits et mouvement réduit ----------------------------------- */
 
 @media (max-width: 1100px) {

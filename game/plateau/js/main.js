@@ -104,6 +104,9 @@
     TableauDeBord.afficherMvp(V.mvp);
     TableauDeBord.afficherPubliees(V.publiees);
     TableauDeBord.afficherBoucles(V.bouclesFaites, V.cycle);
+
+    // Le banc d'essai de l'étape 2 : un bouton par brique animée.
+    Banc.init({ scenario: S, traduire: t, etat: V, cadre: document.querySelector(".plateau-cadre") });
   }
 
   function toutAfficher() {
@@ -128,6 +131,9 @@
     sauver();
     toutAfficher();
   });
+
+  // Pour le banc d'essai (bouton « Remettre le plateau ») et, plus tard, le lecteur de la démo.
+  window.Demo = { redessiner: dessiner };
 
   toutAfficher();
 })();

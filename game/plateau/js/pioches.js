@@ -219,7 +219,8 @@
       const file = S.files.find((f) => f.id === "feedback-backlog");
       await voler(el, centreCadre(), Object.assign(centreDe(Plateau.elementFile(file.id)), { l: 40 }), 650, 0.2);
       etat.fileFeedback.push(carte.id);
-      etat.files[file.id] = Math.min(file.places, etat.fileFeedback.length);
+      // Au-delà de ses places, la file déborde : elle tremble (le goulot se voit).
+      etat.files[file.id] = etat.fileFeedback.length;
       Plateau.remplirFile(file.id, etat.files[file.id]);
     } else {
       // L'événement va se poser à côté de Vera.
@@ -242,6 +243,9 @@
     occupe = true;
     majCompteurs();
     Plateau.activerAgent("pix", true);
+    Plateau.afficherBulle("pix", false);
+    // PIX se met au travail : un rayon vers le ticket, des petits </> qui volent.
+    const arreter = window.Anim ? Anim.travailler("pix", cible.f) : () => {};
 
     const el = creerCarte("test", carte);
     const depart = centreDe(Plateau.elementPioche("test"));
@@ -255,6 +259,8 @@
       v.efforts = (v.efforts || []).concat("pix");
       v.cartesTest = (v.cartesTest || []).concat({ id: carte.id, revelee: false });
     });
+    Plateau.animerCase(cible.f, cible.efforts.length - 1);
+    arreter();
     etat.tokensRestants = Math.max(0, etat.tokensRestants - 1);
     TableauDeBord.afficherTokens(etat.tokensRestants);
     Plateau.afficherBulle("pix", true);

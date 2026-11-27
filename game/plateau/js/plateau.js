@@ -75,6 +75,8 @@
     t = traduire;
     cadrer();
     svg.innerHTML = "";
+    vu.station = null; vu.posees = {}; vu.utilisees = {}; vu.files = {};
+    for (const f in tickets) delete tickets[f];
 
     definitions();
     calques = {};
@@ -394,42 +396,77 @@
 
   // --- Les fonctions d'état (appelées par la vitrine, puis par le script) ----
 
+  // Ce que le plateau montre en ce moment (pour que les animations partent du bon endroit).
+  const vu = { station: null, posees: {}, utilisees: {}, files: {} };
+
   function illuminerStation(id) {
+    vu.station = id;
     svg.querySelectorAll(".station").forEach((g) => g.classList.toggle("active", g.dataset.station === id));
   }
 
+  // n peut dépasser la taille de la file : elle déborde (elle tremble et rougit).
   function remplirFile(id, n) {
     const g = svg.querySelector(`.file[data-file="${id}"]`);
-    g.querySelectorAll(".case-file").forEach((c) => c.classList.toggle("pleine", +c.dataset.index < n));
+    const avant = vu.files[id] || 0;
+    vu.files[id] = n;
+    const cases = g.querySelectorAll(".case-file");
+    cases.forEach((c) => {
+      const i = +c.dataset.index;
+      c.classList.toggle("pleine", i < n);
+      // Une case qui vient de se remplir « arrive » (petit rebond).
+      c.classList.remove("arrive");
+      if (i < n && i >= avant) {
+        void c.getBoundingClientRect();
+        c.classList.add("arrive");
+      }
+    });
+    g.classList.toggle("saturee", n >= cases.length);
+    if (n > cases.length && n > avant) {
+      g.classList.remove("deborde");
+      void g.getBoundingClientRect();
+      g.classList.add("deborde");
+    }
   }
 
   function utiliserHeures(role, n) {
+    vu.utilisees[role] = n;
     const g = svg.querySelector(`.role[data-role="${role}"]`);
     // Les jetons partent de la droite : ceux qui restent sont à gauche.
     // Un jeton parti laisse une place vide : il est posé sur une station.
     g.querySelectorAll(".jeton-soleil").forEach((c) => c.classList.toggle("utilise", +c.dataset.index >= S.heuresParRole - n));
   }
 
-  // Les jetons Heure posés sur une station.
-  // Les jetons Heure posés sur une station. roles : la liste des propriétaires,
-  // par exemple ["chef", "designer"] (un jeton par heure).
+  // Où se trouve un jeton Heure au pilotage (index 0 à 2, de gauche à droite).
+  function posJetonSoleil(role, index) {
+    return { x: G.cx + 52 + index * 30, y: G.cy - 50 + S.roles.indexOf(role) * 52 };
+  }
+
+  // Où se pose le i-ème jeton Heure sur une station : comme une petite lune sur le bord de la planète.
+  // En haut, l'étiquette est au-dessus de la planète : les jetons vont sur sa droite.
+  // Sur Build, ils vont à gauche, pour ne pas croiser le lien de PIX.
   const DEPART_JETONS = { build: 195 };
+  function posHeurePosee(stationId, i) {
+    const p = surOrbite(station(stationId).angle);
+    const depart = DEPART_JETONS[stationId] !== undefined ? DEPART_JETONS[stationId] : p.y < G.cy ? -30 : -130;
+    const a = ((depart + i * 34) * Math.PI) / 180;
+    const r = G.rStation + 4;
+    return { x: p.x + r * Math.cos(a), y: p.y + r * Math.sin(a) };
+  }
+
+  // Les jetons Heure posés sur une station. roles : la liste des propriétaires,
+  // par exemple ["chef", "designer"] (un jeton par heure), avec la lettre de chacun.
   function poserHeures(stationId, roles) {
+    vu.posees[stationId] = (roles || []).slice();
     calques.jetons.querySelectorAll(`[data-station="${stationId}"]`).forEach((e) => e.remove());
     if (!roles || !roles.length) return;
-    const p = surOrbite(station(stationId).angle);
     const g = el("g", { class: "jetons-poses", "data-station": stationId }, calques.jetons);
-    // Les jetons se posent comme de petites lunes sur le bord de la planète,
-    // avec la lettre de celui qui a passé cette heure ici.
     roles.forEach((role, i) => {
-      // En haut, l'étiquette est au-dessus de la planète : les jetons vont sur sa droite.
-      // Sur Build, ils vont à gauche, pour ne pas croiser le lien de PIX.
-      const depart = DEPART_JETONS[stationId] !== undefined ? DEPART_JETONS[stationId] : p.y < G.cy ? -30 : -130;
-      const a = ((depart + i * 34) * Math.PI) / 180;
-      const r = G.rStation + 4;
-      const x = p.x + r * Math.cos(a), y = p.y + r * Math.sin(a);
-      badgeRole(g, role, x, y, 16, "heure-posee");
+      const p = posHeurePosee(stationId, i);
+      badgeRole(g, role, p.x, p.y, 16, "heure-posee").dataset.index = i;
     });
+  }
+  function elementHeurePosee(stationId, i) {
+    return calques.jetons.querySelector(`.jetons-poses[data-station="${stationId}"] .heure-posee[data-index="${i}"]`);
   }
 
   function activerAgent(id, actif) {
@@ -687,6 +724,28 @@
   function ticket(f) { return tickets[f] && tickets[f].v; }
   function ticketsA(stationId) { return Object.values(tickets).map((m) => m.v).filter((v) => v.station === stationId); }
 
+  // Déplacer un ticket (pendant un voyage) : x, y en coordonnées du plateau.
+  function placerTicket(f, x, y) {
+    const e = elementTicket(f);
+    if (e) e.setAttribute("transform", `translate(${x},${y})`);
+  }
+  // Changer la place d'un ticket une fois le voyage fini (station et rang dans la station).
+  function rangerTicket(f, stationId, index) {
+    const memo = tickets[f];
+    if (!memo) return;
+    memo.v.station = stationId;
+    memo.index = index;
+    const p = placeCouloir(stationId, index);
+    placerTicket(f, p.x, p.y);
+  }
+  function rangTicket(f) { return tickets[f] ? tickets[f].index : -1; }
+
+  // Faire briller une case d'effort qui vient d'être faite.
+  function animerCase(f, index) {
+    const c = svg.querySelector(`.ticket[data-f="${f}"] .case-effort[data-index="${index}"]`);
+    if (c) c.classList.add("se-remplit");
+  }
+
   // Les éléments à l'écran (pour faire voler une carte depuis ou vers eux).
   function elementPioche(type) { return svg.querySelector(`.pioche[data-pioche="${type}"] .dos-carte.dessus`); }
   function elementCarteTest(id) { return svg.querySelector(`.carte-test[data-carte="${id}"]`); }
@@ -740,6 +799,18 @@
     majPioche, poserEvenement, dessinerMotifDos, poserIdees, poserBacklog, retirerVaisseau, montrerLoupe, cacherLoupe,
     placeBacklogLibre, basculerZones, zoneSous, pointPlateau, creerFantome, viderFantome, montrerCibles,
     elementPioche, elementCarteTest, elementTicket, elementFile, elementEvenement, elementPlanete, elementSvg,
-    elementTuile, elementPileCachees
+    elementTuile, elementPileCachees,
+    // Pour les animations (js/animations.js) : l'état visible et la géométrie.
+    placerTicket, rangerTicket, rangTicket, animerCase, elementHeurePosee,
+    stationActive: () => vu.station,
+    heuresPosees: (st) => (vu.posees[st] || []).slice(),
+    toutesHeuresPosees: () => JSON.parse(JSON.stringify(vu.posees)),
+    heuresUtilisees: () => Object.assign({}, vu.utilisees),
+    niveauFile: (id) => vu.files[id] || 0,
+    outils: {
+      el, badgeRole, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
+      angleStation: (id) => station(id).angle,
+      surOrbite, G, COULOIR, DECALAGES, places: () => G.places, calque: (nom) => calques[nom]
+    }
   };
 })();
