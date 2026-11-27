@@ -85,6 +85,8 @@ Chaque étape se termine par un test dans le navigateur, une mise à jour de ce 
 
 *Idées notées (à traiter à l'étape 5 ou au moteur de règles) :*
 - **Les deux boucles de retour** (27 nov., accord de l'utilisateur, à coder) : un problème trouvé au Test fait **reculer le ticket au Build** (la case fautive se vide, le responsable la refait en 1 heure, puis le ticket revient au Test) ; une carte Feedback sur une fonctionnalité **live** crée un **ticket correctif** qui part de la Communauté vers le Backlog et refait tout le chemin, pendant que la fonctionnalité reste live, marquée « bug signalé » ou « amélioration demandée » dans le tableau de bord.
+- **L'aiguillage à la sortie du Backlog** (27 nov., accord de l'utilisateur, à coder) : en envoyant un ticket dans le cycle, on choisit qui le produit. « PIX » : voie du haut, arrêt à la station Prompt, une heure de prompt, badge PIX. « D » ou « P » (le responsable) : voie du bas, on saute le Prompt, pastille du responsable. Chaque bouton dit ce que coûte le choix ; il est grisé si le responsable a déjà fait son effort du cycle.
+- **Décisions sur la correction** (27 nov.) : seul un humain corrige (le responsable, 1 heure), pas PIX pour l'instant ; la correction ne compte pas dans la limite d'un effort par cycle.
 - **La pioche Événements n'est pas pour les joueurs** (27 nov.) : c'est l'animateur qui retourne la carte Événement au début du Brief (dans le numérique : automatiquement quand il fait passer tout le monde au cycle suivant, la même carte pour toutes les équipes). Dans la démo, le clic sur la pioche reste ouvert pour le banc d'essai ; avec le moteur de règles, il sera réservé à l'animateur.
 
 | # | Étape | Terminé quand… | Fait |
