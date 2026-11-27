@@ -87,7 +87,7 @@ Le plateau numérique (`game/plateau/style.css`) ajoute quelques variables tiré
 | Variable | Thème clair | Thème sombre « Tech » | Rôle |
 |---|---|---|---|
 | `--ink` | `#0D2329` | `#0D2329` | Encre bleu nuit : texte et contours posés sur l'ambre ou le cyan |
-| `--line` | `#0D2329` | `#2E4550` | Contours du style flat (planètes, vaisseaux) |
+| `--line` | `#0D2329` | `#2E4550` | Contours du style flat (planètes, tickets) |
 | `--line-soft` | `#B9CAC9` | `#24313A` | Traits secondaires, éléments éteints |
 | `--ciel` | `#B9CAC9` | `#8CA3AB` | Étoiles du fond |
 | `--fond-plateau` | `#F4FAF9` | `#0C1518` | Fond du cadre du plateau |

@@ -14,7 +14,7 @@ window.VITRINE = {
   // Les tickets posés sur l'orbite : fonctionnalité, station, efforts faits et par qui
   // ("pix" = payé 1 token, "humain" = payé 1 heure).
   // cartesTest : les cartes Test cachées sous les efforts faits par PIX.
-  vaisseaux: [
+  tickets: [
     { f: "F18", station: "prompt", efforts: [] },
     { f: "F17", station: "build", efforts: ["pix", "pix"], cartesTest: ["cachee", "cachee"] },
     { f: "F14", station: "test", efforts: ["pix", "humain"], cartesTest: ["ok"] },

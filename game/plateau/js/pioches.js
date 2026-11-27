@@ -115,8 +115,10 @@
     a.className = "avis";
     a.textContent = texte;
     couche.appendChild(a);
-    setTimeout(() => a.classList.add("sortie"), 2600);
-    setTimeout(() => a.remove(), 3100);
+    // Un avis long reste plus longtemps : le temps de le lire.
+    const duree = Math.max(2600, texte.length * 55);
+    setTimeout(() => a.classList.add("sortie"), duree);
+    setTimeout(() => a.remove(), duree + 500);
   }
 
   // --- La grande carte (HTML) -----------------------------------------------
@@ -200,9 +202,10 @@
   // --- Piocher ---------------------------------------------------------------
 
   // type : "evenement", "feedback" ou "test". id (facultatif) : une carte précise (pour le script).
-  async function piocher(type, id) {
+  // f (carte Test seulement) : la fonctionnalité sur laquelle PIX travaille.
+  async function piocher(type, id, f) {
     if (occupe) return;
-    if (type === "test") return piocherTest(id);
+    if (type === "test") return piocherTest(id, f);
     const carte = sortir(type, id);
     if (!carte) return;
     occupe = true;
@@ -232,8 +235,12 @@
   }
 
   // Une carte Test se pioche quand PIX fait un effort : elle reste face cachée sous le ticket.
-  async function piocherTest(id) {
-    const cible = Plateau.ticketsA("build").find((v) => (v.efforts || []).length < S.fonctionnalites[v.f].efforts);
+  // PIX travaille sur la fonctionnalité donnée, sinon sur celle qu'on a choisie (si elle est en Build),
+  // sinon sur la première de Build qui a encore un effort à faire.
+  async function piocherTest(id, f) {
+    const libre = (v) => v && v.station === "build" && (v.efforts || []).length < S.fonctionnalites[v.f].efforts;
+    const choisie = Plateau.ticket(f || Plateau.choisi());
+    const cible = libre(choisie) ? choisie : f ? null : Plateau.ticketsA("build").find(libre);
     if (!cible) {
       avis(t("avis.build.plein"));
       return;
@@ -255,7 +262,7 @@
     el.remove();
 
     // PIX fait l'effort (1 token) et la carte Test se glisse dessous, face cachée.
-    Plateau.majVaisseau(cible.f, (v) => {
+    Plateau.majTicket(cible.f, (v) => {
       v.efforts = (v.efforts || []).concat("pix");
       v.cartesTest = (v.cartesTest || []).concat({ id: carte.id, revelee: false });
     });
@@ -264,6 +271,8 @@
     etat.tokensRestants = Math.max(0, etat.tokensRestants - 1);
     TableauDeBord.afficherTokens(etat.tokensRestants);
     Plateau.afficherBulle("pix", true);
+    // Dire ce qui vient de se passer : la carte tirée, c'est le risque caché du travail de PIX.
+    avis(t("avis.pix.carte").replace("{f}", cible.f));
     occupe = false;
   }
 
@@ -287,7 +296,7 @@
     await voler(el, centreCadre(), Object.assign(centreDe(Plateau.elementCarteTest(id)), { l: 20 }), 550, 0.3);
     el.remove();
 
-    Plateau.majVaisseau(f, (v) => {
+    Plateau.majTicket(f, (v) => {
       v.cartesTest = v.cartesTest.map((c) => (c.id === id ? Object.assign({}, c, { revelee: true }) : c));
     });
     occupe = false;
@@ -324,8 +333,8 @@
     } else if (cible.zone === "cycle" && depuis === "backlog") {
       etat.backlog = etat.backlog.filter((x) => x !== f);
       const v = { f, station: "prompt", efforts: [] };
-      etat.vaisseaux.push(v);
-      Plateau.poserVaisseau(v, Plateau.ticketsA("prompt").length).classList.add("nouveau");
+      etat.tickets.push(v);
+      Plateau.poserTicket(v, Plateau.ticketsA("prompt").length).classList.add("nouveau");
     } else {
       return false;
     }
@@ -419,6 +428,9 @@
       if (pioche) return piocher(pioche.dataset.pioche);
       const carte = e.target.closest(".carte-test.cliquable");
       if (carte && carte.dataset.carte) return reveler(carte.dataset.carte);
+      // Un clic sur un ticket du couloir choisit cette fonctionnalité (un autre clic la libère).
+      const tk = e.target.closest(".ticket.compact");
+      if (tk) return Plateau.choisir(tk.dataset.f);
       if (e.target.closest('.file[data-file="feedback-backlog"]')) return trier();
       if (e.target.closest('.station[data-station="backlog"]')) return Plateau.basculerZones();
     };

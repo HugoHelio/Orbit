@@ -36,7 +36,7 @@
     return { x: G.cx + (G.rx + d) * Math.cos(a), y: G.cy + (G.ry + d) * Math.sin(a) };
   }
 
-  // Point entre une station et le soleil (là où se garent les vaisseaux).
+  // Point entre une station et le soleil (là où se garent les tickets).
   function versLeCentre(p, distance) {
     const dx = G.cx - p.x, dy = G.cy - p.y;
     const n = Math.hypot(dx, dy);
@@ -75,13 +75,13 @@
     t = traduire;
     cadrer();
     svg.innerHTML = "";
-    vu.station = null; vu.posees = {}; vu.utilisees = {}; vu.files = {};
+    vu.station = null; vu.posees = {}; vu.utilisees = {}; vu.files = {}; vu.choisi = null;
     for (const f in tickets) delete tickets[f];
 
     definitions();
     calques = {};
     ["ciel", "orbite", "liens", "zones", "pioches", "evenement", "files", "stations", "soleil", "planetes",
-     "satellites", "jetons", "idees", "vaisseaux", "bulles", "loupe", "glisse"].forEach((nom) => {
+     "satellites", "jetons", "idees", "tickets", "bulles", "loupe", "glisse"].forEach((nom) => {
       calques[nom] = el("g", { class: "calque-" + nom }, svg);
     });
 
@@ -179,13 +179,22 @@
 
   // La légende de l'effort : relie les tickets aux heures et aux tokens du tableau de bord.
   function dessinerLegende() {
-    const g = el("g", { class: "legende", transform: "translate(1010,940)" }, calques.liens);
-    el("rect", { x: -16, y: -30, width: 340, height: 100, rx: 14, class: "legende-fond" }, g);
+    const g = el("g", { class: "legende", transform: "translate(850,940)" }, calques.liens);
+    el("rect", { x: -16, y: -30, width: 500, height: 100, rx: 14, class: "legende-fond" }, g);
     el("text", { x: 0, y: -6, class: "legende-titre", texte: t("legende.titre") }, g);
     [["humain", "legende.humain"], ["agent", "legende.agent"], ["", "legende.afaire"]].forEach(([qui, cle], i) => {
       const y = 18 + i * 21;
       el("rect", { x: 0, y: y - 9, width: 26, height: 8, rx: 4, class: "case-effort" + (qui ? " faite par-" + qui : "") }, g);
       el("text", { x: 38, y: y, class: "legende-texte", texte: t(cle) }, g);
+    });
+    // Les petites cartes Test sous les efforts de PIX : ce qu'elles veulent dire.
+    const x2 = 268;
+    el("text", { x: x2, y: -6, class: "legende-titre", texte: t("legende.test.titre") }, g);
+    ["cachee", "ok", "bug"].forEach((etat, i) => {
+      const y = 18 + i * 21;
+      const c = el("g", { class: "carte-test " + etat, transform: `translate(${x2 + 8},${y - 4}) scale(0.8)` }, g);
+      miniCarteTest(c, etat);
+      el("text", { x: x2 + 24, y: y, class: "legende-texte", texte: t("legende.test." + etat) }, g);
     });
   }
 
@@ -551,7 +560,7 @@
     el("text", { x: 16, y: 32, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + def.resp + ".court") }, g);
     el("text", { x: 39, y: 17, class: "tuile-nom", texte: abreger(t("f." + f), l > 150 ? 17 : 15) }, g);
     for (let i = 0; i < def.etoiles; i++) {
-      el("path", { d: "M0,-5 L1.5,-1.6 L5,-1.6 L2.2,0.7 L3.2,4.2 L0,2.1 L-3.2,4.2 L-2.2,0.7 L-5,-1.6 L-1.5,-1.6 Z", class: "vaisseau-etoile", transform: `translate(${44 + i * 11},29)` }, g);
+      el("path", { d: "M0,-5 L1.5,-1.6 L5,-1.6 L2.2,0.7 L3.2,4.2 L0,2.1 L-3.2,4.2 L-2.2,0.7 L-5,-1.6 L-1.5,-1.6 Z", class: "ticket-etoile", transform: `translate(${44 + i * 11},29)` }, g);
     }
     for (let i = 0; i < def.efforts; i++) {
       el("rect", { x: l - 12 - (def.efforts - i) * 15, y: 25, width: 12, height: 6, rx: 3, class: "case-effort" }, g);
@@ -596,11 +605,14 @@
   // Dans le couloir, le ticket est compact : numéro, lettre du responsable, nom court, barre d'effort.
   // Au survol, la loupe montre le ticket complet (avec les étoiles).
   const COMPACT = { l: 132, h: 36, talon: 30 };
-  function poserVaisseau(v, index) {
+  function poserTicket(v, index) {
     tickets[v.f] = { v, index };
     const def = S.fonctionnalites[v.f];
     const p = placeCouloir(v.station, index);
-    const g = el("g", { class: "vaisseau ticket compact", "data-f": v.f, transform: `translate(${p.x},${p.y})` }, calques.vaisseaux);
+    const g = el("g", {
+      class: "ticket compact" + (vu.choisi === v.f ? " choisi" : ""), "data-f": v.f,
+      transform: `translate(${p.x},${p.y})`, tabindex: 0, role: "button"
+    }, calques.tickets);
     const L = -COMPACT.l / 2, R = COMPACT.l / 2, H = COMPACT.h / 2, T = L + COMPACT.talon;
     el("rect", { x: L, y: -H, width: COMPACT.l, height: COMPACT.h, rx: 8, class: "ticket-fond" }, g);
     el("path", { d: `M${L + 8},${-H} H${T} V${H} H${L + 8} Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`, class: "ticket-talon" + (def.ideeGamer ? " gamer" : "") }, g);
@@ -627,14 +639,14 @@
     const memo = tickets[f];
     if (!memo) return;
     const p = placeCouloir(memo.v.station, memo.index);
-    const g = el("g", { class: "loupe", transform: `translate(${p.x},${p.y - 4})` }, calques.loupe);
+    const g = el("g", { class: "loupe" + (vu.choisi === f ? " choisi" : ""), transform: `translate(${p.x},${p.y - 4})` }, calques.loupe);
     dessinerTicketComplet(g, memo.v);
   }
   function cacherLoupe() { calques.loupe.innerHTML = ""; }
 
   function dessinerTicketComplet(g, v) {
     const def = S.fonctionnalites[v.f];
-    g.classList.add("ticket", "vaisseau");
+    g.classList.add("ticket");
     const { g: L, d: R, h: H, talon: T } = TICKET;
 
     // La forme du ticket, avec deux encoches à la ligne de découpe.
@@ -658,13 +670,13 @@
     for (let i = 0; i < def.etoiles; i++) {
       el("path", {
         d: "M0,-6 L1.8,-1.9 L6,-1.9 L2.6,0.8 L3.8,5 L0,2.5 L-3.8,5 L-2.6,0.8 L-6,-1.9 L-1.8,-1.9 Z",
-        class: "vaisseau-etoile", transform: `translate(${x0 + 6 + i * 14},6)`
+        class: "ticket-etoile", transform: `translate(${x0 + 6 + i * 14},6)`
       }, g);
     }
     const faits = (v.efforts || []).length;
     el("text", {
       x: R - 9, y: 10, class: "ticket-effort", "text-anchor": "end",
-      texte: t("vaisseau.effort").replace("{n}", faits).replace("{total}", def.efforts)
+      texte: t("ticket.effort").replace("{n}", faits).replace("{total}", def.efforts)
     }, g);
 
     // La barre d'effort : une case de taille fixe par effort (1 effort = 1 heure ou 1 token).
@@ -694,31 +706,45 @@
         class: "carte-test " + etat + (etat === "cachee" ? " cliquable" : ""), "data-carte": carte.id || "", "data-f": v.f,
         transform: `translate(${x0 + i * (lc + ecart) + lc / 2},${H + 14})`
       }, g);
-      el("rect", { x: -8, y: -10, width: 16, height: 21, rx: 3, class: "carte-test-fond" }, c);
-      const lettre = etat === "cachee" ? t("carte.test.cachee") : etat === "ok" ? "✓" : "!";
-      el("text", { x: 0, y: 4.5, class: "carte-test-texte", "text-anchor": "middle", texte: lettre }, c);
+      miniCarteTest(c, etat);
+      // L'infobulle dit ce qu'est cette petite carte (et ce qu'on peut en faire).
+      el("title", { texte: t("carte.test.aide." + etat) }, c);
     });
   }
 
+  // Une petite carte Test : « ? » cachée, « ✓ » OK, « ! » Bug ou Pas fun.
+  function miniCarteTest(c, etat) {
+    el("rect", { x: -8, y: -10, width: 16, height: 21, rx: 3, class: "carte-test-fond" }, c);
+    const lettre = etat === "cachee" ? t("carte.test.cachee") : etat === "ok" ? "✓" : "!";
+    el("text", { x: 0, y: 4.5, class: "carte-test-texte", "text-anchor": "middle", texte: lettre }, c);
+  }
+
+  // La fonctionnalité choisie (clic sur son ticket) : le banc d'essai, puis le joueur, agissent sur elle.
+  function choisir(f) {
+    vu.choisi = vu.choisi === f ? null : f;
+    calques.tickets.querySelectorAll(".ticket").forEach((e) => e.classList.toggle("choisi", e.dataset.f === vu.choisi));
+    document.dispatchEvent(new CustomEvent("plateau:choix", { detail: vu.choisi }));
+  }
+
   // Retirer un ticket du couloir (quand il est publié, par exemple).
-  function retirerVaisseau(f) {
-    const e = calques.vaisseaux.querySelector(`.ticket[data-f="${f}"]`);
+  function retirerTicket(f) {
+    const e = calques.tickets.querySelector(`.ticket[data-f="${f}"]`);
     if (e) e.remove();
     delete tickets[f];
   }
 
-  function viderVaisseaux() { calques.vaisseaux.innerHTML = ""; }
+  function viderTickets() { calques.tickets.innerHTML = ""; }
 
   // Redessiner un ticket après un changement (un effort fait, une carte Test ajoutée ou retournée).
-  function majVaisseau(f, changer) {
+  function majTicket(f, changer) {
     const memo = tickets[f];
     if (!memo) return;
     changer(memo.v);
-    const ancien = calques.vaisseaux.querySelector(`.ticket[data-f="${f}"]`);
+    const ancien = calques.tickets.querySelector(`.ticket[data-f="${f}"]`);
     const suivant = ancien ? ancien.nextSibling : null;
     if (ancien) ancien.remove();
-    const g = poserVaisseau(memo.v, memo.index);
-    if (suivant) calques.vaisseaux.insertBefore(g, suivant);
+    const g = poserTicket(memo.v, memo.index);
+    if (suivant) calques.tickets.insertBefore(g, suivant);
   }
 
   function ticket(f) { return tickets[f] && tickets[f].v; }
@@ -795,14 +821,15 @@
 
   window.Plateau = {
     init, illuminerStation, remplirFile, utiliserHeures, poserHeures,
-    activerAgent, afficherBulle, poserVaisseau, viderVaisseaux, majVaisseau, ticket, ticketsA,
-    majPioche, poserEvenement, dessinerMotifDos, poserIdees, poserBacklog, retirerVaisseau, montrerLoupe, cacherLoupe,
+    activerAgent, afficherBulle, poserTicket, viderTickets, majTicket, ticket, ticketsA,
+    majPioche, poserEvenement, dessinerMotifDos, poserIdees, poserBacklog, retirerTicket, montrerLoupe, cacherLoupe,
     placeBacklogLibre, basculerZones, zoneSous, pointPlateau, creerFantome, viderFantome, montrerCibles,
     elementPioche, elementCarteTest, elementTicket, elementFile, elementEvenement, elementPlanete, elementSvg,
     elementTuile, elementPileCachees,
     // Pour les animations (js/animations.js) : l'état visible et la géométrie.
     placerTicket, rangerTicket, rangTicket, animerCase, elementHeurePosee,
     stationActive: () => vu.station,
+    choisir, choisi: () => vu.choisi,
     heuresPosees: (st) => (vu.posees[st] || []).slice(),
     toutesHeuresPosees: () => JSON.parse(JSON.stringify(vu.posees)),
     heuresUtilisees: () => Object.assign({}, vu.utilisees),

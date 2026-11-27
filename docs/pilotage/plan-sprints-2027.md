@@ -5,7 +5,7 @@
 ## Où on en est (pour reprendre une session, y compris avec Claude Code)
 
 - **Fait :** GDD 0.20, cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan par chapitre ; démo du plateau, étape 1 (plateau statique dans les deux thèmes, 26 nov.).
-- **En cours : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), **étape 2 « les briques animées », à moitié faite** (pioches, cartes qui volent et se retournent, zones Idées → Backlog → couloir). Restent six animations : jeton Heure, station, vaisseau, effort, PIX et SCAN, files. Puis les étapes 3 à 5 : script des 2 boucles, gamification, test auprès de 3 ou 4 personnes.
+- **En cours : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), **étape 2 « les briques animées », à moitié faite** (pioches, cartes qui volent et se retournent, zones Idées → Backlog → couloir). Restent six animations : jeton Heure, station, ticket, effort, PIX et SCAN, files. Puis les étapes 3 à 5 : script des 2 boucles, gamification, test auprès de 3 ou 4 personnes.
 - **Ensuite :** le moteur de règles numérique (qui pilote les mêmes animations), puis les builds SpacePlan (PoC d'abord, puis Proto, page de lancement, Alpha).
 
 ## Cadre

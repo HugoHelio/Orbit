@@ -149,11 +149,11 @@
     await pause(500);
   }
 
-  // --- 3. Un vaisseau (ticket) voyage dans le couloir --------------------------
+  // --- 3. Un ticket (une fonctionnalité) avance dans le couloir -------------
   // Il glisse le long du couloir jusqu'à la station suivante (ou celle qu'on donne) ;
   // les tickets restés derrière se resserrent.
 
-  async function voyagerVaisseau(f, vers) {
+  async function avancerTicket(f, vers) {
     const O = Plateau.outils;
     const v = Plateau.ticket(f);
     if (!v) return false;
@@ -198,7 +198,7 @@
     const def = S().fonctionnalites[f];
     if (!v || (v.efforts || []).length >= def.efforts) return false;
     const i = (v.efforts || []).length;
-    Plateau.majVaisseau(f, (x) => { x.efforts = (x.efforts || []).concat(qui); });
+    Plateau.majTicket(f, (x) => { x.efforts = (x.efforts || []).concat(qui); });
     Plateau.animerCase(f, i);
     // Le ticket est complet : son contour brille.
     if (i + 1 === def.efforts) rejouer(Plateau.elementTicket(f), "complet");
@@ -261,7 +261,7 @@
   }
 
   Object.assign(Anim, {
-    tween, pause, envolerHeure, rappelerHeures, allumerStation, voyagerVaisseau,
+    tween, pause, envolerHeure, rappelerHeures, allumerStation, avancerTicket,
     remplirEffort, travailler, changerFile
   });
   window.Anim = Anim;

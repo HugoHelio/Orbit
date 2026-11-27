@@ -22,7 +22,7 @@ Avant de coder les règles, on veut savoir si **l'expérience** marche. La démo
 |---|---|
 | Le plateau complet et joli, dans les deux thèmes | Les règles, les calculs réels, les choix des joueurs |
 | **Un scénario scripté de 2 boucles** (cycle 0, puis cycle 1), avec des données inventées mais crédibles | Le hasard (les cartes Test révélées sont écrites dans le script) |
-| Les animations : stations qui s'illuminent, vaisseaux qui voyagent, efforts qui se remplissent, agents qui travaillent, files qui grossissent, cartes qui se retournent | Plusieurs équipes, leaderboard, sauvegarde, journal |
+| Les animations : stations qui s'illuminent, tickets (les fonctionnalités) qui avancent, efforts qui se remplissent, agents qui travaillent, files qui grossissent, cartes qui se retournent | Plusieurs équipes, leaderboard, sauvegarde, journal |
 | **La couche de gamification** : score qui s'incrémente, gamers qui augmentent, étoiles qui volent vers les fonctionnalités, note du jeu, célébration du MVP, anneau de boucle qui s'allume | XP, badges, feuille de score complète |
 | Une barre de lecture : lecture, pause, pas à pas, vitesse (×1, ×2), recommencer | Le chrono de 20 minutes |
 
@@ -32,7 +32,7 @@ Le plateau reprend le Whiteboard (`docs/whiteboard/plateau-orbite.json`) et la d
 
 - **Au centre, le soleil ambre** (le pilotage) : les 3 rôles avec leurs 3 jetons Heure. Un jeton utilisé s'envole vers la station où l'on agit.
 - **L'orbite et ses 6 stations-planètes :** Backlog → Prompt → Build → Test → Release → Feedback. **La station active s'illumine.** Le nom du temps en cours (Brief, Planning, Build, Test, Release, Review) s'affiche en grand.
-- **Les cartes Fonctionnalité sont des petits vaisseaux** qui voyagent de station en station, avec leur nom, leurs étoiles et leurs cases d'effort qui se remplissent.
+- **Les cartes Fonctionnalité sont des tickets** qui avancent de station en station dans le couloir du cycle, avec leur nom, leurs étoiles et leurs cases d'effort qui se remplissent.
 - **Les satellites :** PIX sur Build, SCAN sur Test (portraits dans `assets/personnages/`). Ils s'animent quand ils travaillent, avec une bulle de personnalité (PIX : « Terminé ! Tout fonctionne parfaitement. » ; SCAN : « Aucun défaut détecté. »).
 - **Les cartes Test cachées** sous les efforts de PIX, qui se retournent (OK en vert, Bug en rouge).
 - **Les 3 files d'attente orange**, qui grossissent quand le travail s'entasse (surtout Feedback → Backlog).
@@ -47,7 +47,7 @@ Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit
 1. *Brief* : Vera apparaît : « Avant de signer, je veux un premier jouable. »
 2. *Planning* : 5 cartes quittent le Backlog (les 5 *Must*).
 3. *Build* : les jetons Heure des 3 humains s'envolent ; les efforts se remplissent un par un.
-4. *Release* : les 5 vaisseaux passent la station Release.
+4. *Release* : les 5 tickets passent la station Release.
 5. *Review* : **célébration du MVP** (« Votre jeu a ses premiers gamers ! ») ; 10 étoiles volent vers le jeu ; le compteur passe de 0 à 250 gamers ; note 3 ; le score monte à 750 ; le premier anneau de boucle s'allume.
 
 **Boucle 2 : le cycle 1, « l'accès anticipé »**
@@ -83,12 +83,14 @@ Chaque étape se termine par un test dans le navigateur, une mise à jour de ce 
 
 **Design gelé jusqu'à l'étape 5 (décidé le 27 nov. 2026).** Le plateau, ses zones et le vocabulaire ne bougent plus pendant les étapes 2 à 4 : on anime ce qui existe. Une nouvelle idée de design va dans la liste ci-dessous et on la traite à l'étape 5, après les premiers regards. Seules exceptions : un défaut qui empêche une animation de fonctionner ou de se comprendre. Pas de nouvelle interaction non plus : le script de l'étape 3 appelle les mêmes fonctions que les clics.
 
+*Corrections de compréhension faites pendant le gel (27 nov., retours sur l'étape 2) :* « ticket » au lieu de « vaisseau » ; légende et infobulles des cartes Test ; avis quand PIX tire une carte Test ; dans le banc d'essai, **on clique sur un ticket pour choisir la fonctionnalité**, puis les boutons (avancer, effort, PIX, SCAN) agissent sur elle et un avis dit pourquoi une action n'est pas possible.
+
 *Idées notées pendant le gel (à traiter à l'étape 5) :* aucune pour l'instant.
 
 | # | Étape | Terminé quand… | Fait |
 |---|---|---|---|
 | 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, tableau de bord, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☑ 26 nov. 2026 |
-| 2 | **Les briques animées** : *(fait le 27 nov. : les pioches virtuelles Événement, Feedback et Test, la carte qui vole, se retourne et part à sa place, la carte Test cachée sous un ticket qu'on retourne d'un clic ; pioches en colonne à droite ; un schéma par carte Feedback ; les trois zones des fonctionnalités, Idées → Backlog → couloir du cycle, avec les clics « choisir », « lancer » et « trier un feedback », qui fait apparaître les idées de gamers ; tickets compacts avec une loupe au survol)* ; faire voler une pastille Heure (CP, D, P) du pilotage jusqu'à la station où l'on agit, en laissant sa place vide au pilotage ; illuminer une station, faire voyager un vaisseau, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file. *(Fait le 27 nov., à valider : `js/animations.js` (les 6 briques : jeton Heure qui vole et revient, comète sur l'orbite et station qui s'allume, vaisseau qui glisse dans le couloir, effort qui se remplit, PIX qui envoie des `</>` et SCAN qui balaie le ticket, file qui grossit, sature et déborde) ; `js/banc.js` (le banc d'essai, un bouton par animation, et les actions qu'appellera le script : une heure puis un effort, SCAN qui teste sans voir les Pas fun…))* | Chaque animation se déclenche par un bouton de test et elle est belle | ☐ |
+| 2 | **Les briques animées** : *(fait le 27 nov. : les pioches virtuelles Événement, Feedback et Test, la carte qui vole, se retourne et part à sa place, la carte Test cachée sous un ticket qu'on retourne d'un clic ; pioches en colonne à droite ; un schéma par carte Feedback ; les trois zones des fonctionnalités, Idées → Backlog → couloir du cycle, avec les clics « choisir », « lancer » et « trier un feedback », qui fait apparaître les idées de gamers ; tickets compacts avec une loupe au survol)* ; faire voler une pastille Heure (CP, D, P) du pilotage jusqu'à la station où l'on agit, en laissant sa place vide au pilotage ; illuminer une station, faire avancer un ticket, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file. *(Fait le 27 nov., à valider : `js/animations.js` (les 6 briques : jeton Heure qui vole et revient, comète sur l'orbite et station qui s'allume, ticket qui glisse dans le couloir, effort qui se remplit, PIX qui envoie des `</>` et SCAN qui balaie le ticket, file qui grossit, sature et déborde) ; `js/banc.js` (le banc d'essai, un bouton par animation, et les actions qu'appellera le script : une heure puis un effort, SCAN qui teste sans voir les Pas fun…))* | Chaque animation se déclenche par un bouton de test et elle est belle | ☐ |
 | 3 | **Le lecteur et le script** des 2 boucles, avec la barre de lecture | La démo se joue de bout en bout en 2 à 3 minutes, et on peut la mettre en pause, avancer pas à pas, recommencer | ☐ |
 | 4 | **La couche de gamification** : compteur de gamers, étoiles qui volent, note, score, célébration du MVP, anneaux de boucle, sons | En la regardant, on a envie de voir la boucle suivante | ☐ |
 | 5 | **Les retouches après les premiers regards** | Les points relevés au test (section 7) sont corrigés | ☐ |

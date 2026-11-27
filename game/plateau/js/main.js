@@ -66,7 +66,7 @@
     V.files["feedback-backlog"] = V.fileFeedback.length;
     Plateau.poserIdees(V.idees, V.ideesCachees.length);
     Plateau.poserBacklog(V.backlog);
-    V.vaisseaux.forEach((v) => {
+    V.tickets.forEach((v) => {
       v.cartesTest = (v.cartesTest || []).map((etatCarte) =>
         etatCarte === "cachee"
           ? { id: Pioches.tirerSilencieux("test"), revelee: false }
@@ -84,9 +84,9 @@
     for (const st in V.heuresPosees) Plateau.poserHeures(st, V.heuresPosees[st]);
 
     const parStation = {};
-    V.vaisseaux.forEach((v) => {
+    V.tickets.forEach((v) => {
       const i = (parStation[v.station] = (parStation[v.station] || 0) + 1) - 1;
-      Plateau.poserVaisseau(v, i);
+      Plateau.poserTicket(v, i);
     });
     for (const id in V.agents) {
       Plateau.activerAgent(id, V.agents[id].actif);
