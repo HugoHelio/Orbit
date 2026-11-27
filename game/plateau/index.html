@@ -66,19 +66,23 @@
           <span class="guide-texte" id="guide-texte"></span>
         </div>
       </div>
-      <div class="lecture-controles" data-titre="lecture.bientot">
-        <button class="bouton" disabled data-titre="lecture.recommencer">
+      <div class="lecture-controles">
+        <div class="piste" aria-hidden="true"><div class="piste-remplie" id="lecture-piste"></div></div>
+        <button class="bouton" id="lecture-recommencer" data-titre="lecture.recommencer">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-trait" d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>
         </button>
-        <button class="bouton bouton-lire" disabled data-titre="lecture.lire">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M8 5l11 7-11 7z"/></svg>
+        <button class="bouton bouton-lire" id="lecture-lire" data-titre="lecture.lire">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="icone-plein icone-lire" d="M8 5l11 7-11 7z"/>
+            <path class="icone-plein icone-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>
+          </svg>
         </button>
-        <button class="bouton" disabled data-titre="lecture.pas">
+        <button class="bouton" id="lecture-pas" data-titre="lecture.pas">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M6 5l9 7-9 7z"/><path class="icone-trait" d="M18 5v14"/></svg>
         </button>
         <div class="vitesses">
-          <button class="bouton bouton-texte actif" disabled>×1</button>
-          <button class="bouton bouton-texte" disabled>×2</button>
+          <button class="bouton bouton-texte actif" data-vitesse="1">×1</button>
+          <button class="bouton bouton-texte" data-vitesse="2">×2</button>
         </div>
       </div>
     </footer>
@@ -93,6 +97,8 @@
   <script src="js/tableau-de-bord.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/banc.js"></script>
+  <script src="js/script-demo.js"></script>
+  <script src="js/lecteur.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

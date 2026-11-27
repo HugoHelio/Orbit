@@ -197,7 +197,14 @@
       el("text", { x: x2 + 24, y: y, class: "legende-texte", texte: t("legende.test." + etat) }, g);
     });
     // Le cadre prend la largeur des textes (+ une marge), une fois les polices chargées.
-    const ajuster = () => { try { fond.setAttribute("width", Math.ceil(g.getBBox().width + 32)); } catch (e) {} };
+    // On mesure les textes sans le cadre (sinon il grandirait à chaque mesure).
+    const ajuster = () => {
+      try {
+        fond.setAttribute("width", 0);
+        const b = g.getBBox();
+        fond.setAttribute("width", Math.ceil(b.x + b.width + 32));
+      } catch (e) { fond.setAttribute("width", 500); }
+    };
     ajuster();
     if (document.fonts) document.fonts.ready.then(ajuster);
   }
@@ -597,15 +604,17 @@
   // de la place, jamais vers la planète ni vers le soleil. Sur les côtés, on empile vers le haut ou
   // vers le bas (60 d'écart : les petites cartes Test sous un ticket ne touchent pas le suivant) ;
   // en haut et en bas de l'orbite (Prompt, Release), on aligne à gauche et à droite.
+  // La deuxième rangée de Prompt passe sous la première (sans toucher le soleil), celle de Release au-dessus.
   const RANGS = {
-    bas: [[0, 0], [0, 60], [0, 120], [0, -60]],
-    haut: [[0, 0], [0, -60], [0, -120], [0, 60]],
-    cotes: [[0, 0], [-142, 0], [142, 0], [0, 58]]
+    bas: [[0, 0], [0, 60], [0, 120], [0, -60], [0, 180]],
+    haut: [[0, 0], [0, -60], [0, -120], [0, 60], [0, -180]],
+    enHaut: [[0, 0], [-142, 0], [142, 0], [-75, 58], [75, 58]],
+    enBas: [[0, 0], [-142, 0], [142, 0], [-75, -58], [75, -58]]
   };
   function rangsStation(stationId) {
     const a = station(stationId).angle;
     const s = Math.sin((a * Math.PI) / 180), c = Math.cos((a * Math.PI) / 180);
-    if (Math.abs(c) < 0.3) return RANGS.cotes;          // en haut ou en bas de l'orbite
+    if (Math.abs(c) < 0.3) return s < 0 ? RANGS.enHaut : RANGS.enBas;  // en haut ou en bas de l'orbite
     return s < 0 ? RANGS.bas : RANGS.haut;              // la planète est au-dessus : on descend, et inversement
   }
   function decalageCouloir(stationId, index) {
@@ -792,6 +801,55 @@
     placerTicket(f, p.x, p.y);
   }
   function rangTicket(f) { return tickets[f] ? tickets[f].index : -1; }
+  // Réserver la place d'arrivée d'un ticket qui part (sans le bouger) : si plusieurs tickets
+  // partent en même temps, chacun a sa place.
+  function reserverTicket(f, stationId, index) {
+    const memo = tickets[f];
+    if (!memo) return;
+    memo.v.station = stationId;
+    memo.index = index;
+  }
+
+  // Le coin haut-gauche d'une tuile dans les Idées (rang i) ou dans le Backlog (rang i),
+  // ou d'une tuile posée sur la place d'un ticket du couloir (pour la faire voler).
+  function cibleTuile(zone, i) {
+    const zi = ZONES.idees, zb = ZONES.backlog;
+    if (zone === "backlog") return { x: zb.x + 26, y: zb.y + 50 + i * TUILE.pas };
+    if (zone === "idees") return { x: zi.x + 9 + (i % 2) * (TUILE.l + 8), y: zi.y + 74 + Math.floor(i / 2) * TUILE.pas };
+    const p = placeCouloir("prompt", i);
+    return { x: p.x - COMPACT.l / 2, y: p.y - TUILE.h / 2 };
+  }
+
+  // La bulle de Vera (l'éditeur), à droite de sa planète : un message sur plusieurs lignes.
+  function bulleVera(cleTexte) {
+    calques.bulles.querySelectorAll(".bulle-vera").forEach((e) => e.remove());
+    if (!cleTexte) return;
+    const mots = t(cleTexte).split(" "), lignes = [];
+    let ligne = "";
+    mots.forEach((m) => {
+      if ((ligne + " " + m).trim().length > 46) { lignes.push(ligne.trim()); ligne = m; } else ligne += " " + m;
+    });
+    if (ligne.trim()) lignes.push(ligne.trim());
+    // Zones ouvertes : la bulle va à gauche de la planète, au-dessus des Idées (la place est libre).
+    // Zones fermées : sous la planète, vers la droite.
+    const h = 22 + lignes.length * 21;
+    const g = el("g", { class: "bulle bulle-vera" }, calques.bulles);
+    let x, y, l = 430, forme;
+    if (zonesOuvertes) {
+      x = 88 - l; y = 112 - h / 2;
+      const ym = 112;
+      forme = `M${x + 12},${y} H${x + l - 12} Q${x + l},${y} ${x + l},${y + 12} V${ym - 9} L${x + l + 16},${ym} L${x + l},${ym + 9}
+          V${y + h - 12} Q${x + l},${y + h} ${x + l - 12},${y + h} H${x + 12} Q${x},${y + h} ${x},${y + h - 12}
+          V${y + 12} Q${x},${y} ${x + 12},${y} Z`;
+    } else {
+      x = 120; y = 176;
+      forme = `M${x + 12},${y} H${x + 20} L${x + 26},${y - 16} L${x + 44},${y} H${x + l - 12} Q${x + l},${y} ${x + l},${y + 12}
+          V${y + h - 12} Q${x + l},${y + h} ${x + l - 12},${y + h} H${x + 12} Q${x},${y + h} ${x},${y + h - 12}
+          V${y + 12} Q${x},${y} ${x + 12},${y} Z`;
+    }
+    el("path", { d: forme, class: "bulle-fond" }, g);
+    lignes.forEach((txt, i) => el("text", { x: x + 16, y: y + 27 + i * 21, class: "bulle-texte vera", texte: txt }, g));
+  }
 
   // Faire briller une case d'effort qui vient d'être faite.
   function animerCase(f, index) {
@@ -854,7 +912,7 @@
     elementPioche, elementCarteTest, elementTicket, elementFile, elementEvenement, elementPlanete, elementSvg,
     elementTuile, elementPileCachees,
     // Pour les animations (js/animations.js) : l'état visible et la géométrie.
-    placerTicket, rangerTicket, rangTicket, animerCase, elementHeurePosee,
+    placerTicket, rangerTicket, rangTicket, reserverTicket, animerCase, elementHeurePosee, cibleTuile, bulleVera,
     stationActive: () => vu.station,
     choisir, choisi: () => vu.choisi,
     heuresPosees: (st) => (vu.posees[st] || []).slice(),

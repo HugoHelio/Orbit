@@ -7,7 +7,9 @@
 
 (function () {
   const L = 240, H = 336; // taille de la grande carte, en pixels (format 63 × 88 mm)
-  let S, t, etat, couche, cadre, occupe = false;
+  let S, t, etat, couche, cadre, occupe = false, auto = false, pixExplique = false;
+  // La vitesse de la démo (×1, ×2) : la même que celle des briques animées.
+  function d(ms) { return ms / (window.Anim ? Anim.vitesse : 1); }
   const piles = {};
 
   // --- Les paquets ------------------------------------------------------------
@@ -29,6 +31,7 @@
     couche = options.couche;
     couche.innerHTML = "";
     occupe = false;
+    pixExplique = false;
     ["evenement", "feedback", "test"].forEach((type) => {
       // Les événements restent dans l'ordre (E1 à E4 pour les premières parties), les autres sont mélangés.
       piles[type] = type === "evenement" ? S.cartes[type].slice() : melanger(S.cartes[type]);
@@ -70,7 +73,7 @@
     const a = carteEl.animate([
       { transform: `translate(${de.x}px, ${de.y}px) scale(${de.l / L})`, opacity: 1 },
       { transform: `translate(${vers.x}px, ${vers.y}px) scale(${vers.l / L})`, opacity: opacite === undefined ? 1 : opacite }
-    ], { duration: duree, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
+    ], { duration: d(duree), easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
     return a.finished;
   }
 
@@ -79,25 +82,32 @@
     const a = interieur.animate([
       { transform: `rotateY(${versLeRecto ? 0 : 180}deg)` },
       { transform: `rotateY(${versLeRecto ? 180 : 0}deg)` }
-    ], { duration: 650, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+    ], { duration: d(650), easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
     return a.finished;
   }
 
+  // En mode automatique (la démo qui se joue toute seule), la carte reste un moment, puis repart ;
+  // un clic la fait repartir plus tôt.
   function attendreClic() {
     return new Promise((ok) => {
+      let fini = false;
+      const finir = () => {
+        if (fini) return;
+        fini = true;
+        fond.classList.remove("visible");
+        setTimeout(() => fond.remove(), 250);
+        ok();
+      };
       const fond = document.createElement("div");
       fond.className = "couche-fond";
       const aide = document.createElement("div");
       aide.className = "couche-aide";
-      aide.textContent = t("pioche.continuer");
+      aide.textContent = t(auto ? "pioche.continuer.auto" : "pioche.continuer");
       fond.appendChild(aide);
       couche.insertBefore(fond, couche.firstChild);
       requestAnimationFrame(() => fond.classList.add("visible"));
-      fond.addEventListener("click", () => {
-        fond.classList.remove("visible");
-        setTimeout(() => fond.remove(), 250);
-        ok();
-      }, { once: true });
+      fond.addEventListener("click", finir, { once: true });
+      if (auto) setTimeout(finir, d(2200));
     });
   }
 
@@ -271,8 +281,9 @@
     etat.tokensRestants = Math.max(0, etat.tokensRestants - 1);
     TableauDeBord.afficherTokens(etat.tokensRestants);
     Plateau.afficherBulle("pix", true);
-    // Dire ce qui vient de se passer : la carte tirée, c'est le risque caché du travail de PIX.
-    avis(t("avis.pix.carte").replace("{f}", cible.f));
+    // Dire ce qui vient de se passer (une fois suffit) : la carte tirée, c'est le risque caché du travail de PIX.
+    if (!pixExplique) avis(t("avis.pix.carte").replace("{f}", cible.f));
+    pixExplique = true;
     occupe = false;
   }
 
@@ -450,5 +461,8 @@
     });
   }
 
-  window.Pioches = { avis, init, tirerSilencieux, piocher, reveler, deplacer, trier };
+  // Le mode automatique : la démo se joue toute seule, les cartes n'attendent pas de clic.
+  function modeAuto(oui) { auto = oui; }
+
+  window.Pioches = { avis, init, modeAuto, tirerSilencieux, piocher, reveler, deplacer, trier };
 })();

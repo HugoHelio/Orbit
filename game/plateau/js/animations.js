@@ -164,6 +164,8 @@
     let a2 = O.angleStation(vers);
     while (a2 <= a1) a2 += 360;
     const d1 = O.decalageCouloir(de, i1), d2 = O.decalageCouloir(vers, i2);
+    // La place d'arrivée est réservée tout de suite : plusieurs tickets peuvent partir ensemble.
+    Plateau.reserverTicket(f, vers, i2);
 
     Plateau.cacherLoupe();
     const e = Plateau.elementTicket(f);
@@ -176,17 +178,64 @@
     e.classList.remove("en-voyage");
     Plateau.rangerTicket(f, vers, i2);
     rejouer(e, "arrive");
-
-    // Les tickets restés à la station de départ remontent d'un rang.
-    const restants = Plateau.ticketsA(de).filter((x) => Plateau.rangTicket(x.f) > i1);
-    await Promise.all(restants.map((x) => {
-      const r = Plateau.rangTicket(x.f), a = O.angleStation(de);
-      return tween(350, (p) => {
-        const q = pointCouloir(a, entre(O.decalageCouloir(de, r), O.decalageCouloir(de, r - 1), p));
-        Plateau.placerTicket(x.f, q.x, q.y);
-      }).then(() => Plateau.rangerTicket(x.f, de, r - 1));
-    }));
+    await resserrer(de);
     return true;
+  }
+
+  // Les tickets restés à une station reprennent les premières places (ils glissent).
+  function resserrer(stationId) {
+    const O = Plateau.outils, a = O.angleStation(stationId);
+    const restants = Plateau.ticketsA(stationId).sort((x, y) => Plateau.rangTicket(x.f) - Plateau.rangTicket(y.f));
+    return Promise.all(restants.map((x, k) => {
+      const r = Plateau.rangTicket(x.f);
+      if (r === k) return null;
+      Plateau.reserverTicket(x.f, stationId, k);
+      return tween(350, (p) => {
+        const q = pointCouloir(a, entre(O.decalageCouloir(stationId, r), O.decalageCouloir(stationId, k), p));
+        Plateau.placerTicket(x.f, q.x, q.y);
+      }).then(() => Plateau.rangerTicket(x.f, stationId, k));
+    }));
+  }
+
+  // Une fonctionnalité publiée part vers la communauté (la planète des gamers), puis quitte le couloir.
+  async function publierTicket(f) {
+    const v = Plateau.ticket(f);
+    if (!v) return false;
+    const de = v.station;
+    const e = Plateau.elementTicket(f);
+    const p0 = Plateau.outils.placeCouloir(de, Plateau.rangTicket(f));
+    const p1 = { x: 205, y: 905 }; // la planète Communauté
+    const c = controle(p0, p1, -0.25);
+    Plateau.cacherLoupe();
+    e.parentNode.appendChild(e);
+    e.classList.add("en-voyage");
+    await tween(1000, (p) => {
+      const q = bezier(p0, c, p1, p);
+      e.setAttribute("transform", `translate(${q.x},${q.y}) scale(${1 - p * 0.75})`);
+      e.setAttribute("opacity", (1 - p * p).toFixed(2));
+    });
+    Plateau.retirerTicket(f);
+    rejouer(document.querySelector('.planete[data-planete="communaute"]'), "recoit");
+    await resserrer(de);
+    return true;
+  }
+
+  // Une tuile vole des Idées au Backlog, ou du Backlog au couloir. La règle du déplacement
+  // (et le redessin des zones) reste dans Pioches.deplacer : ici, on ne fait que le vol.
+  async function volerTuile(f, zone, index) {
+    const O = Plateau.outils;
+    const tuile = Plateau.elementTuile(f);
+    if (!tuile) return;
+    const m = tuile.transform.baseVal.consolidate().matrix;
+    const de = { x: m.e, y: m.f }, vers = Plateau.cibleTuile(zone, index);
+    const fantome = Plateau.creerFantome(tuile);
+    tuile.classList.add("en-deplacement");
+    const c = controle(de, vers, 0.12);
+    await tween(650, (p) => {
+      const q = bezier(de, c, vers, p);
+      fantome.setAttribute("transform", `translate(${q.x},${q.y})`);
+    });
+    Plateau.viderFantome();
   }
 
   // --- 4. Un effort se remplit sur un ticket ------------------------------------
@@ -260,7 +309,7 @@
   }
 
   Object.assign(Anim, {
-    tween, pause, envolerHeure, rappelerHeures, allumerStation, avancerTicket,
+    tween, pause, envolerHeure, rappelerHeures, allumerStation, avancerTicket, publierTicket, volerTuile,
     remplirEffort, travailler, changerFile
   });
   window.Anim = Anim;

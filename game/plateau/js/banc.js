@@ -6,7 +6,7 @@
 // Elles tiennent à jour l'état de la démo et le tableau de bord ; les briques, elles, ne font que dessiner.
 
 (function () {
-  let S, t, etat, occupe = false, panneau = null, ligneChoix = null, prochainRole = 0;
+  let S, t, etat, occupe = false, verrou = false, panneau = null, ligneChoix = null, prochainRole = 0;
 
   function ordre() { return S.stations.map((s) => s.id); }
   function majHeures() { TableauDeBord.afficherHeures(Plateau.heuresUtilisees()); }
@@ -54,6 +54,29 @@
     // PIX fait 1 effort (1 token) : une carte Test est tirée et se glisse dessous, face cachée.
     async effortPix(f, idCarte) {
       return Pioches.piocher("test", idCarte, f);
+    },
+
+    // Au cycle 0, PIX travaille sans carte Test ni token.
+    async effortPixSansCarte(f) {
+      Plateau.activerAgent("pix", true);
+      Plateau.afficherBulle("pix", false);
+      const arreter = Anim.travailler("pix", f);
+      await Anim.pause(900);
+      Anim.remplirEffort(f, "pix");
+      arreter();
+      Plateau.afficherBulle("pix", true);
+      return true;
+    },
+
+    // Le responsable corrige un problème trouvé (1 heure, sur la station Test) : la carte Test est défaussée.
+    async corriger(f, idCarte) {
+      const role = S.fonctionnalites[f].resp;
+      if (!(await Actions.heure(role, Plateau.ticket(f).station))) return false;
+      Plateau.majTicket(f, (v) => { v.cartesTest = (v.cartesTest || []).filter((c) => c.id !== idCarte); });
+      const e = Plateau.elementTicket(f);
+      if (e) { e.classList.remove("complet"); void e.getBoundingClientRect(); e.classList.add("complet"); }
+      Plateau.afficherBulle("pix", false);
+      return true;
     },
 
     // SCAN teste un effort de PIX (1 token). Il trouve les Bug, jamais les Pas fun,
@@ -153,8 +176,14 @@
     { groupe: "plateau", cle: "banc.vitrine", faire: () => window.Demo && Demo.redessiner() }
   ];
 
+  // Pendant la lecture de la démo, le banc attend.
+  function verrouiller(oui) {
+    verrou = oui;
+    if (panneau) panneau.classList.toggle("verrouille", oui);
+  }
+
   async function lancer(bouton) {
-    if (occupe) return;
+    if (occupe || verrou) return;
     occupe = true;
     panneau.classList.add("occupe");
     try {
@@ -193,6 +222,7 @@
     t = options.traduire;
     etat = options.etat;
     occupe = false;
+    verrou = false;
     if (panneau) panneau.remove();
 
     panneau = h("section", "banc");
@@ -226,5 +256,5 @@
   }
 
   window.Actions = Actions;
-  window.Banc = { init };
+  window.Banc = { init, verrouiller };
 })();

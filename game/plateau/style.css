@@ -797,6 +797,26 @@ html, body {
 .banc-bouton:hover { border-color: var(--accent); }
 .banc.occupe .banc-bouton { opacity: 0.5; cursor: wait; }
 
+/* --- Étape 3 : le lecteur de la démo ------------------------------------- */
+
+/* Le bouton lecture devient pause pendant la lecture. */
+.bouton-lire .icone-pause { display: none; }
+.bouton-lire[data-etat="lecture"] .icone-lire { display: none; }
+.bouton-lire[data-etat="lecture"] .icone-pause { display: inline; }
+/* L'avancement de la démo. */
+.lecture-controles .piste { flex: none; width: 140px; margin-right: 6px; }
+.piste-remplie { transition: width 0.4s ease-out; }
+/* Pendant la lecture, le banc d'essai attend. */
+.banc.verrouille .banc-bouton { opacity: 0.45; cursor: not-allowed; }
+
+/* La bulle de Vera : un message sur plusieurs lignes, sans italique (c'est l'éditeur qui parle). */
+.bulle-vera .bulle-fond { stroke: var(--accent); }
+.plateau .bulle-texte.vera { font-size: 15px; font-style: normal; font-weight: 600; }
+
+/* La communauté reçoit une nouvelle version. */
+.planete.recoit .planete-disque { animation: recoit 0.7s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes recoit { 40% { transform: scale(1.15); } }
+
 /* --- Écrans étroits et mouvement réduit ----------------------------------- */
 
 @media (max-width: 1100px) {

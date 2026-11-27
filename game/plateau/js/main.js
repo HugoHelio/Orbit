@@ -49,10 +49,13 @@
     b.setAttribute("aria-label", b.title);
   }
 
-  // --- Dessiner l'état vitrine ---
+  // --- Dessiner l'état de départ ---
+  // Par défaut : le début de la démo (cycle 0, js/script-demo.js).
+  // index.html?etat=vitrine : un plateau en pleine partie (cycle 1, Build), pratique pour le banc d'essai.
+  const modeVitrine = url.get("etat") === "vitrine" || !window.DEMO_SCRIPT;
   function dessiner() {
-    // Une copie fraîche de la vitrine : les pioches la font évoluer pendant qu'on joue avec.
-    const V = JSON.parse(JSON.stringify(window.VITRINE));
+    // Une copie fraîche : les pioches et le lecteur la font évoluer pendant la démo.
+    const V = JSON.parse(JSON.stringify(modeVitrine ? window.VITRINE : window.DEMO_SCRIPT.depart));
     Plateau.init(document.getElementById("plateau"), S, t);
     TableauDeBord.init(document.getElementById("tableau"), S, t);
 
@@ -106,7 +109,11 @@
     TableauDeBord.afficherBoucles(V.bouclesFaites, V.cycle);
 
     // Le banc d'essai de l'étape 2 : un bouton par brique animée.
-    Banc.init({ scenario: S, traduire: t, etat: V, cadre: document.querySelector(".plateau-cadre") });
+    // Le banc d'essai : avec la vitrine, ou sur demande (index.html?banc=1). La démo reste propre.
+    if (modeVitrine || url.get("banc") === "1") Banc.init({ scenario: S, traduire: t, etat: V, cadre: document.querySelector(".plateau-cadre") });
+    // Le lecteur de la démo et sa barre de lecture.
+    if (!modeVitrine) Lecteur.init({ scenario: S, traduire: t, etat: V });
+    else document.querySelectorAll(".lecture-controles button").forEach((b) => (b.disabled = true));
   }
 
   function toutAfficher() {

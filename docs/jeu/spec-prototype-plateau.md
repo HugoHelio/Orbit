@@ -43,29 +43,27 @@ Le plateau reprend le Whiteboard (`docs/whiteboard/plateau-orbite.json`) et la d
 
 Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit des règles (1 étoile = 25 gamers, score = gamers × note), sans calcul réel.
 
-**Boucle 1 : le cycle 0, « le pitch »**
-1. *Brief* : Vera apparaît : « Avant de signer, je veux un premier jouable. »
-2. *Planning* : 5 cartes quittent le Backlog (les 5 *Must*).
-3. *Build* : les jetons Heure des 3 humains s'envolent ; les efforts se remplissent un par un.
-4. *Release* : les 5 tickets passent la station Release.
-5. *Review* : **célébration du MVP** (« Votre jeu a ses premiers gamers ! ») ; 10 étoiles volent vers le jeu ; le compteur passe de 0 à 250 gamers ; note 3 ; le score monte à 750 ; le premier anneau de boucle s'allume.
+**Boucle 1 : le cycle 0, « le pitch »** *(pas de carte Test, pas de token, pas d'événement ni de feedback ; chaque humain peut faire 2 efforts)*
+1. *Brief* : Vera (message V0) : un jeu en pixel art dans l'esprit de Space Invaders ; « avant de signer, montrez-moi un premier jouable ».
+2. *Planning* : la station Backlog s'allume. Les 5 *Must* passent des Idées au Backlog (F02, F07, F09, F06, F13 : 5 places, pile ce qu'il faut), puis partent dans le couloir, à la station Prompt.
+3. *Build* : la station Prompt s'allume ; la cheffe de projet passe 2 heures à écrire les prompts de F09 et F13. La station Build s'allume ; PIX fait les 3 efforts de F09 et F13 (sans carte Test ni token au cycle 0) ; le programmeur fait F02 et F07 (2 heures), le designer F06 (1 heure). 6 efforts : les 5 *Must* sont prêts.
+4. *Test* : rien à tester au cycle 0 ; les tickets passent la station Test.
+5. *Release* : les 5 tickets partent vers la communauté ; ils rejoignent les « Fonctionnalités live » de Star Squadron ; le MVP est publié.
+6. *Review* : 10 étoiles, soit **250 gamers** ; note 3 ; **score 750** ; le premier anneau de boucle s'allume ; les heures reviennent au pilotage.
 
 **Boucle 2 : le cycle 1, « l'accès anticipé »**
-1. *Brief* : « Les premiers gamers arrivent. Écoutez-les. »
-2. *Planning* : 2 cartes Feedback arrivent de la communauté dans la file Feedback → Backlog ; le chef de projet en trie une ; 3 fonctionnalités partent vers Prompt (Explosions, Score, Fond spatial).
-3. *Build* : PIX s'anime et fait 3 efforts (3 tokens dépensés), avec 3 cartes Test cachées ; un humain fait 1 effort ; la file Prompt → Build garde 1 effort en attente.
-4. *Test* : SCAN scanne 2 efforts : un OK, **un Bug trouvé** (rouge, corrigé par le programmeur). Un effort n'est pas testé.
-5. *Release* : la carte Test non testée se retourne **devant les gamers** : OK, soulagement (moment de tension).
-6. *Review* : les étoiles volent vers les 3 nouvelles fonctionnalités ; les gamers passent de 250 à 475 ; une carte Feedback livrée fait monter la note à 3,5 ; le score passe à 1 662 ; le deuxième anneau s'allume. Une nouvelle carte Feedback arrive : la file Feedback → Backlog grossit (le succès crée sa propre charge).
+1. *Brief* : Vera (message V1) : « Les premiers gamers arrivent. Écoutez-les… mais pas tous. » L'animateur retourne l'événement **E1** (2 cartes Feedback de plus, car le jeu a des gamers).
+2. *Planning* : **4 cartes Feedback** arrivent dans la file Feedback → Backlog (2 pour les paliers de 100 et 200 gamers, 2 pour E1) : FB18 (des explosions !), FB19 (l'espace est statique), FB07 (le score plafonne) et FB16 (un compliment). La cheffe de projet les trie (2 heures, 1 heure pour 2 cartes) : trois **idées de gamers apparaissent** (F17 Explosions, F18 Fond spatial, F14 Système de score), le compliment s'écarte. Les trois passent au Backlog puis dans le couloir.
+3. *Build* : prompts de F17 (la cheffe de projet, 1 heure) et de F14 (le designer, 1 heure). PIX fait les **3 efforts de F17** (3 tokens, 3 cartes Test cachées) : il a fini sa capacité, **le prompt de F14 attend** dans la file Prompt → Build (le goulot). Le designer fait F18 (1 heure).
+4. *Test* : SCAN teste 2 efforts de F17 (2 tokens) : un OK, **un Bug trouvé** (PIX proteste) ; le designer le corrige (1 heure). Le troisième effort n'est pas testé.
+5. *Release* : la carte non testée se retourne **devant les gamers** : OK, soulagement. F17 et F18 sont publiées ; F14 reste en Prompt, pas finie.
+6. *Review* : 6 étoiles de plus, soit **400 gamers** ; les 2 cartes Feedback livrées (FB18 avec F17, FB19 avec F18) font monter la note de 3 à **4** ; **score 1 600** ; le deuxième anneau s'allume. Deux nouvelles cartes Feedback arrivent (paliers de 300 et 400 gamers) : la file grossit, **le succès crée sa propre charge**.
 
-*Le script est un fichier de données, facile à modifier (ordre, textes, durées, chiffres) sans toucher au code.*
+*Bilan des heures au cycle 1 : cheffe de projet 3 (tri 2, prompt 1), designer 3 (prompt, effort, correction), programmeur 0 : ses fonctionnalités ne sont pas au programme ce cycle. Tokens : 20 → 15.*
 
-> **À corriger au début de l'étape 3 (relevé le 27 nov. 2026) :** la boucle 2 ne suit plus les règles du GDD 0.19 et 0.20.
-> - Explosions (F17), Score (F14) et Fond spatial (F18) sont des **idées de gamers cachées** : chacune n'apparaît que si l'on trie la carte Feedback qui la cite (FB18, FB07, FB19). Il faut donc trier 3 cartes, pas une.
-> - Ces 3 fonctionnalités font **6 efforts** (3 + 2 + 1). Le script n'en produit que 4, dont un reste en attente, mais publie les 3 avec leurs 9 étoiles.
-> - Elles sont toutes au designer (D), qui ne produit qu'**1 effort par cycle**.
->
-> Deux façons de corriger : changer les fonctionnalités de la boucle 2, ou n'en publier que 2 sur 3 et **montrer celle qui n'est pas finie** (ce qui illustre bien la leçon). Les chiffres des gamers et du score sont à recalculer en conséquence.
+*Correspondance entre les temps du cycle et les stations (décidée le 27 nov. 2026) :* Brief → aucune station (Vera parle) ; Planning → Backlog ; Build → Prompt (les prompts), puis Build ; Test → Test ; Release → Release ; Review → Feedback.
+
+*Le script est un fichier de données (`game/plateau/js/script-demo.js`), facile à modifier (ordre, textes, durées, chiffres) sans toucher au code.*
 
 ## 5. Les règles techniques (en plus de `CLAUDE.md`)
 
@@ -85,13 +83,14 @@ Chaque étape se termine par un test dans le navigateur, une mise à jour de ce 
 
 *Corrections de compréhension faites pendant le gel (27 nov., retours sur l'étape 2) :* « ticket » au lieu de « vaisseau » ; légende et infobulles des cartes Test ; avis quand PIX tire une carte Test ; dans le banc d'essai, **on clique sur un ticket pour choisir la fonctionnalité**, puis les boutons (avancer, effort, PIX, SCAN) agissent sur elle et un avis dit pourquoi une action n'est pas possible.
 
-*Idées notées pendant le gel (à traiter à l'étape 5) :* aucune pour l'instant.
+*Idées notées pendant le gel (à traiter à l'étape 5 ou au moteur de règles) :*
+- **La pioche Événements n'est pas pour les joueurs** (27 nov.) : c'est l'animateur qui retourne la carte Événement au début du Brief (dans le numérique : automatiquement quand il fait passer tout le monde au cycle suivant, la même carte pour toutes les équipes). Dans la démo, le clic sur la pioche reste ouvert pour le banc d'essai ; avec le moteur de règles, il sera réservé à l'animateur.
 
 | # | Étape | Terminé quand… | Fait |
 |---|---|---|---|
 | 1 | **Le plateau statique, joli** : soleil, 6 stations, files, satellites, planètes extérieures, tableau de bord, deux thèmes | On l'ouvre en double-cliquant et on a envie de jouer dessus | ☑ 26 nov. 2026 |
-| 2 | **Les briques animées** : *(fait le 27 nov. : les pioches virtuelles Événement, Feedback et Test, la carte qui vole, se retourne et part à sa place, la carte Test cachée sous un ticket qu'on retourne d'un clic ; pioches en colonne à droite ; un schéma par carte Feedback ; les trois zones des fonctionnalités, Idées → Backlog → couloir du cycle, avec les clics « choisir », « lancer » et « trier un feedback », qui fait apparaître les idées de gamers ; tickets compacts avec une loupe au survol)* ; faire voler une pastille Heure (CP, D, P) du pilotage jusqu'à la station où l'on agit, en laissant sa place vide au pilotage ; illuminer une station, faire avancer un ticket, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file. *(Fait le 27 nov., à valider : `js/animations.js` (les 6 briques : jeton Heure qui vole et revient, comète sur l'orbite et station qui s'allume, ticket qui glisse dans le couloir, effort qui se remplit, PIX qui envoie des `</>` et SCAN qui balaie le ticket, file qui grossit, sature et déborde) ; `js/banc.js` (le banc d'essai, un bouton par animation, et les actions qu'appellera le script : une heure puis un effort, SCAN qui teste sans voir les Pas fun…))* | Chaque animation se déclenche par un bouton de test et elle est belle | ☐ |
-| 3 | **Le lecteur et le script** des 2 boucles, avec la barre de lecture | La démo se joue de bout en bout en 2 à 3 minutes, et on peut la mettre en pause, avancer pas à pas, recommencer | ☐ |
+| 2 | **Les briques animées** : *(fait le 27 nov. : les pioches virtuelles Événement, Feedback et Test, la carte qui vole, se retourne et part à sa place, la carte Test cachée sous un ticket qu'on retourne d'un clic ; pioches en colonne à droite ; un schéma par carte Feedback ; les trois zones des fonctionnalités, Idées → Backlog → couloir du cycle, avec les clics « choisir », « lancer » et « trier un feedback », qui fait apparaître les idées de gamers ; tickets compacts avec une loupe au survol)* ; faire voler une pastille Heure (CP, D, P) du pilotage jusqu'à la station où l'on agit, en laissant sa place vide au pilotage ; illuminer une station, faire avancer un ticket, remplir un effort, animer PIX et SCAN, retourner une carte Test, faire grossir une file. *(Fait le 27 nov. : `js/animations.js` (les 6 briques : jeton Heure qui vole et revient, comète sur l'orbite et station qui s'allume, ticket qui glisse dans le couloir, effort qui se remplit, PIX qui envoie des `</>` et SCAN qui balaie le ticket, file qui grossit, sature et déborde) ; `js/banc.js` (le banc d'essai, un bouton par animation, et les actions qu'appellera le script : une heure puis un effort, SCAN qui teste sans voir les Pas fun…))* | Chaque animation se déclenche par un bouton de test et elle est belle | ☑ 27 nov. 2026 |
+| 3 | **Le lecteur et le script** des 2 boucles, avec la barre de lecture | La démo se joue de bout en bout en 2 à 3 minutes, et on peut la mettre en pause, avancer pas à pas, recommencer | ☐ *(fait le 27 nov., à valider : `js/script-demo.js` (l'état de départ et les 75 étapes des 2 boucles), `js/lecteur.js` (le lecteur et la barre de lecture : lecture/pause, aussi à la barre d'espace, pas à pas, ×1 ou ×2, recommencer, barre d'avancement) ; environ 2 minutes à ×1. La démo s'ouvre au début du cycle 0 ; le banc d'essai reste disponible avec `index.html?etat=vitrine` ou `?banc=1`)* |
 | 4 | **La couche de gamification** : compteur de gamers, étoiles qui volent, note, score, célébration du MVP, anneaux de boucle, sons | En la regardant, on a envie de voir la boucle suivante | ☐ |
 | 5 | **Les retouches après les premiers regards** | Les points relevés au test (section 7) sont corrigés | ☐ |
 
