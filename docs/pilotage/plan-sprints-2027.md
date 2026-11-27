@@ -5,7 +5,7 @@
 ## Où on en est (pour reprendre une session, y compris avec Claude Code)
 
 - **Fait :** GDD 0.20, cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan par chapitre ; démo du plateau, étape 1 (plateau statique dans les deux thèmes, 26 nov.).
-- **En cours : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), **étape 2 « les briques animées », à moitié faite** (pioches, cartes qui volent et se retournent, zones Idées → Backlog → couloir). Restent six animations : jeton Heure, station, ticket, effort, PIX et SCAN, files. Puis les étapes 3 à 5 : script des 2 boucles, gamification, test auprès de 3 ou 4 personnes.
+- **En cours : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`) : étapes 1 et 2 faites (plateau, briques animées) ; **étape 3 (script des 2 boucles et barre de lecture) codée, à valider**. Puis l'étape 4 (gamification) et l'étape 5 (test auprès de 3 ou 4 personnes).
 - **Ensuite :** le moteur de règles numérique (qui pilote les mêmes animations), puis les builds SpacePlan (PoC d'abord, puis Proto, page de lancement, Alpha).
 
 ## Cadre
@@ -95,8 +95,8 @@ Sur janvier – juin, on dispose d'environ **260 heures** au lieu de 500. On gar
 | Kit papier v1 (plateau, cartes, fiches de rôle, livret), généré depuis les documents | En avance | Fait (26 nov.) ; sert au mini-test et au repli hors ligne |
 | Règles sur une page (`docs/jeu/regles-une-page.md`) et simulateur d'équilibrage (`docs/jeu/simulation-equilibrage.md`) | En avance | Fait (26 nov.) : règles validées par 2 000 parties simulées par stratégie |
 | Inventaire des builds par chapitre (`docs/jeu/builds-spaceplan.md`) | En avance | Fait (26 nov.) : Proto, PoC, Alpha à interrupteurs ; Beta optionnelle |
-| **Démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), 5 étapes, sans règles | Début décembre | **En cours** : étape 1 faite (26 nov.), étape 2 à moitié (27 nov.) |
-| Corriger le script de la boucle 2 de la démo (il ne suit plus les règles 0.19 et 0.20) | Début de l'étape 3 | À faire |
+| **Démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`), 5 étapes, sans règles | Début décembre | **En cours** : étapes 1 et 2 faites, étape 3 codée (27 nov.) |
+| Corriger le script de la boucle 2 de la démo (il ne suit plus les règles 0.19 et 0.20) | Début de l'étape 3 | Fait (27 nov.) |
 | Remettre les sections 5 à 11 du GDD au vocabulaire de la section 0 (PA, blocs, carte défaut, brief…) | Avant le moteur de règles | À faire |
 | Moteur de règles numérique, qui pilote les animations de la démo | Décembre → S1, si la démo convainc | À faire |
 | **Mini-test papier** : cycles 0 et 1, 1 ou 2 personnes | Début décembre | À organiser |
