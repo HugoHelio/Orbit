@@ -86,14 +86,14 @@ Chaque humain a **3 heures de travail par cycle (3 jetons Heure)**. L'équipe a 
 | F15 | Types de missiles | Interface | 1 | ★★★ | Art | Should | « Les miens sont bleus. Les leurs, rouges. Merci. » | Idée de gamer |
 | F16 | Victoire et récompense | Interface | 3 | ★★★ | Art | Should | « Gagner, c'est bien. Le sentir, c'est mieux. » | Idée de gamer |
 | F17 | Explosions | Immersion | 3 | ★★★ | Art | Should | « Boum. Enfin un peu de respect. » | Idée de gamer |
-| F18 | Fond spatial | Immersion | 1 | ★★★ | Art | Should | « Des étoiles. Beaucoup d'étoiles. » | Idée de gamer |
+| F18 | Fond étoilé défilant | Immersion | 1 | ★★★ | Art | Should | « Des étoiles. Beaucoup d'étoiles. » | Idée de gamer |
 | F19 | Rencontrer SpaceTron | Immersion | 3 | ★★ | Art | Could | « Il était temps qu'on se présente. » | Départ |
 | F20 | Visuels, univers et ton | Immersion | 3 | ★★★ | Design | Should | « Un jeu, c'est d'abord une ambiance. » | Départ |
 
 ### Les idées de l'équipe et les idées de gamers
 
 - **Au départ, 12 fonctionnalités sont visibles** : la première liste assemblée par l'équipe pour son jeu, Star Squadron (on la donne aux joueurs pour simplifier le cycle 0 ; Vera n'a demandé qu'un jeu en pixel art dans l'esprit de Space Invaders). Elles sont posées, face visible, dans la zone **Idées** du plateau. Pendant le Planning, l'équipe choisit celles qu'elle veut faire et les range dans le **Backlog**, par ordre de priorité.
-- **Les 8 autres sont des idées de gamers** (colonne « Origine ») : F08 Réglage de la difficulté, F11 Grille jusqu'aux bords, F12 Nouvelles vagues, F14 Système de score, F15 Types de missiles, F16 Victoire et récompense, F17 Explosions, F18 Fond spatial. Elles restent **cachées** (pile face cachée) tant qu'un gamer ne les demande pas.
+- **Les 8 autres sont des idées de gamers** (colonne « Origine ») : F08 Réglage de la difficulté, F11 Grille jusqu'aux bords, F12 Nouvelles vagues, F14 Système de score, F15 Types de missiles, F16 Victoire et récompense, F17 Explosions, F18 Fond étoilé défilant. Elles restent **cachées** (pile face cachée) tant qu'un gamer ne les demande pas.
 - **Quand le chef de projet trie une carte Feedback qui cite une idée de gamer encore cachée, cette fonctionnalité apparaît** : elle rejoint la zone Idées, face visible, et la carte Feedback se pose dessus (la note montera quand elle sera publiée). Plus le jeu a de gamers, plus il y a d'idées… et plus il y a à trier.
 - Le piège de la priorisation reste entier : parmi les 12 de départ, F05, F10 et F20 valent 3 étoiles, mais ne sont pas essentielles.
 

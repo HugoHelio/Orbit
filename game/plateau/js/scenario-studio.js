@@ -277,7 +277,7 @@ window.SCENARIO = {
       "f.F15": "Types de missiles",
       "f.F16": "Victoire et récompense",
       "f.F17": "Explosions",
-      "f.F18": "Fond spatial",
+      "f.F18": "Fond étoilé défilant",
       "f.F19": "Rencontrer SpaceTron",
       "f.F20": "Visuels, univers et ton",
 
@@ -563,7 +563,7 @@ window.SCENARIO = {
       "f.F15": "Missile types",
       "f.F16": "Victory and reward",
       "f.F17": "Explosions",
-      "f.F18": "Space background",
+      "f.F18": "Scrolling starfield",
       "f.F19": "Meet SpaceTron",
       "f.F20": "Visuals, world and tone",
 

@@ -53,7 +53,7 @@ Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit
 
 **Boucle 2 : le cycle 1, « l'accès anticipé »**
 1. *Brief* : Vera (message V1) : « Les premiers gamers arrivent. Écoutez-les… mais pas tous. » L'animateur retourne l'événement **E1** (2 cartes Feedback de plus, car le jeu a des gamers).
-2. *Planning* : **4 cartes Feedback** arrivent dans la file Feedback → Backlog (2 pour les paliers de 100 et 200 gamers, 2 pour E1) : FB18 (des explosions !), FB19 (l'espace est statique), FB07 (le score plafonne) et FB16 (un compliment). La cheffe de projet les trie (2 heures, 1 heure pour 2 cartes) : trois **idées de gamers apparaissent** (F17 Explosions, F18 Fond spatial, F14 Système de score), le compliment s'écarte. Les trois passent au Backlog puis dans le couloir.
+2. *Planning* : **4 cartes Feedback** arrivent dans la file Feedback → Backlog (2 pour les paliers de 100 et 200 gamers, 2 pour E1) : FB18 (des explosions !), FB19 (l'espace est statique), FB07 (le score plafonne) et FB16 (un compliment). La cheffe de projet les trie (2 heures, 1 heure pour 2 cartes) : trois **idées de gamers apparaissent** (F17 Explosions, F18 Fond étoilé défilant, F14 Système de score), le compliment s'écarte. Les trois passent au Backlog puis dans le couloir.
 3. *Build* : prompts de F17 (la cheffe de projet, 1 heure) et de F14 (le designer, 1 heure). PIX fait les **3 efforts de F17** (3 tokens, 3 cartes Test cachées) : il a fini sa capacité, **le prompt de F14 attend** dans la file Prompt → Build (le goulot). Le designer fait F18 (1 heure).
 4. *Test* : SCAN teste 2 efforts de F17 (2 tokens) : un OK, **un Bug trouvé** (PIX proteste) ; le designer le corrige (1 heure). Le troisième effort n'est pas testé.
 5. *Release* : la carte non testée se retourne **devant les gamers** : OK, soulagement. F17 et F18 sont publiées ; F14 reste en Prompt, pas finie.
@@ -79,11 +79,12 @@ Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit
 
 Chaque étape se termine par un test dans le navigateur, une mise à jour de ce document (cocher l'étape) et un commit.
 
-**Design gelé jusqu'à l'étape 5 (décidé le 27 nov. 2026).** Le plateau, ses zones et le vocabulaire ne bougent plus pendant les étapes 2 à 4 : on anime ce qui existe. Une nouvelle idée de design va dans la liste ci-dessous et on la traite à l'étape 5, après les premiers regards. Seules exceptions : un défaut qui empêche une animation de fonctionner ou de se comprendre. Pas de nouvelle interaction non plus : le script de l'étape 3 appelle les mêmes fonctions que les clics.
+**Le design reste ouvert (27 nov. 2026).** Le gel décidé le même jour est levé : on continue d'itérer sur le plateau à chaque retour de l'utilisateur. Chaque changement de design est noté ici et dans le GDD (section et journal des décisions). Les briques animées et le script s'adaptent au design, pas l'inverse.
 
-*Corrections de compréhension faites pendant le gel (27 nov., retours sur l'étape 2) :* « ticket » au lieu de « vaisseau » ; légende et infobulles des cartes Test ; avis quand PIX tire une carte Test ; dans le banc d'essai, **on clique sur un ticket pour choisir la fonctionnalité**, puis les boutons (avancer, effort, PIX, SCAN) agissent sur elle et un avis dit pourquoi une action n'est pas possible.
+*Corrections de compréhension (27 nov., retours sur l'étape 2) :* « ticket » au lieu de « vaisseau » ; légende et infobulles des cartes Test ; avis quand PIX tire une carte Test ; dans le banc d'essai, **on clique sur un ticket pour choisir la fonctionnalité**, puis les boutons (avancer, effort, PIX, SCAN) agissent sur elle et un avis dit pourquoi une action n'est pas possible.
 
-*Idées notées pendant le gel (à traiter à l'étape 5 ou au moteur de règles) :*
+*Idées notées (à traiter à l'étape 5 ou au moteur de règles) :*
+- **Les deux boucles de retour** (27 nov., accord de l'utilisateur, à coder) : un problème trouvé au Test fait **reculer le ticket au Build** (la case fautive se vide, le responsable la refait en 1 heure, puis le ticket revient au Test) ; une carte Feedback sur une fonctionnalité **live** crée un **ticket correctif** qui part de la Communauté vers le Backlog et refait tout le chemin, pendant que la fonctionnalité reste live, marquée « bug signalé » ou « amélioration demandée » dans le tableau de bord.
 - **La pioche Événements n'est pas pour les joueurs** (27 nov.) : c'est l'animateur qui retourne la carte Événement au début du Brief (dans le numérique : automatiquement quand il fait passer tout le monde au cycle suivant, la même carte pour toutes les équipes). Dans la démo, le clic sur la pioche reste ouvert pour le banc d'essai ; avec le moteur de règles, il sera réservé à l'animateur.
 
 | # | Étape | Terminé quand… | Fait |

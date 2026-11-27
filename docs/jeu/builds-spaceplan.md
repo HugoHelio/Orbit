@@ -27,7 +27,7 @@ Il y a aussi **quatre démos complètes** : Proto, PoC (« FP »), Alpha et Beta
 | SP-6-PoCDemo | — | Démo du PoC | idem |
 | **Production (Alpha)** | | | |
 | SP-PR4-Code | 0.11 | 7. La grille descend ; 11. Collision alien / vaisseau | F10, F05 |
-| SP-PR5-Code | 0.12 | 13. Score ; 5. Écran de défaite et redémarrage ; 6. Fond spatial (étoiles) | F14, F13, F18 |
+| SP-PR5-Code | 0.12 | 13. Score ; 5. Écran de défaite et redémarrage ; 6. Fond étoilé défilant (étoiles) | F14, F13, F18 |
 | SP-PR6-Dev | 0.13 | 12. Nouvelles vagues d'aliens ; 14. Conditions et écran de victoire | F12, F16 |
 | SP-PR7-Dev | 0.14 | 15. Trois types de vaisseaux ; 18. Puissance de feu | F01, F04 |
 | SP-PR9-Dev | 0.15 | 17. Boucliers ; 19. Visuels des vaisseaux | F03, (F20) |
@@ -64,7 +64,7 @@ Il y a aussi **quatre démos complètes** : Proto, PoC (« FP »), Alpha et Beta
 | F15 | Types de missiles | PoC (PP24) |
 | F16 | Victoire et récompense | PR6 (0.13) |
 | F17 | Explosions | PoC (PP24) |
-| F18 | Fond spatial | PR5 (0.12) |
+| F18 | Fond étoilé défilant | PR5 (0.12) |
 | F19 | SpaceTron | CL6 (0.33) |
 | F20 | Visuels, univers et ton | CL6 (0.33), par petites touches avant |
 
