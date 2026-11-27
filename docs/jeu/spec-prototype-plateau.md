@@ -60,6 +60,13 @@ Durée visée : **2 à 3 minutes en vitesse ×1**. Les chiffres suivent l'esprit
 
 *Le script est un fichier de données, facile à modifier (ordre, textes, durées, chiffres) sans toucher au code.*
 
+> **À corriger au début de l'étape 3 (relevé le 27 nov. 2026) :** la boucle 2 ne suit plus les règles du GDD 0.19 et 0.20.
+> - Explosions (F17), Score (F14) et Fond spatial (F18) sont des **idées de gamers cachées** : chacune n'apparaît que si l'on trie la carte Feedback qui la cite (FB18, FB07, FB19). Il faut donc trier 3 cartes, pas une.
+> - Ces 3 fonctionnalités font **6 efforts** (3 + 2 + 1). Le script n'en produit que 4, dont un reste en attente, mais publie les 3 avec leurs 9 étoiles.
+> - Elles sont toutes au designer (D), qui ne produit qu'**1 effort par cycle**.
+>
+> Deux façons de corriger : changer les fonctionnalités de la boucle 2, ou n'en publier que 2 sur 3 et **montrer celle qui n'est pas finie** (ce qui illustre bien la leçon). Les chiffres des gamers et du score sont à recalculer en conséquence.
+
 ## 5. Les règles techniques (en plus de `CLAUDE.md`)
 
 - **Dossier :** `game/plateau/` (`index.html`, `style.css`, `js/`).

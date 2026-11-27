@@ -13,11 +13,11 @@ Il fait partie de l'activité **Helioso** en préparation (lancement mi/fin 2027
 
 ## Où on en est et prochaine étape
 
-*À lire en premier à chaque session. Mis à jour à chaque décision (dernière mise à jour : 26 novembre 2026).*
+*À lire en premier à chaque session. Mis à jour à chaque décision (dernière mise à jour : 27 novembre 2026).*
 
 - L'utilisateur prépare le projet aussi en discussion avec Claude (chat), que Claude Code ne voit pas : **les décisions sont toujours reportées dans les documents du dépôt**. Si une demande contredit un document, le signaler et demander laquelle des deux fait foi.
 - **Fait :** GDD 0.20, étape 1 de la démo du plateau (`game/plateau/index.html`, plateau statique dans les deux thèmes), cartes, règles sur une page, simulateur, kit papier v1, inventaire des builds SpacePlan.
-- **Prochaine étape : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`) : un scénario scripté de 2 boucles, **sans règles derrière**, pour voir si le flux se comprend et si la gamification est engageante. Elle passe **avant les règles numériques et les builds SpacePlan**. **Étape en cours :** les retouches de l'étape 1 à partir des retours de l'utilisateur, qui réagit directement sur le HTML ; puis l'étape 2 (les briques animées). Une étape par session, cocher l'étape dans la spécification à la fin.
+- **Prochaine étape : la démo animée du plateau** (`docs/jeu/spec-prototype-plateau.md`) : un scénario scripté de 2 boucles, **sans règles derrière**, pour voir si le flux se comprend et si la gamification est engageante. Elle passe **avant les règles numériques et les builds SpacePlan**. **Étape en cours : l'étape 2 (les briques animées), à moitié faite.** Faits : les pioches, les cartes qui volent et se retournent, la carte Test cachée, les zones Idées → Backlog → couloir. Restent : le jeton Heure qui vole, la station qui s'illumine, le vaisseau qui voyage, l'effort qui se remplit, PIX et SCAN au travail, la file qui grossit, chacun avec un bouton de test. L'utilisateur réagit directement sur le HTML. Une étape par session, cocher l'étape dans la spécification à la fin. **À l'étape 3**, corriger d'abord le script de la boucle 2 (voir la note dans la section 4 de la spécification).
 - **Ensuite, si la démo convainc :** le moteur de règles (mêmes calculs que le simulateur), qui pilote les mêmes animations que la démo.
 - **Ensuite :** les builds SpacePlan (PoC d'abord), voir `docs/jeu/builds-spaceplan.md` et le plan de sprints.
 

@@ -420,15 +420,20 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 
 ## 13. Le plan du prototype
 
-| Étape | Sprint | Livrable | Ce qu'on vérifie |
-|---|---|---|---|
-| **1. Règles v0** | S1 (4 – 17 janv.) | Ce GDD finalisé, la liste complète des cartes, le plateau dessiné | Les règles tiennent sur une page recto-verso |
-| **2. Prototype papier (N0)** | S2 (18 – 31 janv.) | Plateau A2 et cartes imprimés. Partie test de 90 min (cycle 0 + 2 cycles) avec **2 équipes** de proches | Règles comprises en moins de 15 min ? Les goulots apparaissent-ils tout seuls ? Le barème récompense-t-il la bonne stratégie ? |
-| **3. Prototype web (N1)** | S3 (1er – 14 févr.) | Plateau numérique animé par équipe, hors ligne + page leaderboard | Le jeu tourne sans calculs à la main |
-| **4. Démo** | S4 (15 – 28 févr.) | Vidéo de 2 min + version jouable en 5 min pour la prospection | Un enseignant comprend l'intérêt en 2 minutes |
-| **5. Multijoueur (N2)** | Été 2027 | Parties avec code, écran animateur synchronisé, repli hors ligne | Une classe de 30 joue sans incident, même avec une coupure réseau |
+*Aligné sur le plan de sprints (version 8) : **le numérique d'abord** (décision du 26 nov. 2026). Le papier devient une vérification légère des règles et le repli hors ligne.*
 
-**Les critères de réussite du test papier :**
+| Étape | Quand | Livrable | Ce qu'on vérifie |
+|---|---|---|---|
+| **1. Règles v0** | Fait (26 nov. 2026) | Ce GDD, la liste complète des cartes, les règles sur une page, le simulateur, le kit papier v1 | Les règles tiennent sur une page recto-verso et la simulation récompense la bonne stratégie |
+| **2. Démo animée du plateau** | Début déc. 2026 (en cours) | Scénario scripté de 2 boucles, sans règles (`docs/jeu/spec-prototype-plateau.md`) | Comprend-on le flux sans explication ? A-t-on envie de jouer ? |
+| **3. Mini-test papier** | Début déc. 2026 | Cycles 0 et 1 avec 1 ou 2 personnes | Les règles se comprennent-elles ? |
+| **4. Moteur de règles (N1, une équipe)** | S1 (4 – 17 janv.) | Les règles de la section 0, mêmes calculs que le simulateur, branchées sur les animations de la démo. Première partie test (cycles 0 et 1) avec 2 ou 3 proches | Le jeu tourne sans calculs à la main |
+| **5. Builds SpacePlan** | S2 (18 – 31 janv.) | Builds PoC et Proto, page de lancement « Jouer à votre jeu » (`docs/jeu/builds-spaceplan.md`) | L'équipe joue vraiment au jeu qu'elle a livré |
+| **6. Jeu complet** | S3 (1er – 14 févr.) | Cycles 0 à 4, build Alpha, feuille de score gamifiée | Une partie complète tient dans la session de 3 h |
+| **7. Démo de prospection** | S4 (15 – 28 févr.) | Plusieurs équipes et leaderboard (N1), vidéo de 2 min | Un enseignant comprend l'intérêt en 2 minutes |
+| **8. Multijoueur (N2)** | Été 2027 | Parties avec code, écran animateur synchronisé, repli hors ligne | Une classe de 30 joue sans incident, même avec une coupure réseau |
+
+**Les critères de réussite des parties test** (sur le prototype numérique) :
 - Au moins 2 joueurs sur 3 veulent rejouer.
 - Au débrief, les joueurs formulent **eux-mêmes** au moins 3 des 7 leçons.
 - Un cycle tient en moins de 30 minutes.
@@ -490,6 +495,7 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 27 nov. 2026 | **Backlog limité à 5 places** sur le plateau : l'équipe doit prioriser |
 | 27 nov. 2026 | **Le Backlog est un zoom de la planète Backlog** (cône, même contour noir), qu'un clic ouvre ou ferme. **Qui parle au joueur :** les agents ne parlent que de leur propre travail (PIX et SCAN, dans une bulle au-dessus d'eux) ; les règles du plateau (« Backlog plein », « plus rien à coder ») passent par un **avis neutre**, sans personnage. Vera reste la voix de l'éditeur (brief, événements). Piste ouverte : un narrateur ou un tuteur pour guider la première partie |
 | 27 nov. 2026 | **K6, maître de jeu** : le robot K6 (mascotte de SpacePlan, version « professeur ») guide les joueurs dans la barre du bas du plateau (sa tête avec le chapeau), en sous-titre : un message par temps du cycle (Brief, Planning, Build…), qui ne cache jamais le plateau. **Logo de Star Squadron** : la fusée du logo de référence à gauche (image découpée, `assets/logos/star-squadron-fusee.png`), titre en lettres pixel sur un bandeau bleu nuit à droite (STAR en blanc, SQUADRON en ambre), d'après le logo de référence `assets/logos/star-squadron-reference.png` |
+| 27 nov. 2026 | **Plan du prototype (section 13) aligné sur le plan de sprints v8** : démo animée, puis mini-test papier, moteur de règles, builds SpacePlan, jeu complet, démo de prospection, multijoueur. Les critères de réussite s'appliquent aux parties test numériques. Aucune règle ne change |
 
 ---
 
