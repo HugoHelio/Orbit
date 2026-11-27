@@ -28,7 +28,8 @@ REGLES = dict(
     cycles=5,             # cycles 0 à 4
     humain_max=1, humain_c0=2, pix_cap=3,
     humain_c4=2,          # GDD 0.21 : « le sprint final », 2 jetons Prod au dernier cycle
-    feedback_prod=True,   # GDD 0.21 : le travail demandé par un feedback est un effort (il prend le jeton Prod)
+    feedback_prod=True,
+    review_par_P=False,   # piste : la code review revient au programmeur (garant du code), pas au responsable   # GDD 0.21 : le travail demandé par un feedback est un effort (il prend le jeton Prod)
     note_depart=3.0, note_min=1.0, note_max=5.0,
     fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
     pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)
@@ -235,8 +236,9 @@ class Partie:
                             b["k"] = True
             for f in prets:
                 for b in f["blocks"]:
-                    if b["by"] == "PIX" and not b["k"] and pa[f["resp"]] > 0 and self.r.random() < p["relire"]:
-                        if self.agit(pa, f["resp"]):
+                    rev = "P" if R["review_par_P"] else f["resp"]
+                    if b["by"] == "PIX" and not b["k"] and pa[rev] > 0 and self.r.random() < p["relire"]:
+                        if self.agit(pa, rev):
                             b["k"] = True; self.temps += D["relecture"]; self.log["relectures"] += 1
             for f in prets:
                 if pa["D"] > 0 and any(b["by"] == "PIX" and not b["k"] for b in f["blocks"]) and self.r.random() < p["playtest"]:
