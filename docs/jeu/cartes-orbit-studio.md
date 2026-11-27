@@ -115,10 +115,10 @@ Pour chaque effort produit par PIX, une carte Test est glissée **face cachée**
 
 **Corriger un problème révélé** coûte 1 heure au responsable de la fonctionnalité. La carte Test est alors défaussée.
 
-**Phrases d'ambiance**
-- *OK :* « PIX : "Je vous l'avais dit." » / « Propre. Suspect, mais propre. » / « Rien à signaler, capitaine. »
-- *Bug :* « PIX : "C'est impossible, j'ai tout vérifié." » / « Le vaisseau traverse les aliens. Comme un fantôme. » / « Le jeu se fige quand on tire trop vite. » / « Le score affiche −12. » / « L'alien touché ne disparaît pas. »
-- *Pas fun :* « SCAN : "Fonctionnement conforme." Un gamer : "J'ai fermé le jeu." » / « Techniquement parfait. Humainement ennuyeux. » / « On gagne en 13 secondes. »
+**Phrases d'ambiance** *(neutres : aucun personnage ne parle sur une carte Test, car elle peut être révélée par SCAN, par un humain ou par les gamers ; elle décrit ce qu'on voit à l'écran)*
+- *OK :* « Ça marche. Vraiment. » / « Propre. Suspect, mais propre. » / « Rien à signaler. On peut publier. »
+- *Bug :* « Le jeu plante au deuxième niveau. » / « Le vaisseau traverse les aliens. Comme un fantôme. » / « Le jeu se fige quand on tire trop vite. » / « Le score affiche −12. » / « L'alien touché ne disparaît pas. »
+- *Pas fun :* « Tout fonctionne. Le gamer ferme le jeu au bout de 30 secondes. » / « Techniquement parfait. Humainement ennuyeux. » / « On gagne en 13 secondes. »
 
 *Probabilités pour l'équilibrage : un effort a 40 % de risque de problème avec un prompt simple, environ 16 % avec un prompt détaillé.*
 

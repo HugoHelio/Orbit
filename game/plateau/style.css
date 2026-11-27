@@ -701,7 +701,7 @@ html, body {
 
 /* K6, le maître de jeu, dans la barre du bas */
 .guide { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
-.guide-k6 { height: 46px; width: auto; flex: none; filter: drop-shadow(0 2px 3px rgba(13, 35, 41, 0.2)); }
+.guide-k6 { height: 34px; width: auto; flex: none; filter: drop-shadow(0 2px 3px rgba(13, 35, 41, 0.2)); }
 .guide-bulle {
   position: relative; display: flex; flex-direction: column; gap: 1px; min-width: 0;
   background: var(--surface-2); border-radius: 12px; padding: 6px 14px;

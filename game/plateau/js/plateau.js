@@ -180,7 +180,7 @@
   // La légende de l'effort : relie les tickets aux heures et aux tokens du tableau de bord.
   function dessinerLegende() {
     const g = el("g", { class: "legende", transform: "translate(850,940)" }, calques.liens);
-    el("rect", { x: -16, y: -30, width: 500, height: 100, rx: 14, class: "legende-fond" }, g);
+    const fond = el("rect", { x: -16, y: -30, width: 500, height: 100, rx: 14, class: "legende-fond" }, g);
     el("text", { x: 0, y: -6, class: "legende-titre", texte: t("legende.titre") }, g);
     [["humain", "legende.humain"], ["agent", "legende.agent"], ["", "legende.afaire"]].forEach(([qui, cle], i) => {
       const y = 18 + i * 21;
@@ -196,6 +196,10 @@
       miniCarteTest(c, etat);
       el("text", { x: x2 + 24, y: y, class: "legende-texte", texte: t("legende.test." + etat) }, g);
     });
+    // Le cadre prend la largeur des textes (+ une marge), une fois les polices chargées.
+    const ajuster = () => { try { fond.setAttribute("width", Math.ceil(g.getBBox().width + 32)); } catch (e) {} };
+    ajuster();
+    if (document.fonts) document.fonts.ready.then(ajuster);
   }
 
   function definitions() {
@@ -589,10 +593,29 @@
 
   // Le couloir du cycle : chaque station a sa place sur un anneau entre l'orbite et le soleil.
   const COULOIR = { rx: 255, ry: 205 };
-  const DECALAGES = [0, 54, -54, 108];
+  // Où se rangent les tickets d'une même station (décalages [x, y] par rang) : du côté où il y a
+  // de la place, jamais vers la planète ni vers le soleil. Sur les côtés, on empile vers le haut ou
+  // vers le bas (60 d'écart : les petites cartes Test sous un ticket ne touchent pas le suivant) ;
+  // en haut et en bas de l'orbite (Prompt, Release), on aligne à gauche et à droite.
+  const RANGS = {
+    bas: [[0, 0], [0, 60], [0, 120], [0, -60]],
+    haut: [[0, 0], [0, -60], [0, -120], [0, 60]],
+    cotes: [[0, 0], [-142, 0], [142, 0], [0, 58]]
+  };
+  function rangsStation(stationId) {
+    const a = station(stationId).angle;
+    const s = Math.sin((a * Math.PI) / 180), c = Math.cos((a * Math.PI) / 180);
+    if (Math.abs(c) < 0.3) return RANGS.cotes;          // en haut ou en bas de l'orbite
+    return s < 0 ? RANGS.bas : RANGS.haut;              // la planète est au-dessus : on descend, et inversement
+  }
+  function decalageCouloir(stationId, index) {
+    const r = rangsStation(stationId);
+    const d = r[index] || [0, 60 * index];
+    return { x: d[0], y: d[1] };
+  }
   function placeCouloir(stationId, index) {
-    const a = (station(stationId).angle * Math.PI) / 180;
-    return { x: G.cx + COULOIR.rx * Math.cos(a), y: G.cy + COULOIR.ry * Math.sin(a) + (DECALAGES[index] || index * 54) };
+    const a = (station(stationId).angle * Math.PI) / 180, d = decalageCouloir(stationId, index);
+    return { x: G.cx + COULOIR.rx * Math.cos(a) + d.x, y: G.cy + COULOIR.ry * Math.sin(a) + d.y };
   }
 
   // Une carte Fonctionnalité = un ticket qui voyage sur l'orbite.
@@ -629,7 +652,7 @@
         class: "case-effort" + (qui ? " faite par-" + (qui === "pix" ? "agent" : "humain") : ""), "data-index": i
       }, g);
     }
-    poserCartesTest(g, v, x0, lc, ecart, H);
+    poserCartesTest(g, v, x0, lc, ecart, H, true);
     return g;
   }
 
@@ -695,7 +718,9 @@
   }
 
   // Les cartes Test, cachées sous les efforts faits par PIX.
-  function poserCartesTest(g, v, x0, lc, ecart, H) {
+  // compact : sur un ticket du couloir, les cartes sont plus petites et à cheval sur le bord du bas,
+  // pour ne pas déborder sur le ticket voisin.
+  function poserCartesTest(g, v, x0, lc, ecart, H, compact) {
     const effortsPix = (v.efforts || []).map((q, i) => (q === "pix" ? i : -1)).filter((i) => i >= 0);
     // Une carte Test vaut { id, revelee } : son type vient du paquet du scénario.
     (v.cartesTest || []).forEach((carte, k) => {
@@ -704,7 +729,9 @@
       const etat = carte.revelee && def ? def.type : "cachee";
       const c = el("g", {
         class: "carte-test " + etat + (etat === "cachee" ? " cliquable" : ""), "data-carte": carte.id || "", "data-f": v.f,
-        transform: `translate(${x0 + i * (lc + ecart) + lc / 2},${H + 14})`
+        transform: compact
+          ? `translate(${x0 + i * (lc + ecart) + lc / 2},${H + 4}) scale(0.75)`
+          : `translate(${x0 + i * (lc + ecart) + lc / 2},${H + 14})`
       }, g);
       miniCarteTest(c, etat);
       // L'infobulle dit ce qu'est cette petite carte (et ce qu'on peut en faire).
@@ -837,7 +864,7 @@
     outils: {
       el, badgeRole, posJetonSoleil, posHeurePosee, placeCouloir, posStation,
       angleStation: (id) => station(id).angle,
-      surOrbite, G, COULOIR, DECALAGES, places: () => G.places, calque: (nom) => calques[nom]
+      surOrbite, G, COULOIR, decalageCouloir, places: () => G.places, calque: (nom) => calques[nom]
     }
   };
 })();

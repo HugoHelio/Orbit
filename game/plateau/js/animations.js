@@ -53,14 +53,13 @@
   }
 
   // Le point d'un ticket dans le couloir, pour une station et un rang (angle en degrés).
-  function pointCouloir(angle, decalage) {
+  // d : le décalage { x, y } du rang dans la station.
+  function pointCouloir(angle, d) {
     const O = Plateau.outils, a = (angle * Math.PI) / 180;
-    return { x: O.G.cx + O.COULOIR.rx * Math.cos(a), y: O.G.cy + O.COULOIR.ry * Math.sin(a) + decalage };
+    return { x: O.G.cx + O.COULOIR.rx * Math.cos(a) + d.x, y: O.G.cy + O.COULOIR.ry * Math.sin(a) + d.y };
   }
-  function decalage(index) {
-    const D = Plateau.outils.DECALAGES;
-    return D[index] !== undefined ? D[index] : index * 54;
-  }
+  // Mélanger deux décalages (p de 0 à 1).
+  function entre(d1, d2, p) { return { x: d1.x + (d2.x - d1.x) * p, y: d1.y + (d2.y - d1.y) * p }; }
 
   // --- 1. Un jeton Heure vole du pilotage vers une station ---------------------
   // Le jeton part de la droite de la ligne du rôle et laisse sa place vide.
@@ -164,14 +163,14 @@
     const a1 = O.angleStation(de);
     let a2 = O.angleStation(vers);
     while (a2 <= a1) a2 += 360;
-    const d1 = decalage(i1), d2 = decalage(i2);
+    const d1 = O.decalageCouloir(de, i1), d2 = O.decalageCouloir(vers, i2);
 
     Plateau.cacherLoupe();
     const e = Plateau.elementTicket(f);
     e.parentNode.appendChild(e); // au premier plan pendant le voyage
     e.classList.add("en-voyage");
     await tween(Math.max(900, ((a2 - a1) / 60) * 900), (p) => {
-      const q = pointCouloir(a1 + (a2 - a1) * p, d1 + (d2 - d1) * p);
+      const q = pointCouloir(a1 + (a2 - a1) * p, entre(d1, d2, p));
       Plateau.placerTicket(f, q.x, q.y);
     });
     e.classList.remove("en-voyage");
@@ -183,7 +182,7 @@
     await Promise.all(restants.map((x) => {
       const r = Plateau.rangTicket(x.f), a = O.angleStation(de);
       return tween(350, (p) => {
-        const q = pointCouloir(a, decalage(r) + (decalage(r - 1) - decalage(r)) * p);
+        const q = pointCouloir(a, entre(O.decalageCouloir(de, r), O.decalageCouloir(de, r - 1), p));
         Plateau.placerTicket(x.f, q.x, q.y);
       }).then(() => Plateau.rangerTicket(x.f, de, r - 1));
     }));

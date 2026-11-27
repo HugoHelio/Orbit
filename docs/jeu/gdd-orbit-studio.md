@@ -192,9 +192,13 @@ Les personnages ont un portrait en pixel art (fichiers dans `assets/personnages/
 
 ### Le texte d'ambiance des cartes
 
-Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la leçon. Exemples :
-- *Carte défaut « Crash » :* « PIX : "C'est impossible, j'ai tout vérifié." »
-- *Carte défaut « Pas fun » :* « Un gamer : "J'ai rien compris, j'ai fermé le jeu." »
+Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la leçon.
+
+**Qui parle (règle de l'humour, 27 nov. 2026) :** une phrase ne fait parler qu'un personnage qui est vraiment en train d'agir à ce moment-là. Sinon, l'humour embrouille. Les **cartes Test sont neutres** : elles peuvent être révélées par SCAN, par un humain ou par les gamers, donc aucun personnage n'y parle ; elles décrivent ce qu'on voit à l'écran. Les personnages parlent dans **leur bulle**, et seulement de leur propre travail (PIX qui proteste quand on révèle un bug dans son code, SCAN qui annonce le résultat de son test).
+
+Exemples :
+- *Carte Test « Bug » :* « Le vaisseau traverse les aliens. Comme un fantôme. »
+- *Carte Test « Pas fun » :* « Tout fonctionne. Le gamer ferme le jeu au bout de 30 secondes. »
 - *Carte défaut « Faille de sécurité » :* « Une clé d'API traîne dans le code publié. Quelqu'un l'a déjà trouvée. »
 - *Carte feedback :* « "Le boss est trop facile. Vous l'avez testé ?" »
 
@@ -497,6 +501,7 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 27 nov. 2026 | **K6, maître de jeu** : le robot K6 (mascotte de SpacePlan, version « professeur ») guide les joueurs dans la barre du bas du plateau (sa tête avec le chapeau), en sous-titre : un message par temps du cycle (Brief, Planning, Build…), qui ne cache jamais le plateau. **Logo de Star Squadron** : la fusée du logo de référence à gauche (image découpée, `assets/logos/star-squadron-fusee.png`), titre en lettres pixel sur un bandeau bleu nuit à droite (STAR en blanc, SQUADRON en ambre), d'après le logo de référence `assets/logos/star-squadron-reference.png` |
 | 27 nov. 2026 | **Plan du prototype (section 13) aligné sur le plan de sprints v8** : démo animée, puis mini-test papier, moteur de règles, builds SpacePlan, jeu complet, démo de prospection, multijoueur. Les critères de réussite s'appliquent aux parties test numériques. Aucune règle ne change |
 | 27 nov. 2026 | **Jamais « vaisseau » pour une fonctionnalité.** Sur le plateau, une carte Fonctionnalité est un **ticket** (ou une fonctionnalité, une *feature*) qui **avance** de station en station ; le mot « vaisseau » est réservé au vaisseau de Star Squadron (catégorie « Vaisseau », F02). **Lisibilité des cartes Test** (retours sur l'étape 2 de la démo) : la légende du plateau explique les petites cartes sous les efforts de PIX (« ? » cachée, « ✓ » OK, « ! » Bug), chaque petite carte a une infobulle, et quand PIX fait un effort, un avis dit qu'une carte Test vient d'être tirée et glissée dessous. Aucune règle ne change |
+| 27 nov. 2026 | **Qui parle dans l'humour** : un personnage ne parle que s'il agit à ce moment-là. Les cartes Test deviennent **neutres** (plus de phrase de PIX ou de SCAN sur une carte, puisqu'elle peut être révélée par SCAN, un humain ou les gamers) ; les personnages parlent dans leur bulle. Section 4 et phrases des cartes mises à jour |
 
 ---
 
