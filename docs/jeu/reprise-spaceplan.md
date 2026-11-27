@@ -35,7 +35,7 @@ Les 20 fonctionnalités sont réparties en 5 catégories : Player, Alien, Gamepl
 
 ## 2. Les problèmes de design (insights de playtest)
 
-Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Max, Sam ou Nora).
+Ce sont des retours de 16 playtesteurs, à chaque étape, rédigés comme de vrais rapports de playtest. **Ils peuvent devenir directement les cartes Feedback** (avec leurs citations, attribuées à Max, Sam ou Nora).
 
 ### Prototype (`1-Conception/SP-C15`)
 1. **Manque de défi :** trop facile, trop court (13 s en moyenne pour finir le niveau). « Si j'appuie sans arrêt sur espace, je tue tous les aliens. » « Les aliens restants restent au milieu et ne vont pas sur les côtés. »
@@ -45,7 +45,7 @@ Ce sont des retours de 16 joueurs, à chaque étape, rédigés comme de vrais ra
 
 ### Alpha (`3-Production/SP-PR14`)
 1. **Progression de difficulté illogique :** trop dur avec les premiers vaisseaux, trop facile avec les meilleurs. « Pourquoi un vaisseau avec plus de canons aurait aussi plus de boucliers ? »
-2. **Pas de sentiment d'accomplissement :** tout le monde finit le jeu avec le meilleur vaisseau, les scores ne départagent pas les joueurs.
+2. **Pas de sentiment d'accomplissement :** tout le monde finit le jeu avec le meilleur vaisseau, les scores ne départagent pas les gamers.
 3. **Ressenti et immersion :** pas de son, l'espace paraît statique, l'icône « Shield S » ressemble à un 5, demande d'un bouton pause.
 4. **Recommandations :** difficulté progressive, scores comparables, finitions de l'interface, combat de boss ou fin de jeu gratifiante.
 
@@ -64,7 +64,7 @@ Le mini-jeu SpacePlan (shoot'em up en JavaScript, sur un `canvas`) existe à 4 �
 
 Classes principales (Alpha) : `Player`, `Projectile`, `Invader`, `InvaderProjectile`, `Grid`, `Particle`.
 
-**Idée forte :** à chaque release dans Orbit : Studio, l'équipe **joue vraiment à son jeu**. Le jeu affiché n'active que les fonctionnalités que l'équipe a livrées (et montre les défauts qu'elle a laissés passer : collision trop large, pas d'explosions…). Le logiciel devient visible, et le feedback des joueurs prend tout son sens.
+**Idée forte :** à chaque release dans Orbit : Studio, l'équipe **joue vraiment à son jeu**. Le jeu affiché n'active que les fonctionnalités que l'équipe a livrées (et montre les défauts qu'elle a laissés passer : collision trop large, pas d'explosions…). Le logiciel devient visible, et le feedback des gamers prend tout son sens.
 
 **Point d'attention :** le code de SpacePlan est sous la licence commerciale SpacePlan. Le copier dans le dépôt public `Orbit` est possible (même titulaire), mais il faudra le placer sous la licence Helioso, ou le garder dans la partie non publique (open core).
 

@@ -23,12 +23,12 @@
       <div class="marque">
         <span class="marque-soleil" aria-hidden="true"></span>
         <span class="marque-nom" data-texte="jeu.titre"></span>
-        <span class="marque-scenario" data-texte="jeu.scenario"></span>
       </div>
 
       <div class="temps" id="temps" aria-live="polite"></div>
 
       <div class="boutons">
+        <div class="boucles-entete" id="boucles-entete"></div>
         <button class="bouton bouton-texte" id="bouton-langue" data-texte="bouton.langue"></button>
         <button class="bouton" id="bouton-son">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -52,32 +52,44 @@
     <main class="zone">
       <div class="plateau-cadre">
         <svg id="plateau" class="plateau" role="img" aria-label="Plateau de l'orbite d'itération"></svg>
+        <div id="couche-cartes" class="couche-cartes"></div>
       </div>
       <aside class="tableau" id="tableau"></aside>
     </main>
 
-    <footer class="barre-lecture" data-titre="lecture.bientot">
-      <button class="bouton" disabled data-titre="lecture.recommencer">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-trait" d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>
-      </button>
-      <button class="bouton bouton-lire" disabled data-titre="lecture.lire">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M8 5l11 7-11 7z"/></svg>
-      </button>
-      <button class="bouton" disabled data-titre="lecture.pas">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M6 5l9 7-9 7z"/><path class="icone-trait" d="M18 5v14"/></svg>
-      </button>
-      <div class="vitesses">
-        <button class="bouton bouton-texte actif" disabled>×1</button>
-        <button class="bouton bouton-texte" disabled>×2</button>
+    <footer class="barre-lecture">
+      <!-- K6, le maître de jeu : il explique chaque temps, en sous-titre, sans cacher le plateau. -->
+      <div class="guide">
+        <img class="guide-k6 pixel" src="../../assets/personnages/k6-maitre-tete.png" alt="">
+        <div class="guide-bulle">
+          <span class="guide-nom" data-texte="guide.nom"></span>
+          <span class="guide-texte" id="guide-texte"></span>
+        </div>
       </div>
-      <div class="piste"><div class="piste-remplie"></div></div>
-      <span class="lecture-note" data-texte="lecture.bientot"></span>
+      <div class="lecture-controles" data-titre="lecture.bientot">
+        <button class="bouton" disabled data-titre="lecture.recommencer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-trait" d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>
+        </button>
+        <button class="bouton bouton-lire" disabled data-titre="lecture.lire">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M8 5l11 7-11 7z"/></svg>
+        </button>
+        <button class="bouton" disabled data-titre="lecture.pas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="icone-plein" d="M6 5l9 7-9 7z"/><path class="icone-trait" d="M18 5v14"/></svg>
+        </button>
+        <div class="vitesses">
+          <button class="bouton bouton-texte actif" disabled>×1</button>
+          <button class="bouton bouton-texte" disabled>×2</button>
+        </div>
+      </div>
     </footer>
   </div>
 
   <script src="js/scenario-studio.js"></script>
   <script src="js/vitrine.js"></script>
   <script src="js/plateau.js"></script>
+  <script src="js/schemas-feedback.js"></script>
+  <script src="js/pioches.js"></script>
+  <script src="js/logo-star-squadron.js"></script>
   <script src="js/tableau-de-bord.js"></script>
   <script src="js/main.js"></script>
 </body>

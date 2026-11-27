@@ -105,7 +105,7 @@ Une fonctionnalité publiée dont la dépendance manque **compte au score mais n
 
 | Base | Interrupteurs | Combinaisons possibles | Déjà couvertes par une build existante | Solution |
 |---|---|---|---|---|
-| **Aucune** | — | MVP incomplet | — | **Pas de build à montrer** : c'est la règle du jeu (0 joueur) |
+| **Aucune** | — | MVP incomplet | — | **Pas de build à montrer** : c'est la règle du jeu (0 gamer) |
 | **Proto** | 0 | 1 (MVP seul) | 1 : C14 / ProtoDemo | Garder tel quel |
 | **PoC** | 3 (F11, F15, F17) | 7 | 2 : PP21 (F11) et PP25 (les 3) | 3 interrupteurs dans PP25 |
 | **Alpha** | 9 du chapitre + 3 du PoC = 12 | environ 2 300 (après dépendances) | 6 : PR4, PR5, PR6, PR7, PR9, PR13 | 12 interrupteurs dans PR13 : impossible en builds séparées, naturel en interrupteurs |

@@ -16,7 +16,7 @@ import generer_kit as K  # noqa: E402
 
 FEATS = [dict(id=f["id"], blocs=f["blocs"], etoiles=f["etoiles"], must=f["prio"] == "Must",
               resp="P" if f["resp"] == "Prog" else "D") for f in K.feats]
-FB = [dict(id=f["id"], qui=f["qui"], type=f["type"], cible=f["cible"] if f["cible"].startswith("F") else None)
+FB = [dict(id=f["id"], type=f["type"], cible=f["cible"] if f["cible"].startswith("F") else None)
       for f in K.feedbacks]
 DECK0 = ["none"] * 12 + ["bug"] * 5 + ["pasfun"] * 3
 RANG = {"none": 0, "pasfun": 1, "bug": 2}
@@ -29,8 +29,12 @@ REGLES = dict(
     fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
     pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)
     file_simple=True,     # simplification : à la release, plus de 4 cartes non triées = −0,5 (sans âge)
-    e1_si_joueurs=True,   # logique : E1 n'apporte du feedback que si le jeu a des joueurs
+    e1_si_gamers=True,    # logique : E1 n'apporte du feedback que si le jeu a des gamers
+    idees_gamers=True,    # GDD 0.19 : 12 fonctionnalités au départ, 8 « idées de gamers » révélées par le feedback trié
 )
+
+# Les 8 idées de gamers : cachées au départ, elles apparaissent quand une carte Feedback qui les cite est triée.
+IDEES_GAMERS = {f["id"] for f in K.feats if f.get("idee_gamer")}
 
 # Durées (minutes) d'une action sur papier, pour des débutants : hypothèses à caler pendant la partie test.
 DUREES = dict(vera=2, decouverte_c0=8, planif=4, tri=0.7, brief=1.0, bloc_pix=0.6, bloc_humain=0.3,
@@ -63,7 +67,8 @@ PROFILS = {
 class Partie:
     def __init__(self, prof, rng, regles=REGLES):
         self.p, self.r, self.R = dict(prof), rng, regles
-        self.f = {x["id"]: dict(x, blocks=[], rel=False, bonus=0, attente_note=0.0, travail=0)
+        self.f = {x["id"]: dict(x, blocks=[], rel=False, bonus=0, attente_note=0.0, travail=0,
+                                visible=not (regles["idees_gamers"] and x["id"] in IDEES_GAMERS))
                   for x in FEATS}
         self.deck = DECK0[:]; rng.shuffle(self.deck); self.disc = []
         self.fbdeck = FB[:]; rng.shuffle(self.fbdeck)
@@ -73,7 +78,7 @@ class Partie:
         self.log = Counter()
         # les fonctionnalités que l'équipe croit être les Must au cycle 0
         self.cru_must = set()
-        autres = [x["id"] for x in FEATS if not x["must"]]
+        autres = [x["id"] for x in FEATS if not x["must"] and self.f[x["id"]]["visible"]]
         for x in FEATS:
             if x["must"]:
                 self.cru_must.add(x["id"] if rng.random() < self.p["must"] else rng.choice(autres))
@@ -107,11 +112,11 @@ class Partie:
     def jouable(self):
         return all(f["rel"] and not any(b["c"] == "bug" for b in f["blocks"]) for f in self.f.values() if f["must"])
 
-    def joueurs(self):
+    def gamers(self):
         return 25 * sum(self.etoiles(f) for f in self.f.values() if f["rel"]) if self.jouable() else 0
 
     def ordre(self):
-        fs = [f for f in self.f.values() if not f["rel"] and not self.done(f)]
+        fs = [f for f in self.f.values() if f["visible"] and not f["rel"] and not self.done(f)]
         jou = self.jouable()
 
         def cle(f):
@@ -155,19 +160,21 @@ class Partie:
                 if not ok:
                     self.file.append(carte); continue
                 f = self.f.get(carte["cible"]) if carte["cible"] else None
+                if f and not f["visible"]:
+                    # Une idée de gamer : la carte triée la fait entrer dans les idées de l'équipe.
+                    f["visible"] = True; self.log["idees_revelees"] += 1
                 if f and carte["type"] in ("Bug", "Idée", "Pas fun"):
-                    nora = carte["qui"] == "Nora"
                     if R["fb_note"]:
                         f["travail"] += 1 if f["rel"] else 0
-                        f["attente_note"] += 1.0 if nora else 0.5
+                        f["attente_note"] += 0.5
                     elif carte["type"] == "Bug":
                         f["travail"] += 1; f["attente_note"] += 0.5
                     elif f["rel"]:
-                        f["travail"] += 1; f["bonus_att"] = f.get("bonus_att", 0) + (2 if nora else 1)
+                        f["travail"] += 1; f["bonus_att"] = f.get("bonus_att", 0) + 1
                     else:
-                        f["bonus"] += 2 if nora else 1
+                        f["bonus"] += 1
                 self.log["cartes_triees"] += 1
-        # 2. corrections connues et travail demandé par les joueurs
+        # 2. corrections connues et travail demandé par les gamers
         for f in self.f.values():
             self.corriger(pa, f)
             while f["travail"] and pa[f["resp"]] > 0:
@@ -260,7 +267,7 @@ class Partie:
         if R["file_simple"] and restantes > 4:
             self.note -= 0.5; self.log["communaute_ignoree"] += 1
         self.note = max(R["note_min"], min(R["note_max"], self.note))
-        j = self.joueurs()
+        j = self.gamers()
         if c == 0:
             self.log["jouable_c0"] += int(self.jouable())
         # l'équipe apprend de ses erreurs
@@ -270,9 +277,9 @@ class Partie:
             p["scan"] = min(1, p["scan"] + 0.3); p["garder_bug"] = 1
         if restantes > 4 and self.r.random() < p["apprend"]:
             p["tri"] = min(1, p["tri"] + 0.4)
-        # feedback pour le cycle suivant (E1 : +2 cartes au cycle 1, si le jeu a des joueurs)
+        # feedback pour le cycle suivant (E1 : +2 cartes au cycle 1, si le jeu a des gamers)
         self.maxj = max(self.maxj, j)
-        if c == 0 and (j > 0 or not R["e1_si_joueurs"]):
+        if c == 0 and (j > 0 or not R["e1_si_gamers"]):
             self.bonus_e1 = 2
         while self.pioches < self.maxj // 100 + self.bonus_e1 and self.fbdeck:
             self.file.append(self.fbdeck.pop()); self.pioches += 1; self.temps += D["pioche"]
@@ -283,7 +290,7 @@ class Partie:
         j = 0
         for c in range(self.R["cycles"]):
             j = self.cycle(c)
-        return dict(score=round(j * self.note), joueurs=j, note=self.note, credits=self.credits,
+        return dict(score=round(j * self.note), gamers=j, note=self.note, credits=self.credits,
                     chance=(self.mauvais / self.tires) if self.tires else 0.0, temps=self.t, log=self.log)
 
 
@@ -299,7 +306,7 @@ def etude(n=3000, graine=1):
         sc = [r["score"] for r in res]
         out[nom] = dict(
             moyen=st.mean(sc), p10=pct(sc, .1), med=st.median(sc), p90=pct(sc, .9), mini=min(sc), maxi=max(sc),
-            zero=sum(s == 0 for s in sc) / n, joueurs=st.mean(r["joueurs"] for r in res),
+            zero=sum(s == 0 for s in sc) / n, gamers=st.mean(r["gamers"] for r in res),
             note=st.mean(r["note"] for r in res), jouable_c0=sum(r["log"]["jouable_c0"] for r in res) / n,
             bugs=st.mean(r["log"]["bugs_publies"] for r in res), credits=st.mean(r["credits"] for r in res),
             temps=[st.mean(r["temps"][c] for r in res) for c in range(REGLES["cycles"])], res=res)
@@ -344,11 +351,11 @@ def meilleur_score(n=20000, graine=3):
 if __name__ == "__main__":
     rapide = "--rapide" in sys.argv
     etu = etude(600 if rapide else 3000)
-    print("| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Parties à 0 | Joueurs | Note | Jouable au cycle 0 | Bugs publiés | Crédits restants |")
+    print("| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Parties à 0 | Gamers | Note | Jouable au cycle 0 | Bugs publiés | Crédits restants |")
     print("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for nom, e in etu.items():
         print(f"| {nom} | {e['moyen']:.0f} | {e['p10']} | {e['med']:.0f} | {e['p90']} | {e['mini']} | {e['maxi']} | "
-              f"{100 * e['zero']:.0f} % | {e['joueurs']:.0f} | {e['note']:.2f} | {100 * e['jouable_c0']:.0f} % | {e['bugs']:.1f} | {e['credits']:.1f} |")
+              f"{100 * e['zero']:.0f} % | {e['gamers']:.0f} | {e['note']:.2f} | {100 * e['jouable_c0']:.0f} % | {e['bugs']:.1f} | {e['credits']:.1f} |")
     print("\nCHANCE")
     for nom in PROFILS:
         print(nom, {k: round(v, 2) for k, v in chance(etu[nom]["res"]).items()})

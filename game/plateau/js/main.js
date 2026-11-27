@@ -51,13 +51,36 @@
 
   // --- Dessiner l'état vitrine ---
   function dessiner() {
-    const V = window.VITRINE;
+    // Une copie fraîche de la vitrine : les pioches la font évoluer pendant qu'on joue avec.
+    const V = JSON.parse(JSON.stringify(window.VITRINE));
     Plateau.init(document.getElementById("plateau"), S, t);
     TableauDeBord.init(document.getElementById("tableau"), S, t);
 
+    // Les pioches : on mélange, puis on donne une vraie carte à chaque carte Test de la vitrine.
+    Pioches.init({
+      scenario: S, traduire: t, etat: V,
+      cadre: document.querySelector(".plateau-cadre"), couche: document.getElementById("couche-cartes")
+    });
+    // Les cartes Feedback de la file sont de vraies cartes : on les retire de la pioche.
+    V.fileFeedback.forEach((id) => Pioches.tirerSilencieux("feedback", null, id));
+    V.files["feedback-backlog"] = V.fileFeedback.length;
+    Plateau.poserIdees(V.idees, V.ideesCachees.length);
+    Plateau.poserBacklog(V.backlog);
+    V.vaisseaux.forEach((v) => {
+      v.cartesTest = (v.cartesTest || []).map((etatCarte) =>
+        etatCarte === "cachee"
+          ? { id: Pioches.tirerSilencieux("test"), revelee: false }
+          : { id: Pioches.tirerSilencieux("test", etatCarte), revelee: true });
+    });
+
     Plateau.illuminerStation(V.stationActive);
     for (const id in V.files) Plateau.remplirFile(id, V.files[id]);
-    for (const role in V.heuresUtilisees) Plateau.utiliserHeures(role, V.heuresUtilisees[role]);
+    // Les heures utilisées se comptent à partir des jetons posés : le pilotage,
+    // les stations et le tableau de bord disent toujours la même chose.
+    const heuresUtilisees = {};
+    S.roles.forEach((r) => (heuresUtilisees[r] = 0));
+    for (const st in V.heuresPosees) V.heuresPosees[st].forEach((r) => heuresUtilisees[r]++);
+    for (const role in heuresUtilisees) Plateau.utiliserHeures(role, heuresUtilisees[role]);
     for (const st in V.heuresPosees) Plateau.poserHeures(st, V.heuresPosees[st]);
 
     const parStation = {};
@@ -71,11 +94,15 @@
     }
 
     TableauDeBord.afficherTemps(document.getElementById("temps"), V.cycle, V.temps);
-    TableauDeBord.afficherJoueurs(V.joueurs);
+    // K6, le maître de jeu, explique le temps en cours.
+    document.getElementById("guide-texte").textContent = t("guide." + V.temps);
+    TableauDeBord.afficherGamers(V.gamers);
     TableauDeBord.afficherNote(V.note);
     TableauDeBord.afficherScore(V.score);
+    TableauDeBord.afficherHeures(heuresUtilisees);
     TableauDeBord.afficherTokens(V.tokensRestants);
     TableauDeBord.afficherMvp(V.mvp);
+    TableauDeBord.afficherPubliees(V.publiees);
     TableauDeBord.afficherBoucles(V.bouclesFaites, V.cycle);
   }
 

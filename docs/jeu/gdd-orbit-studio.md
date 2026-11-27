@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | 0.15 — 26 novembre 2026 |
+| **Version** | 0.20 — 27 novembre 2026 |
 | **Statut** | Règles validées par simulation ; kit papier prêt pour un brouillon de test (`prototype-papier/`) |
 | **Plateau de travail** | Whiteboard « Helioso Orbit — plateau de l'orbite d'itération » : https://claude.ai/artifact/6uS1vcS3rbC3wgpG6S7YHn (sauvegarde : `docs/whiteboard/plateau-orbite.json`) |
 | **Documents liés** | `docs/jeu/regles-une-page.md` (les règles pour les joueurs), `docs/jeu/simulation-equilibrage.md` (la simulation), `docs/jeu/cartes-orbit-studio.md` (toutes les cartes), `docs/jeu/direction-artistique.md` (palette, thèmes, typographie), `docs/jeu/reprise-spaceplan.md` (ce qu'on reprend de SpacePlan), `docs/jeu/builds-spaceplan.md` (les builds jouables de SpacePlan, fonctionnalité par fonctionnalité), `docs/offre/scenarios-business-game.md` (les autres scénarios), `docs/pilotage/plan-sprints-2027.md` (le calendrier) |
@@ -25,6 +25,11 @@
 - **0.13** — Règles plus lisibles : recto en images (le matériel en un coup d'œil, le cycle en schéma, comment lire une carte), verso pour le détail. Les crédits IA deviennent des **tokens IA**. Le cycle commence par « Écouter », et le risque du cycle se note pendant « Planifier ».
 - **0.14** — **Passe sur le vocabulaire**, pour des mots compris dès la première lecture : bloc → **effort** ; point d'action → **heure** (jeton Heure) ; carte Défaut → **carte Test** (OK, Bug, Pas fun) ; brief à PIX → **prompt** ; premier jouable → **MVP** ; le cycle devient **Brief, Planning, Build, Test, Release, Review**. Les mots du métier restent en anglais, exprès, avec un glossaire dans les règles. Sur le plateau, la station « Brief » devient « Prompt » et « Production » devient « Build ». Les sections 5 à 11 gardent encore l'ancien vocabulaire : la section 0 prime. La streameuse Nova devient **Nora** (Nova ressemblait à un nom de planète). Inventaire des **builds jouables de SpacePlan** dans HLC (`docs/jeu/builds-spaceplan.md`) : les 20 fonctionnalités y apparaissent toutes, le prototype correspond au MVP.
 - **0.15** — **Plateau aligné sur le nouveau vocabulaire** (section « Le plateau ») : stations Backlog → Prompt → Build → Test → Release → Feedback, jetons Heure, files Prompt → Build et Build → Test, ARTY verrouillé jusqu'au cycle 2. Étape 1 de la démo numérique faite : le plateau statique dans les deux thèmes (`game/plateau/`).
+- **0.16** — Retours sur le plateau numérique : l'éditeur s'appelle **Nebulous Publishing** (le même nom en français et en anglais, et « Publishing » dit bien que c'est un éditeur, pas un studio). Il donne à l'équipe **la mission, le brief et le cadre** ; c'est **l'équipe qui écrit le Backlog** (flèche « Nos idées » du pilotage vers le Backlog). Les cartes Fonctionnalité deviennent des **tickets** (numéro, nom, étoiles, barre d'effort). Le tableau de bord montre la **banque d'heures** de l'équipe à côté des tokens IA.
+- **0.17** — **Max, Sam et Nora sont les trois fondateurs d'Orbital Studio** (les visages de l'équipe : programmeur, designer, chef de projet). Les cartes Feedback deviennent **anonymes** : c'est la voix de la communauté. Le bonus « Nora » (+1 de note) disparaît : toute carte Feedback livrée vaut +0,5. Le festival accueille « une streameuse célèbre ». **Effort et heure :** 1 effort = 1 unité de travail, de taille fixe sur les tickets ; un humain la paie 1 heure, PIX 1 token.
+- **0.18** — **Gamers** : les joueurs de Star Squadron s'appellent partout des gamers (règles, cartes, kit papier, simulateur, plateau numérique) ; les étudiants restent les joueurs d'Helioso Orbit. La catégorie de fonctionnalités « Joueur » devient « Vaisseau ». Simulation relancée sans le bonus Nora : scores 1 à 4 % plus bas, mêmes leçons.
+- **0.19** — **12 fonctionnalités au départ, 8 idées de gamers.** Les 8 fonctionnalités que les feedbacks demandent (F08 Réglage de la difficulté, F11 Grille jusqu'aux bords, F12 Nouvelles vagues, F14 Système de score, F15 Types de missiles, F16 Victoire et récompense, F17 Explosions, F18 Fond spatial) sont cachées au départ ; une carte Feedback triée qui en cite une la fait apparaître. Sur le plateau, trois zones pour les fonctionnalités : **Idées** (pas encore choisies), **Backlog** (choisies, par priorité) et le **couloir du cycle** autour du soleil. Simulation : scores 10 à 15 % plus bas, même classement, et la leçon « trier le feedback » est plus nette.
+- **0.20** — **Vera ne demande qu'un jeu en pixel art dans l'esprit de Space Invaders** (message V0 neutre). Le jeu et sa première liste de fonctionnalités viennent de l'équipe ; on donne cette liste (les 12 de départ) aux joueurs pour simplifier le cycle 0. Les 5 Must se déduisent du genre : qu'est-ce qui rend ce jeu jouable ?
 
 *Tous les chiffres sont des valeurs de départ, à régler pendant les tests.*
 
@@ -36,19 +41,19 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 
 | Élément | Règles de base | Modules pour plus tard |
 |---|---|---|
-| **Fonctionnalités** | Les **20 fonctionnalités de SpacePlan** (master feature list). Taille : *Low* = 1 effort, *Medium* = 2, *High* = 3. **La priorité n'est pas imprimée** : les équipes retrouvent les 5 *Must* à partir du message de Vera | Dépendances entre fonctionnalités ; demandes de joueurs (classement, combat de boss…) |
-| **MVP** (premier jouable) | **Tant que les 5 *Must* ne sont pas tous livrés sans bug, le jeu a 0 joueur.** Les étoiles des autres fonctionnalités livrées attendent et comptent dès que le MVP est atteint. Un bug révélé plus tard sur un *Must* recasse le jouable | — |
-| **Valeur** | *Must* = 2 étoiles, *Should* = 3, *Could* = 2. **Une étoile livrée = 25 joueurs** | Fun variable par carte |
+| **Fonctionnalités** | Les **20 fonctionnalités de SpacePlan** (master feature list). **12 sont visibles au départ** (la première liste de l'équipe, donnée aux joueurs pour simplifier le cycle 0) ; **8 sont des idées de gamers**, cachées jusqu'à ce qu'une carte Feedback triée les cite. Taille : *Low* = 1 effort, *Medium* = 2, *High* = 3. **La priorité n'est pas imprimée** : Vera ne demande qu'un jeu en pixel art dans l'esprit de Space Invaders ; les équipes retrouvent les 5 *Must* en se demandant ce qui rend ce jeu jouable | Dépendances entre fonctionnalités ; demandes de gamers (classement, combat de boss…) |
+| **MVP** (premier jouable) | **Tant que les 5 *Must* ne sont pas tous livrés sans bug, le jeu a 0 gamer.** Les étoiles des autres fonctionnalités livrées attendent et comptent dès que le MVP est atteint. Un bug révélé plus tard sur un *Must* recasse le jouable | — |
+| **Valeur** | *Must* = 2 étoiles, *Should* = 3, *Could* = 2. **Une étoile livrée = 25 gamers** | Fun variable par carte |
 | **Équipe** | Chef de projet, designer, programmeur : **3 heures chacun par cycle**, et une **fiche de rôle** A5 chacun. **Un humain produit au plus 1 effort par cycle** (1 heure), 2 au cycle 0. 20 tokens IA pour la partie | 4e rôle |
 | **Matériel** | **9 jetons Heure** (posés sur la station où l'on agit), **15 pions Effort** (posés sur les cases grises des cartes Fonctionnalité), **3 marqueurs** (tokens, note, cycle) | — |
 | **Agents** | **PIX** (jusqu'à 3 efforts par cycle ; un prompt couvre une fonctionnalité entière ; les efforts en trop attendent) et **SCAN** (jusqu'à 4 tests par cycle), 1 token par action | ARTY |
 | **Cartes Test** | **Un seul paquet de 20 cartes** : 12 OK, 5 Bug, 3 Pas fun. Prompt simple = 1 carte ; prompt détaillé = **2 cartes, on garde la meilleure**. SCAN trouve les Bug, seul le playtest du designer trouve les Pas fun. Bug publié : 0 étoile ; Pas fun publié : −1 étoile | Crash, dette technique, faille de sécurité ; renvoi à PIX |
-| **Feedback** | 24 cartes tirées des **vrais playtests de SpacePlan**, signées Max, Sam ou Nora ; 1 carte à chaque nouveau palier de 100 joueurs ; à trier par le chef de projet. **Une seule règle** : la carte va sur la fonctionnalité citée, 1 effort de plus si elle est déjà publiée ; livrée, **la note monte de 0,5** (+1 pour Nora). Plus de 4 cartes non triées à la release : −0,5 | Agent de tri |
-| **Événements** | Un par cycle, ordre fixe (E1 à E4), sans choix de résolution. E1 n'apporte du feedback que si le jeu a des joueurs | Résolutions et bonus ; **se préparer à l'événement annoncé** (1 heure, annule son effet), à tester au simulateur |
+| **Feedback** | 24 cartes tirées des **vrais playtests de SpacePlan**, anonymes (la voix de la communauté) ; 1 carte à chaque nouveau palier de 100 gamers ; à trier par le chef de projet. **Une seule règle** : la carte va sur la fonctionnalité citée, 1 effort de plus si elle est déjà publiée ; livrée, **la note monte de 0,5**. Plus de 4 cartes non triées à la release : −0,5 | Agent de tri |
+| **Événements** | Un par cycle, ordre fixe (E1 à E4), sans choix de résolution. E1 n'apporte du feedback que si le jeu a des gamers | Résolutions et bonus ; **se préparer à l'événement annoncé** (1 heure, annule son effet), à tester au simulateur |
 | **Cycle 0** | Libre : les équipes choisissent quoi produire, **sans carte Test ni coût en tokens**, sans événement ni feedback. Comme il n'y a rien à tester ni à trier, chaque humain peut produire 2 efforts | — |
-| **Score** | **Joueurs × note.** Joueurs = étoiles publiées × 25, recalculés à chaque release. Note sur 5, départ à 3, **entre 1 et 5** : −0,5 par bug publié et si le feedback s'accumule, +0,5 par carte Feedback livrée (+1 pour Nora). 0 joueur = 0 point | Bonus d'étapes et d'événements, pénalités |
+| **Score** | **Gamers × note.** Gamers = étoiles publiées × 25, recalculés à chaque release. Note sur 5, départ à 3, **entre 1 et 5** : −0,5 par bug publié et si le feedback s'accumule, +0,5 par carte Feedback livrée. 0 gamer = 0 point | Bonus d'étapes et d'événements, pénalités |
 | **Temps** | Cycles chronométrés : **25 min au cycle 0** (on y apprend les règles en jouant), **puis 20 min**. À la sonnerie, release avec ce qui est prêt | — |
-| **Vocabulaire** | Les mots du métier sont en anglais, exprès, et expliqués dans les règles : **Brief, Planning, Build, Test, Release, Review** (les 6 temps du cycle), **prompt**, **bug**, **feedback**, **backlog**, **MVP**. Les unités sont en français et concrètes : **effort** (le travail d'une fonctionnalité), **heure** (le temps d'un joueur), **token IA** (le budget des agents), **étoile** (25 joueurs) | Glossaire bilingue dans le jeu numérique |
+| **Vocabulaire** | Les mots du métier sont en anglais, exprès, et expliqués dans les règles : **Brief, Planning, Build, Test, Release, Review** (les 6 temps du cycle), **prompt**, **bug**, **feedback**, **backlog**, **MVP**. Les unités sont en français et concrètes : **effort** (le travail d'une fonctionnalité), **heure** (le temps d'un joueur), **token IA** (le budget des agents), **étoile** (25 gamers), **gamer** (un joueur du jeu vidéo Star Squadron ; les étudiants sont les joueurs d'Helioso Orbit) | Glossaire bilingue dans le jeu numérique |
 | **Release** | L'équipe joue vraiment à son jeu : la version de SpacePlan qui correspond à ce qu'elle a livré (voir section 12) | Activation fine fonctionnalité par fonctionnalité |
 
 ---
@@ -67,9 +72,9 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 1. **La qualité du brief fait la qualité de l'agent.** Un brief bâclé coûte plus cher plus tard.
 2. **Un agent testeur trouve les bugs, pas l'ennui.** Le jugement « est-ce que c'est fun ? » reste humain.
 3. **Ajouter des agents n'accélère pas toujours.** Plus de production = plus de relecture = plus d'embouteillage (une loi de Brooks version IA).
-4. **Livrer petit et souvent** bat livrer gros et tard. Mais plus le jeu a de joueurs, plus il y a de feedback à trier : le succès crée sa propre charge.
+4. **Livrer petit et souvent** bat livrer gros et tard. Mais plus le jeu a de gamers, plus il y a de feedback à trier : le succès crée sa propre charge.
 5. **Ce qui n'est pas vérifié finit en dette** : bugs cachés, dette technique, failles de sécurité.
-6. **Le nécessaire avant le séduisant.** Tant que le jeu n'est pas jouable, il n'a pas de joueurs : les fonctionnalités qui rapportent le plus ne servent à rien sans les essentielles.
+6. **Le nécessaire avant le séduisant.** Tant que le jeu n'est pas jouable, il n'a pas de gamers : les fonctionnalités qui rapportent le plus ne servent à rien sans les essentielles.
 7. **Gérer un risque, c'est choisir sa réponse.** Face à un risque, on peut l'**éviter** (faire produire par un humain), le **réduire** (un brief détaillé), le **détecter** avant qu'il ne frappe (SCAN, relecture, playtest) ou l'**accepter** en connaissance de cause (publier sans vérifier, garder des tokens en réserve). La simulation le montre : la malchance coûte 37 % du score à une équipe qui ne vérifie rien, moins de 6 % à une équipe qui gère ses risques.
 
 **Comment la gestion des risques est rendue visible :** à chaque cycle, l'équipe écrit sur sa feuille de score **son risque du cycle et sa parade** (30 secondes), puis note s'il est arrivé. Au débrief, elle classe ses propres décisions dans les 4 réponses au risque (feuille de débrief du livret).
@@ -102,7 +107,7 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 | **Beer Game** (MIT, chaîne logistique) | Une **carte du flux** (commandes, production, livraisons) qui sert de plateau ; des règles simples, une forte charge émotionnelle, et un débrief qui montre que c'est le **système** qui crée les problèmes. | Le **plateau-carte du flux**, adapté au cycle d'itération ; un **débrief centré sur le système** |
 | **Fresques** (Climat, Numérique, IA) | Des cartes, un atelier de 2 à 3 h en groupe, des animateurs formés qui démultiplient l'atelier. | Le **format de 3 h**, le matériel en cartes, l'objectif de **certifier des animateurs** plus tard (brique C) |
 | **SpacePlan** (mon jeu) | Les phases d'un projet de jeu vidéo : conception, pré-production, production, finalisation. | Les phases deviennent les **actes du récit**, et la production devient une **boucle agile** |
-| **Jeux de gestion de studio** (style « tycoon ») | Le plaisir de voir son studio grandir et son jeu gagner des joueurs. | Le **score en joueurs** et la fierté de « son » jeu |
+| **Jeux de gestion de studio** (style « tycoon ») | Le plaisir de voir son studio grandir et son jeu gagner des gamers. | Le **score en gamers** et la fierté de « son » jeu |
 
 **Jeux proches, à étudier (repérés le 26 nov. 2026) :**
 - **Backstage Game** : un serious game pour apprendre la conduite de projet avec les codes du jeu vidéo. C'est le plus proche de notre univers.
@@ -125,33 +130,37 @@ Le jeu se construit comme un jeu de société : des **règles de base**, simples
 
 ### Le pitch narratif
 
-Trois amis viennent de fonder **Orbital Studio** dans un petit local. Leur projet : **« Star Squadron »**, un shoot'em up spatial rétro. Un éditeur, **Nébuleuse Games**, a accepté de leur verser une avance. Le studio est équipé de deux agents IA, mais avec un budget de tokens limité. Dans 8 semaines, il y a le **Festival du jeu indépendant**. Nébuleuse Games ne signera le contrat complet qu'avec **un seul studio** : celui qui fera la meilleure impression au festival. Les autres studios de la salle visent le même contrat.
+Trois amis, **Nora, Sam et Max**, viennent de fonder **Orbital Studio** dans un petit local. Leur projet : **« Star Squadron »**, un shoot'em up spatial rétro. Un éditeur, **Nebulous Publishing**, a accepté de leur verser une avance. Le studio est équipé de deux agents IA, mais avec un budget de tokens limité. Dans 8 semaines, il y a le **Festival du jeu indépendant**. Nebulous Publishing ne signera le contrat complet qu'avec **un seul studio** : celui qui fera la meilleure impression au festival. Les autres studios de la salle visent le même contrat.
 
 ### Les personnages non joueurs
 
 **Chez l'éditeur**
-- **Vera, productrice chez Nébuleuse Games.** Elle a parié sur les studios de la salle. Elle envoie les missions, change parfois d'avis, et rappelle les échéances. Elle s'exprime par des messages courts, lus par l'animateur au début de chaque cycle.
+- **Vera, productrice chez Nebulous Publishing.** Elle a parié sur les studios de la salle. Elle envoie les missions, change parfois d'avis, et rappelle les échéances. Elle s'exprime par des messages courts, lus par l'animateur au début de chaque cycle.
 
 **Les agents IA (ils ont une personnalité)**
 - **PIX, l'agent codeur.** Rapide, enthousiaste, toujours sûr d'avoir réussi (« Terminé ! Tout fonctionne parfaitement. »), même quand ce n'est pas vrai.
-- **SCAN, l'agent testeur.** Méthodique et pointilleux. Il signale les bugs avec précision, mais il ne comprend pas ce qu'est le fun (« Aucun défaut détecté. Le joueur meurt en 4 secondes, conformément au code. »).
+- **SCAN, l'agent testeur.** Méthodique et pointilleux. Il signale les bugs avec précision, mais il ne comprend pas ce qu'est le fun (« Aucun défaut détecté. Le gamer meurt en 4 secondes, conformément au code. »).
 - **ARTY, l'agent artiste** (débloqué au cycle 2). Il produit des visuels superbes, mais pas toujours dans le même style.
 
-**La communauté (trois joueurs types, sur les cartes feedback)**
-- **Max, le joueur acharné** : il veut de la difficulté et repère chaque bug.
-- **Sam, le joueur occasionnel** : il veut comprendre en 10 secondes et s'amuser tout de suite.
-- **Nora, la streameuse** : elle a beaucoup d'abonnés. Un bon retour de sa part rapporte des joueurs, un crash en direct en fait perdre beaucoup.
+**L'équipe du studio (les visages des rôles joués par les étudiants)**
+- **Nora, la cheffe de projet** : elle tient le Backlog, écrit les prompts et trie le feedback.
+- **Sam, le designer** : il veut que le jeu soit compris en 10 secondes et amusant tout de suite.
+- **Max, le programmeur** : il veut que ça marche, et il repère chaque bug.
+
+Les étudiants jouent ces rôles ; les visages rendent l'équipe vivante sur le plateau numérique. Le rôle compte plus que le personnage : chaque étudiant peut jouer n'importe quel rôle.
+
+**La communauté** n'a pas de visage : ses cartes Feedback sont **anonymes**, comme les retours qu'un studio lit sur un forum ou une boutique en ligne.
 
 ### Les portraits *(décidé le 26 nov. 2026)*
 
-Les personnages non joueurs ont un portrait en pixel art (fichiers dans `assets/personnages/`). Les rôles des joueurs n'en ont pas : ce sont les joueurs eux-mêmes.
+Les personnages ont un portrait en pixel art (fichiers dans `assets/personnages/`) : Vera, les agents, et les trois fondateurs du studio, visages des rôles des joueurs.
 
 | Personnage | Portrait | Origine |
 |---|---|---|
-| **Vera** | Jessica | Portraits de HLC (SpacePlan), générés par IA |
-| **Max** | Ben | idem |
-| **Sam** | Luke | idem |
-| **Nora** | Kira | idem |
+| **Vera** | Kira | Portraits de HLC (SpacePlan), générés par IA |
+| **Nora** (cheffe de projet) | Jessica | idem |
+| **Sam** (designer) | Luke | idem |
+| **Max** (programmeur) | Ben | idem |
 | **PIX** | Robot K6, orange, avec des lunettes de geek et `</>` sur le ventre | Redessiné à partir de K6, créé par Hugo pour SpacePlan : droits acquis |
 | **SCAN** | Robot K6, cyan, avec des lunettes de vision nocturne à trois lentilles et un code-barres | idem |
 | *En réserve* | Bill | Pour un futur personnage (l'investisseur de l'événement E3 ?) |
@@ -162,17 +171,17 @@ Les personnages non joueurs ont un portrait en pixel art (fichiers dans `assets/
 
 | Acte | Cycle | Message de Vera (début du cycle) | Ce qui se joue |
 |---|---|---|---|
-| **1. Le pitch** | 0 | « Avant de signer, je veux un premier jouable : un vaisseau qui apparaît, qui bouge et qui tire, des aliens en face, un missile qui les touche, et une partie qu'on peut perdre et recommencer. » | Retrouver les 5 *Must* parmi les 20 cartes : sans eux, 0 joueur |
-| **2. L'accès anticipé** | 1 | « Les premiers joueurs arrivent. Écoutez-les. » | Le premier feedback, la première release |
+| **1. Le pitch** | 0 | « Je cherche un jeu en pixel art, dans l'esprit de Space Invaders. Le reste, c'est votre jeu. Avant de signer, montrez-moi un premier jouable. » | Retrouver les 5 *Must* parmi les 12 idées de départ (ce qui rend ce jeu jouable) : sans eux, 0 gamer |
+| **2. L'accès anticipé** | 1 | « Les premiers gamers arrivent. Écoutez-les. » | Le premier feedback, la première release |
 | | 2 | « Bonne nouvelle : vous pouvez recruter ARTY. À vous de voir. » | Faut-il un agent de plus ? |
 | | 3 | « Changement de plan : je veux un mode 2 joueurs pour le festival. » (ou une crise technique) | La crise |
-| **3. Le festival** | 4 | « Nora va jouer à votre jeu en direct. Pas de crash. » | La dernière release, sous pression |
+| **3. Le festival** | 4 | « Une streameuse célèbre va jouer à votre jeu en direct. Pas de crash. » | La dernière release, sous pression |
 | **4. Le post-mortem** | — | Vera annonce le studio retenu | Le débrief |
 
 ### Les fins possibles (lues par l'animateur)
 
-- **Le contrat :** le studio en tête du leaderboard signe avec Nébuleuse Games.
-- **Le sursis :** les studios qui atteignent l'objectif du festival (500 joueurs et une note d'au moins 4) reçoivent une proposition de suivi.
+- **Le contrat :** le studio en tête du leaderboard signe avec Nebulous Publishing.
+- **Le sursis :** les studios qui atteignent l'objectif du festival (500 gamers et une note d'au moins 4) reçoivent une proposition de suivi.
 - **La fermeture :** les autres repartent avec un post-mortem, et c'est très bien, car c'est le meilleur moment pour apprendre.
 
 ### La langue des textes
@@ -185,9 +194,9 @@ Les personnages non joueurs ont un portrait en pixel art (fichiers dans `assets/
 
 Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la leçon. Exemples :
 - *Carte défaut « Crash » :* « PIX : "C'est impossible, j'ai tout vérifié." »
-- *Carte défaut « Pas fun » :* « Sam : "J'ai rien compris, j'ai fermé le jeu." »
+- *Carte défaut « Pas fun » :* « Un gamer : "J'ai rien compris, j'ai fermé le jeu." »
 - *Carte défaut « Faille de sécurité » :* « Une clé d'API traîne dans le code publié. Quelqu'un l'a déjà trouvée. »
-- *Carte feedback :* « Max : "Le boss est trop facile. Vous l'avez testé ?" »
+- *Carte feedback :* « "Le boss est trop facile. Vous l'avez testé ?" »
 
 ---
 
@@ -223,10 +232,10 @@ Chaque carte porte une phrase d'ambiance courte, qui fait sourire et rappelle la
 
 ### Les zones
 
-1. **L'orbite d'itération.** Six stations en boucle : **Backlog → Prompt → Build → Test → Release → Feedback**, puis retour au Backlog. Les cartes Fonctionnalité (des « vaisseaux ») avancent de station en station. À ne pas confondre avec les 6 **temps** du cycle (Brief, Planning, Build, Test, Release, Review) : la station active s'illumine pendant le temps qui lui correspond.
-2. **Le poste de pilotage (au centre).** Les 3 humains (chef de projet, designer, programmeur), chacun avec ses 3 jetons Heure. Un jeton utilisé se pose sur la station où l'on agit.
+1. **L'orbite d'itération.** Six stations en boucle : **Backlog → Prompt → Build → Test → Release → Feedback**, puis retour au Backlog. Les cartes Fonctionnalité (des tickets) vivent dans **trois zones** : les **Idées** (à gauche, hors de l'orbite : pas encore choisies, en petites tuiles ; les idées de gamers y apparaissent, avec un **talon ambre**), le **Backlog** (une colonne à côté de la station Backlog : choisies, par ordre de priorité, **5 places au plus**, ce qui force l'équipe à prioriser ; c'est le **zoom de la planète Backlog** : même contour, et un cône qui s'ouvre de la planète vers la boîte ; **un clic sur la planète ouvre ou ferme** les Idées et le Backlog, pour alléger le plateau) et le **couloir du cycle** (un anneau entre l'orbite et le soleil, où les tickets compacts avancent de station en station). On passe d'une zone à l'autre par **glisser-déposer** : Idées ↔ Backlog dans les deux sens (on peut changer d'avis et réordonner le Backlog), puis Backlog → cycle, sans retour possible. Leur **barre d'effort** a une case de taille fixe par effort : 1 effort = 1 unité de travail, payée **1 heure** par un humain (case ambre) ou **1 token** par PIX (case cyan). Le talon du ticket porte la **lettre du responsable** (P pour Prog, D pour Design et Art) : c'est lui qui la produit, relit le travail de PIX et corrige. À ne pas confondre avec les 6 **temps** du cycle (Brief, Planning, Build, Test, Release, Review) : la station active s'illumine pendant le temps qui lui correspond.
+2. **Le poste de pilotage (au centre).** Les 3 humains (chef de projet, designer, programmeur), chacun avec son visage et ses 3 jetons Heure. Un jeton utilisé se pose sur la station où l'on agit, **avec la lettre de son propriétaire** (**CP** chef de projet, **D** designer, **P** programmeur, comme dans SpacePlan) : on voit où chacun passe son temps, et qui sature. Les heures restent **personnelles** (pas de temps commun) et **de la même couleur pour tous** (ambre) : c'est la lettre qui dit à qui elles sont. Au pilotage et au tableau de bord, chaque visage porte sa lettre. **L'équipe nourrit le Backlog** : une flèche « Idées » part du pilotage vers le Backlog.
 3. **Les satellites.** Les agents IA, posés sur la station où ils travaillent : PIX et ARTY sur Build (ARTY reste verrouillé jusqu'au cycle 2), SCAN sur Test.
-4. **Les planètes extérieures.** **Nébuleuse Games** envoie les missions vers le Backlog. **La communauté** reçoit les releases et renvoie le feedback.
+4. **Les planètes extérieures.** **Nebulous Publishing**, l'éditeur (Vera), **commande un jeu pour le festival** : il ne dit ni quel jeu faire, ni quelles fonctionnalités. **Le jeu et ses idées viennent de l'équipe** (pas de flèche de l'éditeur vers les Idées). Vera intervient par ses messages et les cartes Événement. **La communauté** reçoit les releases et renvoie le feedback.
 5. **Les pistes autour du plateau.** Le temps (cycles 0 à 4, puis le festival), le carburant (tokens IA), le score et la note.
 
 ### Les trois goulots (les files d'attente orange)
@@ -237,11 +246,11 @@ Les petits blocs orange sont des **files d'attente**. Il y en a trois, de taille
 |---|---|---|
 | **Entre Prompt et Build** | Les idées s'enchaînent vite, mais PIX ne fait que 3 efforts par cycle : même si c'est rapide, les prompts attendent. | Petite |
 | **Entre Build et Test** | Les agents produisent plus que les humains ne peuvent relire. | Moyenne |
-| **Entre Feedback et Backlog** | Chaque release apporte des retours, de plus en plus nombreux à mesure que le jeu gagne des joueurs. Il faut les lire, les trier et décider, et ça ne peut être fait que par des humains. | **La plus grande : le goulot principal** |
+| **Entre Feedback et Backlog** | Chaque release apporte des retours, de plus en plus nombreux à mesure que le jeu gagne des gamers. Il faut les lire, les trier et décider, et ça ne peut être fait que par des humains. | **La plus grande : le goulot principal** |
 
 **Ce que le plateau doit faire voir d'un coup d'œil :** au fil de la partie, c'est la file **Feedback → Backlog** qui grossit le plus. Le goulot principal est la **décision**, pas la production.
 
-**En version papier :** un plateau A2, des cartes, des figurines et des jetons. **En version numérique :** le même plan, animé (les vaisseaux qui voyagent, les files d'attente qui grossissent en orbite), avec un tableau de bord du studio (joueurs, note, score, tokens IA, MVP, anneaux de boucles). Prototype en cours : `game/plateau/` (voir `docs/jeu/spec-prototype-plateau.md`).
+**En version papier :** un plateau A2, des cartes, des figurines et des jetons. **En version numérique :** le même plan, animé (les vaisseaux qui voyagent, les files d'attente qui grossissent en orbite), avec un tableau de bord : le studio (Orbital Studio, en petit), puis **le jeu vidéo Star Squadron en grand, avec son logo et son MVP**, ses **gamers** et sa note, le score, les heures de l'équipe, les tokens IA et les anneaux de boucles. Sur le plateau numérique, les joueurs de Star Squadron s'appellent **gamers**, pour ne pas les confondre avec les étudiants qui jouent à Helioso Orbit. **Les pioches sont sur le plateau**, à droite entre ARTY et SCAN : trois paquets virtuels (Événements, Feedback, Test). **Chaque carte Feedback a un petit schéma** (un écran de jeu dans le style des prototypes de SpacePlan : vaisseau en triangle, aliens en cercles, tirs en points, boîte de collision en carré, souhait du gamer en pointillés cyan), parce qu'un schéma explique mieux qu'une phrase sur une petite carte. La carte piochée vole au centre, se retourne et part à sa place : une carte Feedback rejoint la file Feedback → Backlog, un événement se pose à côté de Vera, une carte Test **reste face cachée** sous l'effort que PIX vient de faire (1 token) ; un clic sur une carte Test cachée la retourne (OK, Bug, Pas fun). Prototype en cours : `game/plateau/` (voir `docs/jeu/spec-prototype-plateau.md`).
 
 ### Le style visuel
 
@@ -256,15 +265,15 @@ Détail complet dans `docs/jeu/direction-artistique.md`.
 ## 7. La boucle de jeu : un cycle (environ 20 à 30 minutes)
 
 1. **Message de Vera et événement (3 min).** L'animateur lit le message de Vera, tire la carte événement (dont le type était annoncé) et annonce le type du prochain.
-2. **Arrivée et tri du feedback (4 min).** Des cartes feedback arrivent dans la file Feedback → Backlog : **1 carte pour 100 joueurs**. Le chef de projet trie (1 PA pour 2 cartes) : chaque carte triée devient une tâche du Backlog ou est écartée. **Un feedback ignoré trop longtemps fait baisser la note** (« la communauté se sent ignorée »).
+2. **Arrivée et tri du feedback (4 min).** Des cartes feedback arrivent dans la file Feedback → Backlog : **1 carte pour 100 gamers**. Le chef de projet trie (1 PA pour 2 cartes) : chaque carte triée devient une tâche du Backlog ou est écartée. **Un feedback ignoré trop longtemps fait baisser la note** (« la communauté se sent ignorée »).
 3. **Planification (4 min).** Le chef de projet choisit les tâches du cycle dans le Backlog. L'équipe décide qui fait quoi : humain ou agent.
 4. **Briefs (4 min).** Pour chaque tâche donnée à un agent : un brief simple (1 PA) ou détaillé (2 PA). Les briefs au-delà de la capacité de PIX attendent dans la file Brief → Production.
 5. **Production (4 min).** Les agents produisent : on pose une carte défaut face cachée sur chaque bloc. Les humains produisent moins, mais sans défaut caché.
 6. **Test et relecture (4 min).** SCAN retourne les défauts techniques qu'il trouve. Le programmeur peut relire (1 PA par bloc) pour révéler tout défaut. Le designer peut faire un playtest (1 PA) pour repérer un « pas fun ». Ce qui n'est pas relu reste dans la file Production → Test.
-7. **Release (3 min).** L'équipe choisit ce qu'elle publie. Les défauts encore cachés sont révélés **à ce moment-là, devant les joueurs**. On calcule le score du cycle et l'animateur met à jour le **leaderboard**.
+7. **Release (3 min).** L'équipe choisit ce qu'elle publie. Les défauts encore cachés sont révélés **à ce moment-là, devant les gamers**. On calcule le score du cycle et l'animateur met à jour le **leaderboard**.
 8. **Mini-rétro (2 min).** Une question : « Qu'est-ce qu'on change au prochain cycle ? »
 
-**Piste pour plus tard :** un agent de tri du feedback, qui résume vite les retours mais rate les nuances (il range une remarque de Nora avec les autres).
+**Piste pour plus tard :** un agent de tri du feedback, qui résume vite les retours mais rate les nuances (il range une remarque importante avec les autres).
 
 ---
 
@@ -297,17 +306,17 @@ Toutes les équipes jouent le même scénario en parallèle, **sans interaction 
 
 ### Le score
 
-*En règles de base (section 0) : **score = joueurs × note**, et les joueurs sont recalculés à chaque release (ils ne s'additionnent pas). Le barème complet ci-dessous (version 0.3) sera revu quand on ajoutera les modules.*
+*En règles de base (section 0) : **score = gamers × note**, et les gamers sont recalculés à chaque release (ils ne s'additionnent pas). Le barème complet ci-dessous (version 0.3) sera revu quand on ajoutera les modules.*
 
-**Score = Joueurs + (Note × 100) + Bonus d'étapes − Pénalités**
+**Score = Gamers + (Note × 100) + Bonus d'étapes − Pénalités**
 
 | Élément | Points |
 |---|---|
-| **Joueurs** | Somme des valeurs Fun livrées × 25 à chaque release, cumulée sur la partie |
+| **Gamers** | Somme des valeurs Fun livrées × 25 à chaque release, cumulée sur la partie |
 | **Note** (sur 5, départ à 3) | × 100 au score. +0,5 pour une release sans aucun défaut visible, −0,5 par crash visible, −0,5 si plus de 4 cartes feedback attendent depuis plus d'un cycle |
 | **Bonus d'étape : premier jouable** | +50 si les 3 fonctionnalités du cycle 0 sont livrées sans crash |
 | **Bonus d'étape : événement bien résolu** | +30 à +80 selon la carte événement (chaque carte indique sa meilleure résolution) |
-| **Bonus d'étape : objectif du festival** | +200 si 500 joueurs et une note d'au moins 4 sont atteints |
+| **Bonus d'étape : objectif du festival** | +200 si 500 gamers et une note d'au moins 4 sont atteints |
 | **Bonus de gestion** | +5 par token IA restant à la fin |
 | **Pénalité : faille de sécurité publiée** | −150 |
 | **Pénalité : dette technique non traitée à la fin** | −20 par carte |
@@ -329,7 +338,7 @@ Sur papier, la feuille de score reste simple. **Dans le jeu numérique, elle doi
 - **Le plateau A2 de l'orbite d'itération**, un par équipe, avec les trois zones de files d'attente marquées.
 - **12 cartes fonctionnalités**, chacune avec une valeur **Fun** (1 à 5) et une **taille** en blocs (1 à 4). Par exemple : vaisseau qui se déplace, tir, vague d'ennemis, collisions et score, écran titre, sons, bonus, boss, niveaux 2 et 3, classement en ligne, mode 2 joueurs, options d'accessibilité.
 - **Des cartes défaut**, tirées face cachée pour chaque bloc produit par un agent : *aucun défaut*, *bug mineur*, *crash*, *pas fun*, *dette technique* (le prochain bloc lié coûte +1), *faille de sécurité* (rare, catastrophique si elle part en release). Deux paquets : briefs simples (risque élevé) et briefs détaillés (risque faible).
-- **Environ 30 cartes feedback** signées Max, Sam ou Nora : idée de fonctionnalité, signalement de bug, plainte « pas fun », compliment.
+- **Environ 30 cartes feedback** anonymes : idée de fonctionnalité, signalement de bug, plainte « pas fun », compliment.
 - **8 cartes événements**, avec une tension qui monte, chacune avec sa meilleure résolution et son bonus.
 - **Des figurines** pour les 3 humains et les 3 agents.
 - **Des jetons** : points d'action et tokens IA.
@@ -343,12 +352,12 @@ Sur papier, la feuille de score reste simple. **Dans le jeu numérique, elle doi
 |---|---|---|
 | **0:00 – 0:15** | Accueil et récit | Message de Vera, objectif du festival, constitution des studios concurrents |
 | **0:15 – 0:30** | Règles et matériel | Rôles, plateau de l'orbite, cartes, exemple d'un tour |
-| **0:30 – 0:50** | **Acte 1 : cycle 0, le pitch** | Message de Vera ; les équipes retrouvent les 5 *Must* parmi les 20 cartes et les produisent. Sans défauts, sans tokens, sans événement |
-| **0:50 – 1:20** | **Cycle 1** (30 min) | Premiers joueurs, premier feedback. Premier leaderboard |
+| **0:30 – 0:50** | **Acte 1 : cycle 0, le pitch** | Message de Vera ; les équipes retrouvent les 5 *Must* parmi les 12 cartes de départ et les produisent. Sans défauts, sans tokens, sans événement |
+| **0:50 – 1:20** | **Cycle 1** (30 min) | Premiers gamers, premier feedback. Premier leaderboard |
 | **1:20 – 1:45** | **Cycle 2** (25 min) | ARTY peut être recruté. Événement : mise à jour du modèle de PIX (+1 bloc, mais ses défauts changent) |
 | **1:45 – 1:55** | Pause | |
 | **1:55 – 2:15** | **Cycle 3, la crise** (20 min) | Vera exige un mode 2 joueurs, ou une clé d'API se retrouve dans le code publié |
-| **2:15 – 2:30** | **Acte 3 : cycle 4, le festival** (15 min) | Nora joue en direct : chaque crash compte double. Leaderboard final et annonce du studio retenu |
+| **2:15 – 2:30** | **Acte 3 : cycle 4, le festival** (15 min) | Une streameuse célèbre joue en direct : chaque crash compte double. Leaderboard final et annonce du studio retenu |
 | **2:30 – 3:00** | **Acte 4 : post-mortem** (30 min) | Le débrief |
 
 **Le rythme est voulu :** les cycles raccourcissent (30, 25, 20, puis 15 minutes) pendant que les événements se durcissent et que le feedback s'accumule.
@@ -467,6 +476,20 @@ Le dépôt est public, mais l'usage du jeu est sous **licence Helioso** (voir `L
 | 26 nov. 2026 | **Le numérique d'abord :** la force du jeu est l'interactivité (plateau qui s'anime, efforts qui se cumulent, agents qui codent, gamification), que le papier ne fait pas ressentir. Le papier devient une vérification légère des règles et le repli hors ligne ; le vrai test est le **prototype du plateau numérique** (`docs/jeu/spec-prototype-plateau.md`), qui passe **avant les builds SpacePlan**. Il commence par une **démo animée et scriptée, sans règles** (2 boucles), pour tester le flux et la gamification avant de coder les règles |
 | 26 nov. 2026 | **Builds SpacePlan :** pas une seule build à 20 interrupteurs, mais **une base par chapitre** (Proto, PoC, Alpha, puis Beta) avec des interrupteurs pour les fonctionnalités du chapitre et des précédents. Seul cas sans build : MVP incomplet (`docs/jeu/builds-spaceplan.md`) |
 | 26 nov. 2026 | **Plateau au nouveau vocabulaire** : stations Prompt et Build (au lieu de Brief et Production), files Prompt → Build et Build → Test, jetons Heure au pilotage. Premier plateau numérique statique, dans les deux thèmes (`game/plateau/`, étape 1 de la démo) |
+| 27 nov. 2026 | **Retours sur le plateau numérique :** l'éditeur devient **Nebulous Publishing** ; il donne la mission, le brief et le cadre à l'équipe, qui écrit elle-même le Backlog ; les cartes Fonctionnalité deviennent des tickets avec une barre d'effort ; banque d'heures de l'équipe au tableau de bord. **Provisoire :** dans la démo, les visages de Nora, Sam et Max servent pour l'équipe (chef de projet, designer, programmeur), et la communauté n'a plus de visages. Les cartes Feedback restent signées Max, Sam et Nora : à trancher (nouveaux portraits pour l'équipe ou pour la communauté) |
+| 27 nov. 2026 | **Max, Sam et Nora deviennent les fondateurs du studio** (visages de l'équipe) ; **feedback anonyme**, sans signature ; plus de bonus Nora (+0,5 pour toute carte Feedback livrée) ; « une streameuse célèbre » au festival. Tranche la question laissée ouverte le même jour. **1 effort = 1 unité de travail**, de taille fixe sur les tickets, payée 1 heure (humain) ou 1 token (PIX) |
+| 27 nov. 2026 | **Heures personnelles, sans couleur par rôle.** On garde les tâches réservées par rôle (le goulot, c'est « la bonne personne n'a plus de temps » : le programmeur qui doit relire tout le code de PIX). Pour le rendre visible sans compliquer : la lettre du responsable sur chaque ticket (CP, D, P, comme dans SpacePlan), et la lettre du propriétaire sur chaque jeton Heure posé. Les petits visages étaient illisibles à cette taille ; les visages restent au pilotage et au tableau de bord, avec leur lettre. Aucune règle ne change |
+| 27 nov. 2026 | **Portraits de Vera et Nora échangés** : Vera prend le visage plus mûr (Kira), Nora le visage plus jeune (Jessica), qui fait étudiante. Les fichiers `vera-portrait.png` et `nora-portrait.png` sont échangés. Sur le plateau, les prénoms s'affichent sous les rôles (Nora, Sam, Max) et sous l'éditeur (Vera) |
+| 27 nov. 2026 | **Titres et flèches du plateau numérique :** « Helioso Orbit » seul en haut (c'est le nom du jeu de plateau) ; Orbital Studio en petit, **Star Squadron en grand avec un logo** (vaisseau en pixel art, dessin original) et son MVP juste dessous ; **« gamers »** pour les joueurs de Star Squadron (les étudiants sont les joueurs d'Helioso Orbit) ; la flèche de l'éditeur revient vers le **Backlog** (elle traversait tout le plateau) ; « Idées » au lieu de « Nos idées » |
+| 27 nov. 2026 | **« Gamers » partout** pour les joueurs de Star Squadron (règles, glossaire, cartes, kit, simulateur, plateau) ; « joueurs » = les étudiants. Catégorie « Joueur » → « Vaisseau ». Les playtesteurs de SpacePlan sont appelés playtesteurs |
+| 27 nov. 2026 | **Pioches virtuelles sur le plateau numérique** (Événements, Feedback, Test) : la carte vole, se retourne et part à sa place ; la carte Test reste cachée sous l'effort de PIX jusqu'à ce qu'on la retourne. Les cartes et leurs textes (fr et en) sont dans le fichier du scénario |
+| 27 nov. 2026 | **Pioches à droite du plateau** (entre ARTY et SCAN), après essai de trois placements (à droite, à gauche, chacune près de sa source). **Un schéma par carte Feedback**, dans le style des prototypes de SpacePlan (diapositives « Playtest debrief » du PowerPoint de SpacePlan) |
+| 27 nov. 2026 | **12 fonctionnalités au départ, 8 idées de gamers** révélées par le feedback trié (F08, F11, F12, F14, F15, F16, F17, F18 : celles que les feedbacks demandent). Le début est moins écrasant, la boucle agile devient visible (on livre, les gamers suggèrent, le backlog se nourrit). Plateau : zones Idées, Backlog et couloir du cycle. Pioches en colonne à droite |
+| 27 nov. 2026 | **Le jeu vient de l'équipe** : Nebulous Publishing commande un jeu, sans dire lequel ni ses fonctionnalités (plus de flèche de Vera vers les Idées). **Glisser-déposer** entre Idées et Backlog (dans les deux sens) puis vers le cycle (sans retour). Talon ambre pour les idées de gamers (au lieu d'une bulle jaune peu claire). Tableau de bord : un bloc **Fonctionnalités live** sous Star Squadron ; les anneaux de boucles passent dans la barre du haut |
+| 27 nov. 2026 | **Message V0 neutre** : Vera veut un jeu en pixel art dans l'esprit de Space Invaders, rien de plus. L'équipe assemble sa première liste de fonctionnalités (les 12 de départ, fournies pour simplifier le cycle 0) et en déduit les 5 Must. Sur le plateau, la zone s'appelle « Idées de l'équipe » |
+| 27 nov. 2026 | **Backlog limité à 5 places** sur le plateau : l'équipe doit prioriser |
+| 27 nov. 2026 | **Le Backlog est un zoom de la planète Backlog** (cône, même contour noir), qu'un clic ouvre ou ferme. **Qui parle au joueur :** les agents ne parlent que de leur propre travail (PIX et SCAN, dans une bulle au-dessus d'eux) ; les règles du plateau (« Backlog plein », « plus rien à coder ») passent par un **avis neutre**, sans personnage. Vera reste la voix de l'éditeur (brief, événements). Piste ouverte : un narrateur ou un tuteur pour guider la première partie |
+| 27 nov. 2026 | **K6, maître de jeu** : le robot K6 (mascotte de SpacePlan, version « professeur ») guide les joueurs dans la barre du bas du plateau (sa tête avec le chapeau), en sous-titre : un message par temps du cycle (Brief, Planning, Build…), qui ne cache jamais le plateau. **Logo de Star Squadron** : la fusée du logo de référence à gauche (image découpée, `assets/logos/star-squadron-fusee.png`), titre en lettres pixel sur un bandeau bleu nuit à droite (STAR en blanc, SQUADRON en ambre), d'après le logo de référence `assets/logos/star-squadron-reference.png` |
 
 ---
 

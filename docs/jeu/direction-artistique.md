@@ -20,7 +20,7 @@
 | Bleu nuit | `#0D2329` | Encre : texte et contours du thème clair et du papier ; surfaces secondaires du thème sombre |
 | Sarcelle | `#23C2AA` | Couleur principale : actions, Fonctionnalités, éditeur |
 | Cyan | `#0AE2EA` | Couleur secondaire : agents IA, station active |
-| Ambre | `#FBAB00` | Soleil du pilotage, joueurs, étoiles, files d'attente (papier), Feedback |
+| Ambre | `#FBAB00` | Soleil du pilotage, gamers, étoiles, files d'attente (papier), Feedback |
 | Gris sauge | `#B9CAC9` | Éléments neutres, décor |
 | Rouge corail | `#E5484D` (clair) / `#F87171` (sombre) | Défauts et alertes (ajouté : HLC v2.0 n'avait pas de couleur d'alerte) |
 
@@ -74,7 +74,7 @@ Corps de texte imprimé : 11 pt minimum sur les cartes.
 
 ## 7. Les personnages en pixel art
 
-- **Portraits des personnages non joueurs** dans `assets/personnages/` (un fichier `<nom>-portrait.png` par personnage, fond transparent, à afficher dans un cercle) : Vera, Max, Sam, Nora, PIX et SCAN. Le détail est dans le GDD (section 4, « Les portraits »).
+- **Portraits des personnages** (Vera, les agents et les trois fondateurs du studio) dans `assets/personnages/` (un fichier `<nom>-portrait.png` par personnage, fond transparent, à afficher dans un cercle) : Vera, Max, Sam, Nora, PIX et SCAN. Le détail est dans le GDD (section 4, « Les portraits »).
 - **Les agents sont des robots de la même famille** (dérivés de K6, la mascotte de SpacePlan), en grille de 19 × 30 pixels : **PIX en ambre**, **SCAN en cyan** (la couleur des agents). Contours bleu nuit `#0D2329`.
 - **Affichage :** toujours en `image-rendering: pixelated`, jamais lissé.
 - **À faire :** une passe de retouche des portraits humains (issus de générations IA de SpacePlan), pour un style homogène et unique.
@@ -93,3 +93,6 @@ Le plateau numérique (`game/plateau/style.css`) ajoute quelques variables tiré
 | `--fond-plateau` | `#F4FAF9` | `#0C1518` | Fond du cadre du plateau |
 | `--halo-soleil`, `--halo-agent` | ambre et cyan transparents | idem, un peu plus forts | Lueurs du soleil et de la station active |
 | `--sur-accent`, `--sur-danger` | `#0D2329`, `#FFFFFF` | `#0A1114`, `#0A1114` | Texte posé sur un aplat sarcelle ou rouge |
+| `--sur-encre` | `#FFFFFF` | `#E6EDF3` | Texte posé sur un aplat bleu nuit (carte Événement) |
+
+**L'écran de jeu des schémas de feedback.** Les cartes Feedback montrent un petit écran de jeu, dans le style des prototypes de SpacePlan. Il est sombre dans les deux thèmes, avec ses propres variables : `--ecran-fond` (`#0A1114`), `--ecran-vaisseau` (rouge corail, le vaisseau en triangle), `--ecran-alien` (`#6DBE4B`, les aliens en cercles), `--ecran-tir` (ambre, les tirs du joueur), `--ecran-tir-alien` (`#FF8A3D`, les tirs des aliens), `--ecran-boite` (cyan, les boîtes de collision et **le souhait du gamer, en pointillés**), `--ecran-texte` (`#E6EDF3`).

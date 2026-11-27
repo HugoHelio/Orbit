@@ -11,7 +11,7 @@
     largeur: 1400, hauteur: 1040,
     cx: 700, cy: 500,          // centre : le soleil
     rx: 400, ry: 320,          // l'ellipse de l'orbite
-    rSoleil: 128,
+    rSoleil: 140,
     rStation: 60
   };
 
@@ -73,13 +73,13 @@
     svg = svgElement;
     S = scenario;
     t = traduire;
-    svg.setAttribute("viewBox", `20 48 ${G.largeur - 40} ${G.hauteur - 58}`);
+    cadrer();
     svg.innerHTML = "";
 
     definitions();
     calques = {};
-    ["ciel", "orbite", "liens", "files", "stations", "soleil", "planetes",
-     "satellites", "jetons", "vaisseaux", "bulles"].forEach((nom) => {
+    ["ciel", "orbite", "liens", "zones", "pioches", "evenement", "files", "stations", "soleil", "planetes",
+     "satellites", "jetons", "idees", "vaisseaux", "bulles", "loupe", "glisse"].forEach((nom) => {
       calques[nom] = el("g", { class: "calque-" + nom }, svg);
     });
 
@@ -90,6 +90,101 @@
     dessinerSoleil();
     dessinerPlanetes();
     dessinerSatellites();
+    dessinerLegende();
+    dessinerPioches();
+    dessinerZones();
+  }
+
+  // Le Backlog est un zoom : ouvert, on voit les Idées et le Backlog à gauche ; fermé, le plateau seul.
+  let zonesOuvertes = true;
+  function cadrer() {
+    svg.setAttribute("viewBox", zonesOuvertes ? `-345 48 ${G.largeur + 325} ${G.hauteur - 58}` : `40 48 ${G.largeur - 60} ${G.hauteur - 58}`);
+    svg.classList.toggle("zones-fermees", !zonesOuvertes);
+  }
+  function basculerZones(ouvrir) {
+    zonesOuvertes = ouvrir === undefined ? !zonesOuvertes : ouvrir;
+    cadrer();
+    return zonesOuvertes;
+  }
+
+  // --- Les pioches (paquets de cartes à tirer) -------------------------------
+
+  // Les dispositions possibles des pioches (essais) : index.html?pioches=droite, gauche, eclatees ou bas.
+  // titre : où écrire « Pioches » (null = pas de titre commun).
+  const DISPOSITIONS = {
+    bas: { titre: { x: 860, y: 874 }, pioches: { evenement: [778, 930], feedback: [860, 930], test: [942, 930] } },
+    droite: { titre: null, etiquette: "gauche", pioches: { evenement: [1332, 506], feedback: [1332, 604], test: [1332, 702] } },
+    gauche: { titre: { x: 150, y: 490 }, pioches: { evenement: [68, 546], feedback: [150, 546], test: [232, 546] } },
+    // Chaque pioche près de sa source : Vera, la communauté, SCAN.
+    eclatees: { titre: null, pioches: { evenement: [70, 246], feedback: [440, 905], test: [1330, 560] } }
+  };
+  const DOS = { l: 56, h: 78 };
+  let disposition = "droite";
+
+  function dessinerPioches() {
+    const choix = new URLSearchParams(location.search).get("pioches");
+    if (choix && DISPOSITIONS[choix]) disposition = choix;
+    const D = DISPOSITIONS[disposition];
+    if (D.titre) el("text", { x: D.titre.x, y: D.titre.y, class: "pioches-titre", "text-anchor": "middle", texte: t("pioche.titre") }, calques.pioches);
+    ["evenement", "feedback", "test"].forEach((type) => {
+      const [x, y] = D.pioches[type];
+      const g = el("g", { class: "pioche pioche-" + type, "data-pioche": type, transform: `translate(${x},${y})`, tabindex: 0, role: "button" }, calques.pioches);
+      // Trois dos décalés : on voit l'épaisseur du paquet.
+      [3, 0].forEach((d, i) => {
+        el("rect", { x: -DOS.l / 2 + d, y: -DOS.h / 2 + d, width: DOS.l, height: DOS.h, rx: 7, class: "dos-carte" + (i ? " dessus" : " dessous") }, g);
+      });
+      const dessus = el("g", { class: "dos-motif" }, g);
+      dessinerMotifDos(dessus, type, 0.55);
+      // Le nom et le compteur : sous le paquet, ou à sa gauche quand les pioches sont en colonne.
+      if (D.etiquette === "gauche") {
+        el("text", { x: -DOS.l / 2 - 12, y: -2, class: "pioche-nom", "text-anchor": "end", texte: t("pioche." + type) }, g);
+        el("text", { x: -DOS.l / 2 - 12, y: 15, class: "pioche-compte", "text-anchor": "end", texte: "" }, g);
+      } else {
+        el("text", { x: 0, y: DOS.h / 2 + 20, class: "pioche-nom", "text-anchor": "middle", texte: t("pioche." + type) }, g);
+        el("text", { x: 0, y: DOS.h / 2 + 37, class: "pioche-compte", "text-anchor": "middle", texte: "" }, g);
+      }
+    });
+  }
+
+  // Le motif au dos d'une carte (aussi utilisé pour la grande carte qui vole).
+  function dessinerMotifDos(g, type, echelle) {
+    const m = el("g", { transform: `scale(${echelle})` }, g);
+    if (type === "test") {
+      el("text", { x: 0, y: 18, class: "dos-lettre", "text-anchor": "middle", texte: "?" }, m);
+    } else if (type === "feedback") {
+      el("path", { d: "M-26,-22 H26 Q34,-22 34,-14 V10 Q34,18 26,18 H-4 L-18,32 V18 H-26 Q-34,18 -34,10 V-14 Q-34,-22 -26,-22 Z", class: "dos-icone" }, m);
+    } else {
+      el("path", { d: "M0,-34 L10,-10 L34,-10 L14,4 L22,30 L0,14 L-22,30 L-14,4 L-34,-10 L-10,-10 Z", class: "dos-icone" }, m);
+    }
+  }
+
+  function majPioche(type, n) {
+    const g = svg.querySelector(`.pioche[data-pioche="${type}"]`);
+    g.querySelector(".pioche-compte").textContent = n > 0 ? String(n) : t("pioche.vide");
+    g.classList.toggle("vide", n <= 0);
+  }
+
+  // L'événement du cycle : une petite carte posée à côté de Vera.
+  function poserEvenement(id) {
+    calques.evenement.innerHTML = "";
+    if (!id) return;
+    const g = el("g", { class: "evenement-pose", transform: "translate(445,104)" }, calques.evenement);
+    el("rect", { x: -17, y: -23, width: 34, height: 46, rx: 4, class: "dos-carte evenement-mini" }, g);
+    el("text", { x: 0, y: 6, class: "evenement-mini-id", "text-anchor": "middle", texte: id }, g);
+    el("text", { x: 26, y: -6, class: "evenement-titre" , texte: t("evenement.du.cycle") }, g);
+    el("text", { x: 26, y: 12, class: "evenement-texte", texte: abreger(t("carte." + id + ".titre"), 22) }, g);
+  }
+
+  // La légende de l'effort : relie les tickets aux heures et aux tokens du tableau de bord.
+  function dessinerLegende() {
+    const g = el("g", { class: "legende", transform: "translate(1010,940)" }, calques.liens);
+    el("rect", { x: -16, y: -30, width: 340, height: 100, rx: 14, class: "legende-fond" }, g);
+    el("text", { x: 0, y: -6, class: "legende-titre", texte: t("legende.titre") }, g);
+    [["humain", "legende.humain"], ["agent", "legende.agent"], ["", "legende.afaire"]].forEach(([qui, cle], i) => {
+      const y = 18 + i * 21;
+      el("rect", { x: 0, y: y - 9, width: 26, height: 8, rx: 4, class: "case-effort" + (qui ? " faite par-" + qui : "") }, g);
+      el("text", { x: 38, y: y, class: "legende-texte", texte: t(cle) }, g);
+    });
   }
 
   function definitions() {
@@ -99,6 +194,11 @@
       markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse"
     }, defs);
     el("path", { d: "M0,0 L10,5 L0,10 Z", class: "pointe" }, m);
+    const m2 = el("marker", {
+      id: "pointe-equipe", viewBox: "0 0 10 10", refX: 8, refY: 5,
+      markerWidth: 6, markerHeight: 6, orient: "auto-start-reverse"
+    }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 Z", class: "pointe-equipe" }, m2);
 
     // Un cercle de découpe pour les portraits.
     const clip = el("clipPath", { id: "rond", clipPathUnits: "objectBoundingBox" }, defs);
@@ -113,7 +213,7 @@
   function dessinerCiel() {
     const r = aleatoire(42);
     for (let i = 0; i < 170; i++) {
-      const x = r() * G.largeur, y = r() * G.hauteur;
+      const x = -345 + r() * (G.largeur + 345), y = r() * G.hauteur;
       const taille = r() < 0.12 ? 2.4 : r() * 1.3 + 0.5;
       el("circle", {
         cx: x.toFixed(1), cy: y.toFixed(1), r: taille.toFixed(2),
@@ -128,6 +228,7 @@
     el("ellipse", { cx: G.cx, cy: G.cy, rx: G.rx + 26, ry: G.ry + 26, class: "orbite-anneau" }, g);
     el("ellipse", { cx: G.cx, cy: G.cy, rx: G.rx, ry: G.ry, class: "orbite-trace" }, g);
     el("ellipse", { cx: G.cx, cy: G.cy, rx: G.rx, ry: G.ry, class: "orbite-flux" }, g);
+    el("ellipse", { cx: G.cx, cy: G.cy, rx: COULOIR.rx, ry: COULOIR.ry, class: "couloir" }, g);
 
     // Des chevrons qui indiquent le sens du flux, entre les stations sans file.
     [-120, 60, 120].forEach((angle) => {
@@ -157,9 +258,10 @@
         el("rect", { x: p.x - l / 2, y, width: l, height: h, rx: 4, class: "case-file", "data-index": i }, g);
       }
       if (file.principale) {
-        const tx = p.x - l / 2 - 22;
-        el("text", { x: tx, y: p.y - 8, class: "etiquette-file forte", "text-anchor": "end", texte: t("file.titre") }, g);
-        el("text", { x: tx, y: p.y + 12, class: "etiquette-file", "text-anchor": "end", texte: t("file.principale") }, g);
+        const tx = p.x + l / 2 + 20;
+        el("text", { x: tx, y: p.y - 14, class: "etiquette-file forte", texte: t("file.titre") }, g);
+        el("text", { x: tx, y: p.y + 4, class: "etiquette-file", texte: t("file.principale") }, g);
+        el("text", { x: tx, y: p.y + 21, class: "etiquette-file aide", texte: t("file.trier") }, g);
       }
     });
   }
@@ -185,14 +287,17 @@
     const g = el("g", { class: "soleil", transform: `translate(${G.cx},${G.cy})` }, calques.soleil);
     el("circle", { r: G.rSoleil + 46, fill: "url(#halo-soleil)", class: "soleil-halo" }, g);
     el("circle", { r: G.rSoleil, class: "soleil-disque" }, g);
-    el("text", { x: 0, y: -66, class: "soleil-titre", "text-anchor": "middle", texte: t("pilotage.titre") }, g);
+    el("text", { x: 0, y: -92, class: "soleil-titre", "text-anchor": "middle", texte: t("pilotage.titre") }, g);
 
     S.roles.forEach((role, i) => {
-      const y = -28 + i * 40;
+      const y = -50 + i * 52;
       const ligne = el("g", { class: "role", "data-role": role, transform: `translate(0,${y})` }, g);
-      el("text", { x: -96, y: 5, class: "role-nom", texte: t("role." + role) }, ligne);
+      if (S.portraitsRoles && S.portraitsRoles[role]) portrait(ligne, S.portraitsRoles[role], -98, 0, 22, "equipe");
+      el("text", { x: -68, y: -1, class: "role-nom", texte: t("role." + role) }, ligne);
+      if (S.equipe && S.equipe[role]) el("text", { x: -68, y: 15, class: "role-personne", texte: t("nom." + S.equipe[role]) }, ligne);
       for (let j = 0; j < S.heuresParRole; j++) {
-        el("circle", { cx: 40 + j * 24, cy: 0, r: 9, class: "jeton-heure", "data-index": j }, ligne);
+        // Un jeton Heure qui reste au pilotage : la même pastille ambre que sur les stations.
+        badgeRole(ligne, role, 52 + j * 30, 0, 14, "jeton-soleil").dataset.index = j;
       }
     });
   }
@@ -206,22 +311,46 @@
     }, parent);
   }
 
-  function fleche(d, libelle, lx, ly) {
-    el("path", { d, class: "fleche", "marker-end": "url(#pointe)" }, calques.liens);
-    if (libelle) el("text", { x: lx, y: ly, class: "fleche-libelle", "text-anchor": "middle", texte: libelle }, calques.liens);
+  // Le badge d'un rôle : une pastille avec sa lettre (CP, D, P). Plus lisible qu'un petit visage.
+  function badgeRole(parent, role, x, y, r, classe) {
+    const g = el("g", { class: "badge-role " + (classe || ""), "data-role": role, transform: `translate(${x},${y})` }, parent);
+    el("circle", { r, class: "badge-role-fond" }, g);
+    el("text", {
+      x: 0, y: r * 0.36, class: "badge-role-lettre", "text-anchor": "middle",
+      style: `font-size:${(r * (t("role." + role + ".court").length > 1 ? 0.85 : 1.1)).toFixed(1)}px`,
+      texte: t("role." + role + ".court")
+    }, g);
+    return g;
+  }
+
+  function fleche(d, libelle, lx, ly, ancre, classe, parent) {
+    const p = parent || calques.liens;
+    el("path", { d, class: "fleche " + (classe || ""), "marker-end": `url(#${classe ? "pointe-equipe" : "pointe"})` }, p);
+    if (libelle) el("text", { x: lx, y: ly, class: "fleche-libelle " + (classe || ""), "text-anchor": ancre || "middle", texte: libelle }, p);
   }
 
   function dessinerPlanetes() {
-    // Nébuleuse Games, en haut à gauche, envoie les missions vers le Backlog.
-    const neb = el("g", { class: "planete planete-editeur", "data-planete": "nebuleuse" }, calques.planetes);
-    const n = { x: 135, y: 150 };
-    el("ellipse", { cx: n.x, cy: n.y, rx: 92, ry: 20, class: "planete-anneau", transform: `rotate(-14 ${n.x} ${n.y})` }, neb);
-    el("circle", { cx: n.x, cy: n.y, r: 62, class: "planete-disque" }, neb);
-    portrait(neb, S.personnages.vera, n.x, n.y, 38);
-    el("text", { x: n.x, y: n.y + 96, class: "planete-nom", "text-anchor": "middle", texte: t("planete.nebuleuse") }, neb);
-    el("text", { x: n.x, y: n.y + 116, class: "planete-aide", "text-anchor": "middle", texte: t("planete.nebuleuse.aide") }, neb);
-    const b = posStation("backlog");
-    fleche(`M${n.x + 70},${n.y + 30} Q${b.x - 90},${n.y + 40} ${b.x - 52},${b.y - 42}`, t("fleche.missions"), 318, 186);
+    // Nebulous Publishing, l'éditeur, en haut à gauche : il donne la mission, le brief
+    // et le cadre, qui arrivent au Backlog. Les idées de l'équipe y arrivent aussi.
+    const neb = el("g", { class: "planete planete-editeur", "data-planete": "nebulous" }, calques.planetes);
+    const n = { x: 150, y: 112 };
+    el("ellipse", { cx: n.x, cy: n.y, rx: 70, ry: 15, class: "planete-anneau", transform: `rotate(-14 ${n.x} ${n.y})` }, neb);
+    el("circle", { cx: n.x, cy: n.y, r: 44, class: "planete-disque" }, neb);
+    portrait(neb, S.personnages.vera, n.x, n.y, 28);
+    el("text", { x: n.x + 66, y: n.y - 10, class: "planete-nom", "text-anchor": "start", texte: t("planete.nebulous") }, neb);
+    el("text", { x: n.x + 66, y: n.y + 10, class: "planete-aide", "text-anchor": "start", texte: t("planete.nebulous.aide") }, neb);
+    el("text", { x: n.x + 66, y: n.y + 30, class: "planete-personne", "text-anchor": "start", texte: t("nom.vera") }, neb);
+    // Vera commande un jeu pour le festival : elle ne choisit ni le jeu ni ses fonctionnalités.
+    // Les idées viennent de l'équipe (pas de flèche vers les Idées).
+    // L'équipe choisit dans les Idées et range dans le Backlog.
+    const zi = ZONES.idees, zb = ZONES.backlog;
+    const lz = el("g", { class: "liens-zones" }, calques.liens);
+    fleche(`M${zi.x + zi.l + 4},${zb.y + 86} H${zb.x - 6}`, "", 0, 0, "middle", "fleche-equipe", lz);
+    t("fleche.choix").split(" / ").forEach((ligne, i) =>
+      el("text", { x: (zi.x + zi.l + zb.x) / 2, y: zb.y + 56 + i * 15, class: "fleche-libelle fleche-equipe", "text-anchor": "middle", texte: ligne }, lz));
+    // Les idées de gamers arrivent par le feedback trié.
+    const ff = surOrbite(180);
+    fleche(`M${ff.x - 36},${ff.y + 96} Q${ff.x - 120},${ZONES.cachees.y + 30} ${zi.x + zi.l + 4},${ZONES.cachees.y + 20}`, t("fleche.idees.gamers"), 150, ZONES.cachees.y - 6, "middle", "fleche-equipe", lz);
 
     // La communauté, en bas à gauche : reçoit les releases, renvoie le feedback.
     const com = el("g", { class: "planete planete-communaute", "data-planete": "communaute" }, calques.planetes);
@@ -229,19 +358,16 @@
     el("circle", { cx: c.x, cy: c.y, r: 58, class: "planete-disque" }, com);
     el("path", { d: "M-22,10 a22,22 0 0,1 44,0 M-11,-12 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0", class: "planete-icone", transform: `translate(${c.x},${c.y + 4})` }, com);
     el("text", { x: c.x, y: c.y + 88, class: "planete-nom", "text-anchor": "middle", texte: t("planete.communaute") }, com);
-    S.planetes.find((p) => p.id === "communaute").personnages.forEach((nom, i) => {
-      portrait(com, S.personnages[nom], c.x + 100 + i * 62, c.y + 6, 25, "petit");
-    });
     const r = posStation("release"), f = posStation("feedback");
-    fleche(`M${r.x - 64},${r.y + 22} Q${r.x - 150},${c.y + 10} ${c.x + 300},${c.y + 6}`, t("fleche.release"), 600, 940);
+    fleche(`M${r.x - 64},${r.y + 22} Q${r.x - 170},${c.y + 10} ${c.x + 80},${c.y + 4}`, t("fleche.release"), 560, 935);
     fleche(`M${c.x + 6},${c.y - 66} Q${c.x + 20},${f.y + 40} ${f.x - 58},${f.y + 26}`, t("fleche.retours"), 186, 780);
   }
 
   function dessinerSatellites() {
     const places = {
-      pix:  { x: 1222, y: 218, r: 50 },
-      arty: { x: 1300, y: 390, r: 34 },
-      scan: { x: 1222, y: 792, r: 50 }
+      pix:  { x: 1205, y: 225, r: 36 },
+      arty: { x: 1290, y: 385, r: 28 },
+      scan: { x: 1205, y: 785, r: 36 }
     };
     S.agents.forEach((a) => {
       const p = places[a.id];
@@ -280,21 +406,30 @@
   function utiliserHeures(role, n) {
     const g = svg.querySelector(`.role[data-role="${role}"]`);
     // Les jetons partent de la droite : ceux qui restent sont à gauche.
-    g.querySelectorAll(".jeton-heure").forEach((c) => c.classList.toggle("utilise", +c.dataset.index >= S.heuresParRole - n));
+    // Un jeton parti laisse une place vide : il est posé sur une station.
+    g.querySelectorAll(".jeton-soleil").forEach((c) => c.classList.toggle("utilise", +c.dataset.index >= S.heuresParRole - n));
   }
 
   // Les jetons Heure posés sur une station.
-  function poserHeures(stationId, n) {
+  // Les jetons Heure posés sur une station. roles : la liste des propriétaires,
+  // par exemple ["chef", "designer"] (un jeton par heure).
+  const DEPART_JETONS = { build: 195 };
+  function poserHeures(stationId, roles) {
     calques.jetons.querySelectorAll(`[data-station="${stationId}"]`).forEach((e) => e.remove());
-    if (!n) return;
+    if (!roles || !roles.length) return;
     const p = surOrbite(station(stationId).angle);
     const g = el("g", { class: "jetons-poses", "data-station": stationId }, calques.jetons);
-    // Les jetons se posent comme de petites lunes sur le bord de la planète.
-    for (let i = 0; i < n; i++) {
-      const a = ((-128 + i * 24) * Math.PI) / 180;
-      const r = G.rStation + 2;
-      el("circle", { cx: p.x + r * Math.cos(a), cy: p.y + r * Math.sin(a), r: 9, class: "jeton-heure pose" }, g);
-    }
+    // Les jetons se posent comme de petites lunes sur le bord de la planète,
+    // avec la lettre de celui qui a passé cette heure ici.
+    roles.forEach((role, i) => {
+      // En haut, l'étiquette est au-dessus de la planète : les jetons vont sur sa droite.
+      // Sur Build, ils vont à gauche, pour ne pas croiser le lien de PIX.
+      const depart = DEPART_JETONS[stationId] !== undefined ? DEPART_JETONS[stationId] : p.y < G.cy ? -30 : -130;
+      const a = ((depart + i * 34) * Math.PI) / 180;
+      const r = G.rStation + 4;
+      const x = p.x + r * Math.cos(a), y = p.y + r * Math.sin(a);
+      badgeRole(g, role, x, y, 16, "heure-posee");
+    });
   }
 
   function activerAgent(id, actif) {
@@ -302,68 +437,309 @@
     if (g) g.classList.toggle("actif", actif);
   }
 
-  function afficherBulle(id, visible) {
+  function afficherBulle(id, visible, cleTexte) {
     calques.bulles.querySelectorAll(`[data-agent="${id}"]`).forEach((e) => e.remove());
     if (!visible) return;
     const p = G.places[id];
-    const texte = t("agent." + id + ".bulle");
-    const l = Math.round(texte.length * 7.6) + 32, h = 40;
-    // La bulle se place à gauche du satellite.
-    const x = p.x - p.r - 18 - l;
-    const y = id === "scan" ? p.y + 26 : p.y - p.r - 30;
+    const texte = t(cleTexte || "agent." + id + ".bulle");
+    const l = Math.round(texte.length * 8.8) + 40, h = 50;
+    // Au-dessus de PIX, sous les étiquettes de SCAN : la bulle ne cache ni les files ni les pioches.
+    const dessous = id === "scan";
+    const x = Math.min(1372 - l, Math.max(p.x - l / 2, 880));
+    const y = dessous ? p.y + p.r + 66 : p.y - p.r - 30 - h;
+    const tx = Math.max(x + 24, Math.min(x + l - 24, p.x));
     const g = el("g", { class: "bulle", "data-agent": id }, calques.bulles);
+    const queue = dessous
+      ? `M${x + 12},${y} H${tx - 10} L${tx},${y - 16} L${tx + 10},${y} H${x + l - 12}`
+      : `M${x + 12},${y} H${x + l - 12}`;
+    const basQ = dessous ? `H${x + 12}` : `H${tx + 10} L${tx},${y + h + 16} L${tx - 10},${y + h} H${x + 12}`;
     el("path", {
-      d: `M${x + 10},${y} H${x + l - 10} Q${x + l},${y} ${x + l},${y + 10} V${y + h - 10} Q${x + l},${y + h} ${x + l - 10},${y + h}
-          H${x + l - 30} L${x + l + 6},${y + h + 16} L${x + l - 48},${y + h} H${x + 10} Q${x},${y + h} ${x},${y + h - 10}
-          V${y + 10} Q${x},${y} ${x + 10},${y} Z`,
+      d: `${queue} Q${x + l},${y} ${x + l},${y + 12} V${y + h - 12} Q${x + l},${y + h} ${x + l - 12},${y + h}
+          ${basQ} Q${x},${y + h} ${x},${y + h - 12} V${y + 12} Q${x},${y} ${x + 12},${y} Z`,
       class: "bulle-fond"
     }, g);
-    el("text", { x: x + l / 2, y: y + 26, class: "bulle-texte", "text-anchor": "middle", texte: texte }, g);
+    el("text", { x: x + l / 2, y: y + 31, class: "bulle-texte", "text-anchor": "middle", texte: texte }, g);
   }
 
-  // Un vaisseau = une carte Fonctionnalité. index : sa place dans la pile de la station.
+  // --- Les trois zones des fonctionnalités -----------------------------------
+  // Idées (pas encore choisies) → Backlog (choisies, par priorité) → couloir du cycle (autour du soleil).
+
+  const ZONES = {
+    idees: { x: -332, y: 232, l: 292, h: 470 },
+    cachees: { y: 622 },
+    backlog: { x: 48, y: 232, l: 176, places: 5 }
+  };
+  const TUILE = { l: 133, h: 40, pas: 46 };
+
+  function dessinerZones() {
+    const zi = ZONES.idees, zb = ZONES.backlog;
+    const g = calques.zones;
+    el("rect", { x: zi.x, y: zi.y, width: zi.l, height: zi.h, rx: 16, class: "zone-fond" }, g);
+    el("text", { x: zi.x + 14, y: zi.y + 26, class: "zone-titre", texte: t("zone.idees.titre") }, g);
+    el("text", { x: zi.x + 14, y: zi.y + 44, class: "zone-aide", texte: t("zone.idees.aide") }, g);
+    // La légende du talon ambre : une idée de gamer, venue du feedback.
+    el("rect", { x: zi.x + 14, y: zi.y + 52, width: 10, height: 13, rx: 3, class: "tuile-talon gamer" }, g);
+    el("text", { x: zi.x + 30, y: zi.y + 62, class: "zone-aide", texte: t("zone.legende.gamer") }, g);
+    // La pile des idées de gamers, encore cachées.
+    const p = el("g", { class: "pile-cachees", transform: `translate(${zi.x + 40},${ZONES.cachees.y + 22})` }, g);
+    [4, 2, 0].forEach((d) => el("rect", { x: -24 + d, y: -30 + d, width: 48, height: 64, rx: 6, class: "dos-idee" }, p));
+    el("path", { d: "M-11,-10 H11 Q15,-10 15,-6 V4 Q15,8 11,8 H-2 L-8,14 V8 H-11 Q-15,8 -15,4 V-6 Q-15,-10 -11,-10 Z", class: "dos-idee-icone" }, p);
+    el("text", { x: 38, y: -8, class: "zone-titre petit", texte: t("zone.cachees") }, p);
+    el("text", { x: 38, y: 12, class: "zone-aide compte-cachees", texte: "" }, p);
+
+    const hb = 46 + zb.places * TUILE.pas;
+    const pb = posStation("backlog"), r = G.rStation;
+    const haut = { x: pb.x + r * Math.cos((232 * Math.PI) / 180), y: pb.y + r * Math.sin((232 * Math.PI) / 180) };
+    const bas = { x: pb.x + r * Math.cos((136 * Math.PI) / 180), y: pb.y + r * Math.sin((136 * Math.PI) / 180) };
+    const coin1 = { x: zb.x + zb.l, y: zb.y + 8 }, coin2 = { x: zb.x + zb.l, y: zb.y + hb - 90 };
+    el("path", { d: `M${haut.x},${haut.y} L${coin1.x},${coin1.y} L${coin2.x},${coin2.y} L${bas.x},${bas.y} Z`, class: "zoom-cone" }, g);
+    el("path", { d: `M${haut.x},${haut.y} L${coin1.x},${coin1.y} M${bas.x},${bas.y} L${coin2.x},${coin2.y}`, class: "zoom-trait" }, g);
+    el("rect", { x: zb.x, y: zb.y, width: zb.l, height: hb, rx: 14, class: "zone-fond backlog" }, g);
+    el("text", { x: zb.x + 12, y: zb.y + 24, class: "zone-titre", texte: t("zone.backlog.titre") }, g);
+    el("text", { x: zb.x + 12, y: zb.y + 40, class: "zone-aide", texte: t("zone.backlog.aide") }, g);
+    for (let i = 0; i < zb.places; i++) {
+      const y = zb.y + 50 + i * TUILE.pas;
+      el("rect", { x: zb.x + 26, y, width: zb.l - 34, height: TUILE.h, rx: 8, class: "place-vide" }, g);
+      el("text", { x: zb.x + 14, y: y + 25, class: "place-rang", "text-anchor": "middle", texte: String(i + 1) }, g);
+    }
+  }
+
+  // Une tuile : une fonctionnalité pas encore lancée (dans les Idées ou le Backlog).
+  function tuile(parent, f, x, y, l, classe) {
+    const def = S.fonctionnalites[f];
+    const g = el("g", { class: "tuile " + classe + (def.ideeGamer ? " idee-gamer" : ""), "data-f": f, transform: `translate(${x},${y})`, tabindex: 0, role: "button" }, parent);
+    el("rect", { x: 0, y: 0, width: l, height: TUILE.h, rx: 8, class: "tuile-fond" }, g);
+    el("path", { d: `M8,0 H32 V${TUILE.h} H8 Q0,${TUILE.h} 0,${TUILE.h - 8} V8 Q0,0 8,0 Z`, class: "tuile-talon" + (def.ideeGamer ? " gamer" : "") }, g);
+    el("text", { x: 16, y: 17, class: "tuile-id", "text-anchor": "middle", texte: f }, g);
+    el("text", { x: 16, y: 32, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + def.resp + ".court") }, g);
+    el("text", { x: 39, y: 17, class: "tuile-nom", texte: abreger(t("f." + f), l > 150 ? 17 : 15) }, g);
+    for (let i = 0; i < def.etoiles; i++) {
+      el("path", { d: "M0,-5 L1.5,-1.6 L5,-1.6 L2.2,0.7 L3.2,4.2 L0,2.1 L-3.2,4.2 L-2.2,0.7 L-5,-1.6 L-1.5,-1.6 Z", class: "vaisseau-etoile", transform: `translate(${44 + i * 11},29)` }, g);
+    }
+    for (let i = 0; i < def.efforts; i++) {
+      el("rect", { x: l - 12 - (def.efforts - i) * 15, y: 25, width: 12, height: 6, rx: 3, class: "case-effort" }, g);
+    }
+    return g;
+  }
+
+  // idees : les fonctionnalités visibles pas encore choisies ; cachees : combien d'idées de gamers restent cachées.
+  function poserIdees(idees, cachees, nouvelle) {
+    calques.idees.querySelectorAll(".tuile-idee").forEach((e) => e.remove());
+    const zi = ZONES.idees;
+    idees.forEach((f, i) => {
+      const x = zi.x + 9 + (i % 2) * (TUILE.l + 8), y = zi.y + 74 + Math.floor(i / 2) * TUILE.pas;
+      const g = tuile(calques.idees, f, x, y, TUILE.l, "tuile-idee");
+      if (f === nouvelle) g.classList.add("nouvelle");
+    });
+    const c = svg.querySelector(".compte-cachees");
+    if (c) c.textContent = t("zone.cachees.compte").replace("{n}", cachees);
+  }
+
+  function poserBacklog(liste) {
+    calques.idees.querySelectorAll(".tuile-backlog").forEach((e) => e.remove());
+    const zb = ZONES.backlog;
+    liste.slice(0, zb.places).forEach((f, i) => tuile(calques.idees, f, zb.x + 26, zb.y + 50 + i * TUILE.pas, zb.l - 34, "tuile-backlog"));
+  }
+
+  // Le couloir du cycle : chaque station a sa place sur un anneau entre l'orbite et le soleil.
+  const COULOIR = { rx: 255, ry: 205 };
+  const DECALAGES = [0, 54, -54, 108];
+  function placeCouloir(stationId, index) {
+    const a = (station(stationId).angle * Math.PI) / 180;
+    return { x: G.cx + COULOIR.rx * Math.cos(a), y: G.cy + COULOIR.ry * Math.sin(a) + (DECALAGES[index] || index * 54) };
+  }
+
+  // Une carte Fonctionnalité = un ticket qui voyage sur l'orbite.
+  // À gauche le talon (son numéro), puis son nom, sa valeur (les étoiles)
+  // et sa barre d'effort (le travail à faire : une case = un effort).
+  const TICKET = { g: -92, d: 92, h: 30, talon: -50 };
+  const EFFORT = { largeur: 26, ecart: 4, compact: 15 };
+  const tickets = {};
+
+  // Dans le couloir, le ticket est compact : numéro, lettre du responsable, nom court, barre d'effort.
+  // Au survol, la loupe montre le ticket complet (avec les étoiles).
+  const COMPACT = { l: 132, h: 36, talon: 30 };
   function poserVaisseau(v, index) {
+    tickets[v.f] = { v, index };
     const def = S.fonctionnalites[v.f];
-    // Les vaisseaux se garent entre la station et le soleil ; une pile se décale vers le haut.
-    const distance = v.station === "backlog" ? 165 : 150;
-    const p = versLeCentre(posStation(v.station), distance);
-    const x = p.x + index * 6, y = p.y - index * 11;
-    const g = el("g", { class: "vaisseau", "data-f": v.f, transform: `translate(${x},${y}) scale(1.15)` }, calques.vaisseaux);
+    const p = placeCouloir(v.station, index);
+    const g = el("g", { class: "vaisseau ticket compact", "data-f": v.f, transform: `translate(${p.x},${p.y})` }, calques.vaisseaux);
+    const L = -COMPACT.l / 2, R = COMPACT.l / 2, H = COMPACT.h / 2, T = L + COMPACT.talon;
+    el("rect", { x: L, y: -H, width: COMPACT.l, height: COMPACT.h, rx: 8, class: "ticket-fond" }, g);
+    el("path", { d: `M${L + 8},${-H} H${T} V${H} H${L + 8} Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`, class: "ticket-talon" + (def.ideeGamer ? " gamer" : "") }, g);
+    el("rect", { x: L, y: -H, width: COMPACT.l, height: COMPACT.h, rx: 8, class: "ticket-contour" }, g);
+    el("text", { x: (L + T) / 2, y: -2, class: "ticket-id compact", "text-anchor": "middle", texte: v.f }, g);
+    el("text", { x: (L + T) / 2, y: 13, class: "tuile-lettre", "text-anchor": "middle", texte: t("role." + def.resp + ".court") }, g);
+    const x0 = T + 7;
+    el("text", { x: x0, y: -3, class: "ticket-nom compact", texte: abreger(t("f." + v.f), 14) }, g);
+    const lc = EFFORT.compact, ecart = 3;
+    for (let i = 0; i < def.efforts; i++) {
+      const qui = (v.efforts || [])[i];
+      el("rect", {
+        x: x0 + i * (lc + ecart), y: 5, width: lc, height: 7, rx: 3.5,
+        class: "case-effort" + (qui ? " faite par-" + (qui === "pix" ? "agent" : "humain") : ""), "data-index": i
+      }, g);
+    }
+    poserCartesTest(g, v, x0, lc, ecart, H);
+    return g;
+  }
 
-    el("path", { d: "M-82,-9 L-96,0 L-82,9 Z", class: "flamme" }, g);
-    el("path", { d: "M-70,-25 H50 L80,0 L50,25 H-70 Q-80,25 -80,15 V-15 Q-80,-25 -70,-25 Z", class: "vaisseau-coque" }, g);
-    el("path", { d: "M-70,-25 H-62 V25 H-70 Q-80,25 -80,15 V-15 Q-80,-25 -70,-25 Z", class: "vaisseau-bande" }, g);
-    el("circle", { cx: 58, cy: 0, r: 6, class: "vaisseau-hublot" }, g);
-    el("text", { x: -52, y: -5, class: "vaisseau-nom", texte: abreger(t("f." + v.f), 20) }, g);
+  // La loupe : le ticket complet, dessiné par-dessus le ticket compact survolé.
+  function montrerLoupe(f) {
+    calques.loupe.innerHTML = "";
+    const memo = tickets[f];
+    if (!memo) return;
+    const p = placeCouloir(memo.v.station, memo.index);
+    const g = el("g", { class: "loupe", transform: `translate(${p.x},${p.y - 4})` }, calques.loupe);
+    dessinerTicketComplet(g, memo.v);
+  }
+  function cacherLoupe() { calques.loupe.innerHTML = ""; }
 
+  function dessinerTicketComplet(g, v) {
+    const def = S.fonctionnalites[v.f];
+    g.classList.add("ticket", "vaisseau");
+    const { g: L, d: R, h: H, talon: T } = TICKET;
+
+    // La forme du ticket, avec deux encoches à la ligne de découpe.
+    const forme = `M${L + 8},${-H} H${T - 6} A6,6 0 0,0 ${T + 6},${-H} H${R - 8} Q${R},${-H} ${R},${-H + 8}
+      V${H - 8} Q${R},${H} ${R - 8},${H} H${T + 6} A6,6 0 0,0 ${T - 6},${H} H${L + 8} Q${L},${H} ${L},${H - 8}
+      V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`;
+    el("path", { d: forme, class: "ticket-fond" }, g);
+    el("path", {
+      d: `M${L + 8},${-H} H${T - 6} A6,6 0 0,0 ${T},${-H + 6} V${H - 6} A6,6 0 0,0 ${T - 6},${H} H${L + 8}
+        Q${L},${H} ${L},${H - 8} V${-H + 8} Q${L},${-H} ${L + 8},${-H} Z`,
+      class: "ticket-talon" + (def.ideeGamer ? " gamer" : "")
+    }, g);
+    el("line", { x1: T, y1: -H + 8, x2: T, y2: H - 8, class: "ticket-decoupe" }, g);
+    el("path", { d: forme, class: "ticket-contour" }, g);
+    el("text", { x: (L + T) / 2, y: -9, class: "ticket-id", "text-anchor": "middle", texte: v.f }, g);
+    // La lettre du responsable : c'est lui qui la produit, relit le travail de PIX et corrige.
+    if (def.resp) badgeRole(g, def.resp, (L + T) / 2, 12, 11, "ticket");
+
+    const x0 = T + 9;
+    el("text", { x: x0, y: -11, class: "ticket-nom", texte: abreger(t("f." + v.f), 17) }, g);
     for (let i = 0; i < def.etoiles; i++) {
       el("path", {
         d: "M0,-6 L1.8,-1.9 L6,-1.9 L2.6,0.8 L3.8,5 L0,2.5 L-3.8,5 L-2.6,0.8 L-6,-1.9 L-1.8,-1.9 Z",
-        class: "vaisseau-etoile", transform: `translate(${-45 + i * 15},12)`
+        class: "vaisseau-etoile", transform: `translate(${x0 + 6 + i * 14},6)`
       }, g);
     }
-    const faits = v.effortsFaits || 0;
+    const faits = (v.efforts || []).length;
+    el("text", {
+      x: R - 9, y: 10, class: "ticket-effort", "text-anchor": "end",
+      texte: t("vaisseau.effort").replace("{n}", faits).replace("{total}", def.efforts)
+    }, g);
+
+    // La barre d'effort : une case de taille fixe par effort (1 effort = 1 heure ou 1 token).
+    // Faite par l'équipe : ambre, comme les heures. Faite par PIX : cyan, comme les tokens.
+    const lc = EFFORT.largeur, ecart = EFFORT.ecart;
     for (let i = 0; i < def.efforts; i++) {
+      const qui = (v.efforts || [])[i];
       el("rect", {
-        x: 4 + i * 15, y: 5, width: 12, height: 12, rx: 2.5,
-        class: "case-effort" + (i < faits ? " faite" : ""), "data-index": i
+        x: x0 + i * (lc + ecart), y: 15, width: lc, height: 8, rx: 4,
+        class: "case-effort" + (qui ? " faite par-" + (qui === "pix" ? "agent" : "humain") : ""), "data-index": i
       }, g);
     }
 
-    // Les cartes Test, cachées sous les efforts faits par PIX.
-    (v.cartesTest || []).forEach((etat, i) => {
-      const c = el("g", { class: "carte-test " + etat, transform: `translate(${10 + i * 15},40)` }, g);
-      el("rect", { x: -7, y: -9, width: 14, height: 19, rx: 2.5, class: "carte-test-fond" }, c);
+    poserCartesTest(g, v, x0, lc, ecart, H);
+    return g;
+  }
+
+  // Les cartes Test, cachées sous les efforts faits par PIX.
+  function poserCartesTest(g, v, x0, lc, ecart, H) {
+    const effortsPix = (v.efforts || []).map((q, i) => (q === "pix" ? i : -1)).filter((i) => i >= 0);
+    // Une carte Test vaut { id, revelee } : son type vient du paquet du scénario.
+    (v.cartesTest || []).forEach((carte, k) => {
+      const i = effortsPix[k] !== undefined ? effortsPix[k] : k;
+      const def = S.cartes.test.find((c) => c.id === carte.id);
+      const etat = carte.revelee && def ? def.type : "cachee";
+      const c = el("g", {
+        class: "carte-test " + etat + (etat === "cachee" ? " cliquable" : ""), "data-carte": carte.id || "", "data-f": v.f,
+        transform: `translate(${x0 + i * (lc + ecart) + lc / 2},${H + 14})`
+      }, g);
+      el("rect", { x: -8, y: -10, width: 16, height: 21, rx: 3, class: "carte-test-fond" }, c);
       const lettre = etat === "cachee" ? t("carte.test.cachee") : etat === "ok" ? "✓" : "!";
       el("text", { x: 0, y: 4.5, class: "carte-test-texte", "text-anchor": "middle", texte: lettre }, c);
     });
-    return g;
+  }
+
+  // Retirer un ticket du couloir (quand il est publié, par exemple).
+  function retirerVaisseau(f) {
+    const e = calques.vaisseaux.querySelector(`.ticket[data-f="${f}"]`);
+    if (e) e.remove();
+    delete tickets[f];
   }
 
   function viderVaisseaux() { calques.vaisseaux.innerHTML = ""; }
 
+  // Redessiner un ticket après un changement (un effort fait, une carte Test ajoutée ou retournée).
+  function majVaisseau(f, changer) {
+    const memo = tickets[f];
+    if (!memo) return;
+    changer(memo.v);
+    const ancien = calques.vaisseaux.querySelector(`.ticket[data-f="${f}"]`);
+    const suivant = ancien ? ancien.nextSibling : null;
+    if (ancien) ancien.remove();
+    const g = poserVaisseau(memo.v, memo.index);
+    if (suivant) calques.vaisseaux.insertBefore(g, suivant);
+  }
+
+  function ticket(f) { return tickets[f] && tickets[f].v; }
+  function ticketsA(stationId) { return Object.values(tickets).map((m) => m.v).filter((v) => v.station === stationId); }
+
+  // Les éléments à l'écran (pour faire voler une carte depuis ou vers eux).
+  function elementPioche(type) { return svg.querySelector(`.pioche[data-pioche="${type}"] .dos-carte.dessus`); }
+  function elementCarteTest(id) { return svg.querySelector(`.carte-test[data-carte="${id}"]`); }
+  function elementTicket(f) { return svg.querySelector(`.ticket[data-f="${f}"]`); }
+  function elementFile(id) { return svg.querySelector(`.file[data-file="${id}"] .file-fond`); }
+  function elementEvenement() { return svg.querySelector(".evenement-pose rect") || svg.querySelector('.planete[data-planete="nebulous"] .planete-disque'); }
+  function elementPlanete(id) { return svg.querySelector(`.planete[data-planete="${id}"] .planete-disque`); }
+  function elementSvg() { return svg; }
+
+  function zoneSous(x, y) {
+    const zi = ZONES.idees, zb = ZONES.backlog;
+    if (x >= zi.x && x <= zi.x + zi.l && y >= zi.y && y <= zi.y + zi.h) return { zone: "idees" };
+    const hb = 46 + zb.places * TUILE.pas;
+    if (x >= zb.x && x <= zb.x + zb.l && y >= zb.y && y <= zb.y + hb) {
+      return { zone: "backlog", index: Math.max(0, Math.min(zb.places - 1, Math.floor((y - zb.y - 50) / TUILE.pas))) };
+    }
+    if (((x - G.cx) / G.rx) ** 2 + ((y - G.cy) / G.ry) ** 2 < 1) return { zone: "cycle" };
+    return null;
+  }
+
+  // Les coordonnées du plateau sous le pointeur.
+  function pointPlateau(evt) {
+    const p = svg.createSVGPoint();
+    p.x = evt.clientX; p.y = evt.clientY;
+    return p.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  // Le fantôme d'une tuile qu'on glisse.
+  function creerFantome(tuileEl) {
+    calques.glisse.innerHTML = "";
+    const c = tuileEl.cloneNode(true);
+    c.classList.add("fantome");
+    calques.glisse.appendChild(c);
+    return c;
+  }
+  function viderFantome() { calques.glisse.innerHTML = ""; }
+  function montrerCibles(depuis, oui) {
+    svg.classList.toggle("glisse-en-cours", oui);
+    svg.classList.toggle("depuis-backlog", oui && depuis === "backlog");
+  }
+  function elementTuile(f) { return svg.querySelector(`.tuile[data-f="${f}"]`); }
+  function elementPileCachees() { return svg.querySelector(".pile-cachees rect:last-of-type"); }
+  function placeBacklogLibre(n) {
+    const zb = ZONES.backlog;
+    return n < zb.places;
+  }
+
   window.Plateau = {
     init, illuminerStation, remplirFile, utiliserHeures, poserHeures,
-    activerAgent, afficherBulle, poserVaisseau, viderVaisseaux
+    activerAgent, afficherBulle, poserVaisseau, viderVaisseaux, majVaisseau, ticket, ticketsA,
+    majPioche, poserEvenement, dessinerMotifDos, poserIdees, poserBacklog, retirerVaisseau, montrerLoupe, cacherLoupe,
+    placeBacklogLibre, basculerZones, zoneSous, pointPlateau, creerFantome, viderFantome, montrerCibles,
+    elementPioche, elementCarteTest, elementTicket, elementFile, elementEvenement, elementPlanete, elementSvg,
+    elementTuile, elementPileCachees
   };
 })();

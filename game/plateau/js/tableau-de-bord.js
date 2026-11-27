@@ -12,8 +12,8 @@
     return e;
   }
 
-  function bloc(titre, classe) {
-    const b = h("section", "bloc " + (classe || ""), undefined, racine);
+  function bloc(titre, classe, parent) {
+    const b = h("section", "bloc " + (classe || ""), undefined, parent || racine);
     h("h3", "bloc-titre", titre, b);
     return b;
   }
@@ -24,12 +24,29 @@
     t = traduire;
     racine.innerHTML = "";
 
+    // Le studio (en petit), puis le jeu vidéo qu'il développe (en grand), avec son MVP.
     const entete = h("header", "tableau-entete", undefined, racine);
-    h("div", "tableau-studio", t("studio.nom"), entete);
-    h("div", "tableau-projet", t("studio.projet"), entete);
+    h("span", "tableau-studio", t("studio.nom"), entete);
 
-    const joueurs = bloc(t("tableau.joueurs"), "bloc-joueurs");
-    h("div", "grand-chiffre", "0", joueurs).id = "valeur-joueurs";
+    const jeu = h("section", "bloc bloc-jeu", undefined, racine);
+    jeu.appendChild(window.logoStarSquadron(t("jeu.video.ligne1"), t("jeu.video.ligne2")));
+    const mvp = h("div", "bloc-mvp", undefined, jeu);
+    mvp.id = "bloc-mvp";
+    h("div", "mvp-texte", "", mvp).id = "texte-mvp";
+
+    // Les fonctionnalités live : celles qui sont publiées dans le jeu.
+    const live = bloc(t("tableau.live"), "bloc-live");
+    h("div", "publiees-liste", "", live).id = "liste-publiees";
+    h("div", "bloc-aide", "", live).id = "aide-publiees";
+
+    // Gamers et score côte à côte : le score = gamers × note.
+    const rangee = h("div", "rangee", undefined, racine);
+    const gamers = bloc(t("tableau.gamers"), "bloc-gamers", rangee);
+    h("div", "grand-chiffre", "0", gamers).id = "valeur-gamers";
+
+    const score = bloc(t("tableau.score"), "bloc-score", rangee);
+    h("div", "grand-chiffre score", "0", score).id = "valeur-score";
+    h("div", "bloc-aide", t("tableau.score.aide"), score);
 
     const note = bloc(t("tableau.note"), "bloc-note");
     const ligne = h("div", "note-ligne", undefined, note);
@@ -41,9 +58,24 @@
     }
     h("div", "note-valeur", "3", ligne).id = "valeur-note";
 
-    const score = bloc(t("tableau.score"), "bloc-score");
-    h("div", "grand-chiffre score", "0", score).id = "valeur-score";
-    h("div", "bloc-aide", t("tableau.score.aide"), score);
+
+    // La banque d'heures : le temps de l'équipe, 3 heures par personne et par cycle.
+    const heures = bloc(t("tableau.heures"), "bloc-heures");
+    S.roles.forEach((role) => {
+      const ligne = h("div", "heures-ligne", undefined, heures);
+      ligne.dataset.role = role;
+      if (S.portraitsRoles && S.portraitsRoles[role]) {
+        const img = h("img", "heures-visage pixel", undefined, ligne);
+        img.src = "../../assets/personnages/" + S.portraitsRoles[role];
+        img.alt = "";
+      }
+      h("span", "badge-role-html", t("role." + role + ".court"), ligne);
+      const qui = h("span", "heures-role", t("role." + role), ligne);
+      if (S.equipe && S.equipe[role]) h("small", "heures-personne", t("nom." + S.equipe[role]), qui);
+      const jetons = h("span", "heures-jetons", undefined, ligne);
+      for (let i = 0; i < S.heuresParRole; i++) h("span", "heure", undefined, jetons);
+    });
+    h("div", "bloc-aide", "", heures).id = "valeur-heures";
 
     const tokens = bloc(t("tableau.tokens"), "bloc-tokens");
     const grille = h("div", "tokens-grille", undefined, tokens);
@@ -51,11 +83,10 @@
     for (let i = 0; i < S.tokensIA; i++) h("span", "token", undefined, grille);
     h("div", "bloc-aide", "", tokens).id = "valeur-tokens";
 
-    const mvp = bloc(t("tableau.mvp"), "bloc-mvp");
-    mvp.id = "bloc-mvp";
-    h("div", "mvp-texte", "", mvp).id = "texte-mvp";
-
-    const boucles = bloc(t("tableau.boucles"), "bloc-boucles");
+    // Les boucles s'affichent dans la barre du haut, bien en vue.
+    const boucles = document.getElementById("boucles-entete");
+    boucles.innerHTML = "";
+    h("span", "boucles-titre", t("tableau.boucles"), boucles);
     const anneaux = h("div", "anneaux", undefined, boucles);
     anneaux.id = "anneaux";
     S.cycles.forEach((c) => {
@@ -72,7 +103,7 @@
     return Math.round(n).toLocaleString(document.documentElement.lang || "fr");
   }
 
-  function afficherJoueurs(n) { document.getElementById("valeur-joueurs").textContent = formater(n); }
+  function afficherGamers(n) { document.getElementById("valeur-gamers").textContent = formater(n); }
   function afficherScore(n) { document.getElementById("valeur-score").textContent = formater(n); }
 
   function afficherNote(note) {
@@ -86,7 +117,34 @@
 
   function afficherTokens(restants) {
     document.querySelectorAll("#tokens-grille .token").forEach((e, i) => e.classList.toggle("depense", i >= restants));
-    document.getElementById("valeur-tokens").textContent = `${restants} / ${S.tokensIA}`;
+    document.getElementById("valeur-tokens").textContent =
+      t("tableau.tokens.aide").replace("{n}", restants).replace("{total}", S.tokensIA);
+  }
+
+  // utilisees : { chef: 2, designer: 1, … } (heures déjà dépensées ce cycle)
+  function afficherHeures(utilisees) {
+    let reste = 0;
+    S.roles.forEach((role) => {
+      const n = utilisees[role] || 0;
+      reste += S.heuresParRole - n;
+      document.querySelectorAll(`.heures-ligne[data-role="${role}"] .heure`).forEach((e, i) =>
+        e.classList.toggle("depensee", i >= S.heuresParRole - n));
+    });
+    const total = S.roles.length * S.heuresParRole;
+    document.getElementById("valeur-heures").textContent =
+      t("tableau.heures.aide").replace("{n}", reste).replace("{total}", total);
+  }
+
+  // Les fonctionnalités publiées de Star Squadron (leurs numéros).
+  function afficherPubliees(liste) {
+    const l = document.getElementById("liste-publiees");
+    l.innerHTML = "";
+    liste.forEach((f) => {
+      const p = h("span", "puce-publiee", f, l);
+      p.title = t("f." + f);
+    });
+    document.getElementById("aide-publiees").textContent =
+      t("tableau.live.aide").replace("{n}", liste.length).replace("{total}", Object.keys(S.fonctionnalites).length);
   }
 
   function afficherMvp(publie) {
@@ -120,7 +178,7 @@
   }
 
   window.TableauDeBord = {
-    init, afficherJoueurs, afficherScore, afficherNote, afficherTokens,
-    afficherMvp, afficherBoucles, afficherTemps
+    init, afficherGamers, afficherScore, afficherNote, afficherTokens, afficherHeures,
+    afficherMvp, afficherPubliees, afficherBoucles, afficherTemps
   };
 })();

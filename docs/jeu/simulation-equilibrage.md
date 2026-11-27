@@ -15,7 +15,7 @@
 Ces équipes ne suivent pas une stratégie fixe comme les robots de la version 1 :
 - elles **se trompent** : elles identifient mal un Must, ou perdent une action en hésitant ;
 - elles **tentent des choses**, car chaque décision est tirée au hasard selon leur profil ;
-- elles **apprennent** : après un cycle à 0 joueur, elles retrouvent les Must, et après un bug publié, elles utilisent davantage SCAN.
+- elles **apprennent** : après un cycle à 0 gamer, elles retrouvent les Must, et après un bug publié, elles utilisent davantage SCAN.
 
 | Profil | Comportement |
 |---|---|
@@ -26,22 +26,26 @@ Ces équipes ne suivent pas une stratégie fixe comme les robots de la version 1
 | Les artistes | Visent les étoiles et le fun, playtestent tout, vérifient peu le code |
 | L'équipe experte | Les Must d'abord, PIX vérifié par SCAN, feedback trié |
 
-## Les scores (règles simplifiées, version 0.11)
+## Les scores (GDD 0.19 : 12 fonctionnalités au départ, 8 idées de gamers ; relancé le 27 novembre 2026)
 
-| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Joueurs | Note | Premier jouable au cycle 0 | Bugs publiés | Tokens restants |
+*Depuis le GDD 0.19, 8 fonctionnalités sont cachées au départ et n'apparaissent que quand une carte Feedback triée les cite. Les scores baissent de 10 à 15 % (moins de fonctionnalités disponibles tôt), le classement ne change pas, et l'écart entre les équipes qui trient le feedback et les autres se creuse : 3 377 pour les élèves sérieux, 1 722 pour le chef de projet débordé (avant : 3 960 et 1 958).*
+
+| Profil | Score moyen | 10 % pires | Médiane | 10 % meilleurs | Min | Max | Gamers | Note | Premier jouable au cycle 0 | Bugs publiés | Tokens restants |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Les fonceurs | 1 950 | 875 | 1 800 | 3 412 | 0 | 5 000 | 916 | 2,13 | 6 % | 2,3 | 5,0 |
-| Les élèves sérieux | 4 054 | 3 062 | 4 250 | 4 750 | 0 | 5 375 | 905 | 4,48 | 37 % | 0,6 | 3,2 |
-| Les perfectionnistes | 3 801 | 3 000 | 3 938 | 4 375 | 1 875 | 5 000 | 813 | 4,67 | 72 % | 0,0 | 8,7 |
-| Le chef de projet débordé | 2 028 | 900 | 1 850 | 3 600 | 0 | 5 125 | 929 | 2,19 | 26 % | 1,4 | 1,7 |
-| Les artistes | 3 067 | 1 750 | 3 150 | 4 375 | 0 | 5 250 | 876 | 3,51 | 14 % | 1,3 | 5,8 |
-| L'équipe experte | 4 324 | 3 712 | 4 375 | 4 750 | 1 750 | 5 250 | 895 | 4,83 | 100 % | 0,3 | 3,4 |
+| Les fonceurs | 1 598 | 650 | 1 438 | 2 712 | 0 | 5 000 | 699 | 2,22 | 8 % | 2,2 | 6,0 |
+| Les élèves sérieux | 3 377 | 2 325 | 3 488 | 4 250 | 650 | 5 000 | 777 | 4,31 | 42 % | 0,7 | 2,2 |
+| Les perfectionnistes | 3 291 | 2 475 | 3 375 | 4 000 | 1 400 | 4 750 | 707 | 4,62 | 73 % | 0,0 | 6,4 |
+| Le chef de projet débordé | 1 722 | 675 | 1 562 | 2 900 | 0 | 4 625 | 700 | 2,40 | 29 % | 1,2 | 2,9 |
+| Les artistes | 2 462 | 1 375 | 2 450 | 3 500 | 550 | 4 750 | 711 | 3,41 | 16 % | 1,2 | 6,0 |
+| L'équipe experte | 3 861 | 3 100 | 3 906 | 4 500 | 1 400 | 5 125 | 810 | 4,75 | 100 % | 0,4 | 1,2 |
 
-**Le score minimum est 0.** Il est rare, car presque toutes les équipes trouvent le premier jouable au cycle 1. **Le meilleur score trouvé est 5 375**, en essayant 20 000 stratégies sans erreur. **Le plafond théorique est de 6 375** (51 étoiles × 25 joueurs × une note de 5) : il faudrait tout produire, sans un seul défaut.
+*Version précédente (GDD 0.17, les 20 fonctionnalités visibles, sans bonus Nora) : fonceurs 1 871, élèves sérieux 3 960, perfectionnistes 3 740, chef de projet débordé 1 958, artistes 2 944, équipe experte 4 282.*
+
+**Le score minimum est 0.** Il est rare, car presque toutes les équipes trouvent le premier jouable au cycle 1. **Le meilleur score trouvé est 5 375**, en essayant 20 000 stratégies sans erreur. **Le plafond théorique est de 6 375** (51 étoiles × 25 gamers × une note de 5) : il faudrait tout produire, sans un seul défaut.
 
 **Le premier jouable au cycle 0 est un vrai filtre.** Une équipe qui se trompe sur un seul des 5 Must fait 0 au cycle 0, puis rattrape son retard au cycle 1. Ces taux dépendent de notre hypothèse sur la lecture du message de Vera. La partie test dira si elle est trop pessimiste.
 
-**Avant simplification**, avec les mêmes profils, le classement était le même mais plus serré : 3 433 pour l'équipe experte contre 1 877 pour les fonceurs, soit 1,8 fois plus au lieu de 2,2. Écouter les joueurs rapportait aussi moins. La simplification rend donc les règles plus simples et les leçons plus nettes.
+**Avant simplification**, avec les mêmes profils, le classement était le même mais plus serré : 3 433 pour l'équipe experte contre 1 877 pour les fonceurs, soit 1,8 fois plus au lieu de 2,2. Écouter les gamers rapportait aussi moins. La simplification rend donc les règles plus simples et les leçons plus nettes.
 
 ## La chance
 
@@ -79,11 +83,11 @@ Pour mesurer la chance, on compare les 10 % de parties où l'équipe a tiré le 
 
 | # | Ce qui n'allait pas | Ce qu'on a fait |
 |---|---|---|
-| 1 | **La note ne pouvait presque que baisser.** Seules 2 cartes Feedback (des Bug sur F06) la faisaient monter, donc elle n'avait pas de sens positif. | **Simplifié :** toute carte Feedback livrée fait monter la note (+0,5, ou +1 pour Nora). Le travail sur les fonctionnalités donne les joueurs, l'écoute des joueurs donne la note. |
+| 1 | **La note ne pouvait presque que baisser.** Seules 2 cartes Feedback (des Bug sur F06) la faisaient monter, donc elle n'avait pas de sens positif. | **Simplifié :** toute carte Feedback livrée fait monter la note (+0,5, ou +1 pour Nora). Le travail sur les fonctionnalités donne les gamers, l'écoute des gamers donne la note. |
 | 2 | **Une carte Bug portait sur une fonctionnalité qui n'est peut-être pas sortie** (FB12, sur F15). | Avec la règle unique du feedback, la carte attend la sortie de la fonctionnalité. Plus de cas particulier. |
-| 3 | **E1 apportait des retours de joueurs même à un jeu sans joueurs.** | E1 ne fait piocher que si le jeu a des joueurs. |
+| 3 | **E1 apportait des retours de gamers même à un jeu sans gamers.** | E1 ne fait piocher que si le jeu a des gamers. |
 | 4 | **Des calculs inutiles.** La moitié des étoiles arrondie à l'inférieur donnait 1 étoile pour les fonctionnalités à 2 comme à 3 étoiles, et il fallait suivre l'âge de chaque carte dans la file. | Un Pas fun coûte 1 étoile. La pénalité de file se compte à la release : plus de 4 cartes non triées, −0,5. |
-| 5 | **Toutes les équipes ont à peu près le même nombre de joueurs** (800 à 930) : les différences viennent surtout de la note. La leçon « les agents produisent plus » se voit peu dans les joueurs. | **À surveiller** pendant la partie test. Si besoin, on agrandira le backlog avec les demandes des joueurs (classement, combat de boss), comme le prévoit la section 0 du GDD. |
+| 5 | **Toutes les équipes ont à peu près le même nombre de gamers** (800 à 930) : les différences viennent surtout de la note. La leçon « les agents produisent plus » se voit peu dans les gamers. | **À surveiller** pendant la partie test. Si besoin, on agrandira le backlog avec les demandes des gamers (classement, combat de boss), comme le prévoit la section 0 du GDD. |
 
 **Deux simplifications assumées, à expliquer au débrief si on nous les signale :**
 - **Les humains ne produisent jamais de défaut.** Ils sont lents mais savent ce qu'ils font. C'est volontaire : ça rend visible le compromis entre la vitesse et la fiabilité.

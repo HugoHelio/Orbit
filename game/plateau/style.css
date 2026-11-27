@@ -31,6 +31,16 @@
   --sur-accent: #0D2329;        /* texte sur aplat sarcelle */
   --sur-danger: #FFFFFF;
   --fond-plateau: #F4FAF9;
+  --sur-encre: #FFFFFF;         /* texte sur aplat bleu nuit (carte Événement) */
+
+  /* L'écran de jeu des schémas de feedback (style des prototypes de SpacePlan, identique dans les deux thèmes) */
+  --ecran-fond: #0A1114;
+  --ecran-vaisseau: #E5484D;
+  --ecran-alien: #6DBE4B;
+  --ecran-tir: #FBAB00;
+  --ecran-tir-alien: #FF8A3D;
+  --ecran-boite: #0AE2EA;
+  --ecran-texte: #E6EDF3;
 }
 
 [data-theme="sombre"] {
@@ -58,6 +68,15 @@
   --sur-accent: #0A1114;
   --sur-danger: #0A1114;
   --fond-plateau: #0C1518;
+  --sur-encre: #E6EDF3;
+
+  --ecran-fond: #0A1114;
+  --ecran-vaisseau: #F87171;
+  --ecran-alien: #6DBE4B;
+  --ecran-tir: #FBAB00;
+  --ecran-tir-alien: #FF8A3D;
+  --ecran-boite: #0AE2EA;
+  --ecran-texte: #E6EDF3;
 }
 
 /* --- La page -------------------------------------------------------------- */
@@ -230,7 +249,9 @@ html, body {
 .plateau .soleil-titre {
   fill: var(--ink); font-size: 13px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
 }
-.plateau .role-nom { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.plateau .role-nom { fill: var(--ink); font-size: 14px; font-weight: 700; }
+.plateau .role-personne { fill: var(--ink); font-size: 12.5px; font-weight: 500; opacity: 0.8; }
+.plateau .planete-personne { font-size: 15px; font-weight: 700; fill: var(--accent-text); }
 .jeton-heure { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; transition: all 0.3s; }
 [data-theme="sombre"] .jeton-heure { fill: #FFFFFF; }
 .jeton-heure.utilise { fill: none; stroke-dasharray: 3 3; opacity: 0.55; }
@@ -251,11 +272,34 @@ html, body {
 .pixel { image-rendering: crisp-edges; image-rendering: pixelated; }
 .portrait-cadre { fill: var(--line); }
 .portrait-cadre.agent { fill: var(--agent); }
+.portrait-cadre.equipe { fill: var(--ink); }
+/* Les badges de rôle (CP, D, P) */
+.badge-role-fond { fill: var(--surface); stroke: var(--ink); stroke-width: 2; }
+.plateau .badge-role-lettre { fill: var(--ink); font-weight: 900; }
+/* Un jeton Heure posé : ambre comme les heures, avec la lettre de son propriétaire. */
+.badge-role.heure-posee .badge-role-fond { fill: var(--sun); }
+/* Un jeton qui reste au pilotage : pastille claire, pour se détacher du soleil ambre. */
+.badge-role.jeton-soleil .badge-role-fond { fill: var(--surface); stroke-width: 2.5; }
+.plateau .badge-role.jeton-soleil .badge-role-lettre { fill: var(--text); }
+.badge-role.jeton-soleil.utilise .badge-role-fond { fill: none; stroke: var(--ink); }
+/* Un jeton parti du pilotage : une place vide en pointillés. */
+.badge-role.utilise .badge-role-fond { fill: none; stroke-dasharray: 3 3; opacity: 0.55; }
+.badge-role.utilise .badge-role-lettre { display: none; }
+.badge-role.ticket .badge-role-fond { fill: var(--surface); stroke: none; }
+.plateau .badge-role.ticket .badge-role-lettre { fill: var(--text); }
+.badge-role-html {
+  display: inline-grid; place-items: center; min-width: 26px; height: 22px; padding: 0 4px;
+  border-radius: 11px; background: var(--sun); color: var(--ink);
+  font-size: 11px; font-weight: 900; border: 2px solid var(--ink);
+}
 .portrait-fond { fill: var(--surface-2); }
 
 /* Les flèches */
 .fleche { fill: none; stroke: var(--text-muted); stroke-width: 2.5; stroke-dasharray: 7 6; }
 .pointe { fill: var(--text-muted); }
+.fleche.fleche-equipe { stroke: var(--sun-text); stroke-width: 3; stroke-dasharray: none; }
+.pointe-equipe { fill: var(--sun-text); }
+.plateau .fleche-libelle.fleche-equipe { fill: var(--sun-text) !important; font-size: 14px; font-weight: 800; }
 .fleche-libelle { font-size: 13px; font-weight: 700; fill: var(--text-muted) !important; }
 
 /* Les satellites (agents IA) */
@@ -277,22 +321,32 @@ html, body {
 
 /* Les bulles de personnalité */
 .bulle-fond { fill: var(--surface); stroke: var(--agent); stroke-width: 2.5; }
-.bulle-texte { font-size: 14px; font-weight: 600; font-style: italic; }
+.bulle-texte { font-size: 16px; font-weight: 600; font-style: italic; }
 .bulle { animation: apparait 0.5s ease-out; }
 @keyframes apparait { from { opacity: 0; transform: translateY(6px); } }
 
-/* Les vaisseaux (cartes Fonctionnalité) */
-.vaisseau-coque { fill: var(--surface); stroke: var(--line); stroke-width: 2.5; }
-[data-theme="sombre"] .vaisseau-coque { stroke: var(--accent); }
-.vaisseau-bande { fill: var(--accent); }
-.vaisseau-hublot { fill: var(--agent); stroke: var(--line); stroke-width: 2; }
-.plateau .vaisseau-nom { font-size: 13px; font-weight: 700; }
+/* Les tickets (cartes Fonctionnalité) */
+.ticket { filter: drop-shadow(0 3px 4px rgba(13, 35, 41, 0.18)); }
+.ticket-fond { fill: var(--surface); }
+.ticket-talon { fill: var(--accent); }
+.ticket-contour { fill: none; stroke: var(--line); stroke-width: 2.2; }
+[data-theme="sombre"] .ticket-contour { stroke: var(--accent); }
+.ticket-decoupe { stroke: var(--sur-accent); stroke-width: 1.5; stroke-dasharray: 3 3; opacity: 0.5; }
+.plateau .ticket-id { fill: var(--sur-accent); font-size: 14px; font-weight: 900; letter-spacing: 0.02em; }
+.plateau .ticket-nom { font-size: 14px; font-weight: 700; }
+.plateau .ticket-effort { font-size: 11px; font-weight: 700; fill: var(--accent-text); }
 .vaisseau-etoile { fill: var(--sun); stroke: var(--ink); stroke-width: 0.8; }
-.case-effort { fill: none; stroke: var(--accent-text); stroke-width: 1.8; }
-.case-effort.faite { fill: var(--accent); stroke: var(--accent-text); }
-.flamme { fill: var(--sun); animation: flamme 0.35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: right center; }
-@keyframes flamme { to { transform: scaleX(1.5); opacity: 0.75; } }
-.vaisseau { filter: drop-shadow(0 3px 4px rgba(13, 35, 41, 0.18)); }
+.case-effort { fill: none; stroke: var(--text-muted); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.case-effort.faite { stroke: var(--ink); stroke-dasharray: none; }
+.case-effort.par-humain { fill: var(--sun); }
+.case-effort.par-agent { fill: var(--agent); }
+[data-theme="sombre"] .case-effort.faite { stroke: none; }
+
+/* La légende de l'effort */
+.legende-fond { fill: var(--surface); stroke: var(--line-soft); stroke-width: 1.5; }
+[data-theme="sombre"] .legende-fond { fill: var(--surface-2); }
+.plateau .legende-titre { font-size: 14px; font-weight: 800; }
+.plateau .legende-texte { font-size: 13px; fill: var(--text-muted); }
 
 /* Les cartes Test */
 .carte-test-fond { stroke: var(--line); stroke-width: 1.5; }
@@ -303,36 +357,257 @@ html, body {
 .plateau .carte-test.ok .carte-test-texte { fill: var(--sur-accent); }
 .plateau .carte-test.bug .carte-test-texte { fill: var(--sur-danger); }
 
+
+/* --- Les zones des fonctionnalités (Idées, Backlog, couloir) --------------- */
+
+.zone-fond { fill: var(--surface); stroke: var(--line-soft); stroke-width: 1.5; }
+[data-theme="sombre"] .zone-fond { fill: var(--surface-2); }
+/* Le Backlog est le zoom de la planète Backlog : même contour, et un cône qui s'ouvre vers la boîte. */
+.zone-fond.backlog { stroke: var(--line); stroke-width: 3; }
+.zoom-cone { fill: var(--line-soft); opacity: 0.35; }
+.zoom-trait { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 6 5; }
+.station[data-station="backlog"] { cursor: pointer; }
+.station[data-station="backlog"]:hover .station-planete { stroke: var(--agent); }
+/* Zones fermées : le plateau seul, plus grand. */
+.plateau.zones-fermees .calque-zones, .plateau.zones-fermees .calque-idees, .plateau.zones-fermees .liens-zones { display: none; }
+.plateau .zone-titre { font-size: 15px; font-weight: 800; }
+.plateau .zone-titre.petit { font-size: 13px; }
+.plateau .zone-aide { font-size: 11.5px; fill: var(--text-muted); }
+.place-vide { fill: none; stroke: var(--line-soft); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.plateau .place-rang { font-size: 12px; font-weight: 800; fill: var(--text-muted); }
+.dos-idee { fill: var(--sun); stroke: var(--ink); stroke-width: 1.8; }
+.dos-idee-icone { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.couloir { fill: none; stroke: var(--accent); stroke-width: 58; opacity: 0.07; }
+[data-theme="sombre"] .couloir { opacity: 0.1; }
+
+.tuile { cursor: grab; outline: none; touch-action: none; }
+.tuile.en-deplacement { opacity: 0.25; }
+.fantome { pointer-events: none; opacity: 0.9; filter: drop-shadow(0 8px 12px rgba(13, 35, 41, 0.35)); cursor: grabbing; }
+.plateau.glisse-en-cours .zone-fond { stroke: var(--agent); stroke-width: 3; stroke-dasharray: 8 6; }
+.plateau.depuis-backlog .couloir { opacity: 0.22; stroke: var(--agent); }
+.plateau .etiquette-file.aide { font-size: 11.5px; font-style: italic; }
+.tuile-fond { fill: var(--surface); stroke: var(--line); stroke-width: 1.6; }
+[data-theme="sombre"] .tuile-fond { stroke: var(--accent); }
+.tuile-talon { fill: var(--accent); }
+.plateau .tuile-id { font-size: 11px; font-weight: 900; fill: var(--sur-accent); }
+.plateau .tuile-lettre { font-size: 10px; font-weight: 900; fill: var(--sur-accent); }
+.plateau .tuile-nom { font-size: 12px; font-weight: 700; }
+.tuile-talon.gamer, .ticket-talon.gamer { fill: var(--sun); }
+.plateau .tuile-talon.gamer + .tuile-id, .plateau .ticket-talon.gamer ~ .ticket-id { fill: var(--ink); }
+.tuile:hover .tuile-fond, .tuile:focus .tuile-fond { stroke: var(--agent); stroke-width: 2.5; }
+.tuile.nouvelle .tuile-fond { stroke: var(--sun); stroke-width: 3; animation: pulsation-tuile 1.2s ease-in-out 4; }
+@keyframes pulsation-tuile { 50% { stroke-width: 6; } }
+/* Pas de déplacement CSS sur les groupes SVG (il écraserait leur position) : un simple fondu. */
+.ticket.compact.nouveau { animation: fondu 0.4s ease-out; }
+@keyframes fondu { from { opacity: 0; } }
+
+.plateau .ticket-id.compact { font-size: 11px; }
+.plateau .ticket-nom.compact { font-size: 12px; }
+.ticket.compact { cursor: zoom-in; }
+.calque-loupe { pointer-events: none; }
+.loupe { filter: drop-shadow(0 8px 14px rgba(13, 35, 41, 0.3)); }
+.file[data-file="feedback-backlog"] { cursor: pointer; }
+.file[data-file="feedback-backlog"]:hover .file-fond { stroke: var(--agent); stroke-width: 3; }
+
+.tuile-volante {
+  position: absolute; left: 0; top: 0; width: 120px; height: 34px; margin: -17px 0 0 -60px;
+  border-radius: 8px; background: var(--accent); opacity: 0.8; pointer-events: none;
+}
+
+/* Les fonctionnalités publiées, sous le logo du jeu */
+.publiees-liste { display: flex; gap: 4px; flex-wrap: wrap; }
+.puce-publiee { font-size: 10.5px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: var(--accent); color: var(--sur-accent); }
+
+/* --- Les pioches (sur le plateau) ----------------------------------------- */
+
+.plateau .pioches-titre { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; fill: var(--text-muted); }
+.pioche { cursor: pointer; outline: none; }
+.pioche .dos-carte { stroke: var(--ink); stroke-width: 2.2; transition: transform 0.2s; }
+.pioche .dos-carte.dessous { opacity: 0.8; }
+.pioche-evenement .dos-carte { fill: var(--ink); stroke: var(--line-soft); }
+.pioche-feedback .dos-carte { fill: var(--sun); }
+.pioche-test .dos-carte { fill: var(--danger); }
+.dos-icone { fill: none; stroke: var(--sur-encre); stroke-width: 5; stroke-linejoin: round; }
+.pioche-feedback .dos-icone, .carte-feedback .dos-icone { stroke: var(--ink); }
+.plateau .dos-lettre { font-size: 64px; font-weight: 900; fill: var(--sur-danger); }
+.plateau .pioche-nom { font-size: 13px; font-weight: 700; }
+.plateau .pioche-compte { font-size: 12px; fill: var(--text-muted); }
+.pioche .dos-motif { transition: transform 0.2s; }
+.pioche:hover .dos-motif, .pioche:focus .dos-motif,
+.pioche:hover .dos-carte.dessus, .pioche:focus .dos-carte.dessus { transform: translateY(-4px); }
+.pioche.vide { opacity: 0.35; cursor: default; }
+.carte-test.cliquable { cursor: pointer; }
+.carte-test.cliquable:hover .carte-test-fond { stroke: var(--agent); stroke-width: 2.5; }
+
+/* L'événement du cycle, à côté de Vera */
+.evenement-mini { fill: var(--ink); stroke: var(--line-soft); stroke-width: 1.5; }
+.plateau .evenement-mini-id { fill: var(--sur-encre); font-size: 13px; font-weight: 900; }
+.plateau .evenement-titre { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--text-muted); }
+.plateau .evenement-texte { font-size: 13px; font-weight: 600; }
+
+/* --- Les cartes qui volent (couche HTML au-dessus du plateau) -------------- */
+
+.plateau-cadre { position: relative; }
+.couche-cartes { position: absolute; inset: 0; pointer-events: none; perspective: 1400px; }
+.couche-fond {
+  position: absolute; inset: 0; pointer-events: auto; cursor: pointer;
+  background: rgba(13, 35, 41, 0.28); opacity: 0; transition: opacity 0.25s;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.couche-fond.visible { opacity: 1; }
+.couche-aide {
+  margin-bottom: 18px; padding: 6px 14px; border-radius: 999px;
+  background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600; box-shadow: var(--ombre);
+}
+.avis {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  padding: 9px 18px; border-radius: 999px; background: var(--ink); color: var(--sur-encre);
+  font-size: 14px; font-weight: 600; box-shadow: var(--ombre); z-index: 3;
+  animation: avis-entree 0.3s ease-out; transition: opacity 0.4s;
+}
+.avis.sortie { opacity: 0; }
+@keyframes avis-entree { from { opacity: 0; transform: translate(-50%, -8px); } }
+
+.carte-volante {
+  position: absolute; left: 0; top: 0; margin-left: -120px; margin-top: -168px;
+  transform-origin: center; pointer-events: none; z-index: 2;
+}
+.carte-interieur { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+.carte-face {
+  position: absolute; inset: 0; border-radius: 16px; overflow: hidden;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border: 3px solid var(--ink); box-shadow: 0 18px 40px rgba(13, 35, 41, 0.35);
+}
+.carte-recto { transform: rotateY(180deg); background: var(--surface); color: var(--text); display: flex; flex-direction: column; }
+.carte-dos { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.carte-evenement .carte-dos { background: var(--ink); color: var(--sur-encre); }
+.carte-feedback .carte-dos { background: var(--sun); color: var(--ink); }
+.carte-test .carte-dos { background: var(--danger); color: var(--sur-danger); }
+.carte-dos-motif { width: 120px; height: 120px; }
+.carte-dos-motif .dos-lettre { font-size: 64px; font-weight: 900; fill: var(--sur-danger); font-family: "Inter", sans-serif; }
+.carte-dos-nom { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 26px; }
+.carte-dos-marque { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; }
+
+.carte-bande {
+  display: flex; justify-content: space-between; padding: 9px 14px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--sun); color: var(--ink);
+}
+.carte-bande.bande-encre { background: var(--ink); color: var(--sur-encre); }
+.carte-bande.bande-ok { background: var(--accent); color: var(--sur-accent); }
+.carte-bande.bande-bug, .carte-bande.bande-pasfun { background: var(--danger); color: var(--sur-danger); }
+.carte-corps { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
+.carte-haut { display: flex; justify-content: space-between; align-items: center; }
+.carte-auteur { font-weight: 800; font-size: 15px; }
+.carte-pastille { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); }
+.carte-pastille.fb-bug, .carte-pastille.fb-pasfun { background: var(--danger); color: var(--sur-danger); }
+.carte-pastille.fb-idee { background: var(--accent); color: var(--sur-accent); }
+.carte-citation { font-size: 17px; line-height: 1.35; font-style: italic; }
+.recto-feedback .carte-corps { gap: 8px; padding-top: 10px; }
+.recto-feedback .carte-citation { font-size: 14.5px; line-height: 1.3; }
+
+/* Les schémas des cartes Feedback : un petit écran de jeu */
+.schema-feedback { display: block; width: 100%; height: auto; border-radius: 10px; }
+.sch-ecran { fill: var(--ecran-fond); }
+.sch-vaisseau { fill: var(--ecran-vaisseau); }
+.sch-alien { fill: var(--ecran-alien); }
+.sch-alien.sch-boss { stroke: var(--ecran-texte); stroke-width: 2; }
+.sch-tir { fill: var(--ecran-tir); }
+.sch-tir-alien { fill: var(--ecran-tir-alien); }
+.sch-boite { fill: none; stroke: var(--ecran-boite); stroke-width: 2.5; }
+.sch-texte { fill: var(--ecran-texte); font-family: "Inter", sans-serif; font-weight: 800; }
+.sch-trait { fill: none; stroke: var(--ecran-texte); stroke-width: 2; stroke-linecap: round; }
+.sch-pointe { fill: var(--ecran-texte); }
+.sch-trait.sch-alien-trait { stroke: var(--ecran-tir-alien); }
+.sch-pointe.sch-alien-trait { fill: var(--ecran-tir-alien); }
+/* Ce que le gamer souhaite : en pointillés cyan */
+.sch-trait.sch-souhait { stroke: var(--ecran-boite); stroke-dasharray: 4 3; }
+.sch-pointe.sch-souhait { fill: var(--ecran-boite); }
+.sch-explosion { fill: var(--ecran-tir); }
+.sch-explosion.sch-souhait { fill: none; stroke: var(--ecran-boite); stroke-width: 2; stroke-dasharray: 4 3; }
+.sch-souhait-fond { fill: none; stroke: var(--ecran-boite); stroke-width: 2; stroke-dasharray: 4 3; }
+.sch-pause { fill: var(--ecran-boite); }
+.sch-alerte { fill: var(--ecran-vaisseau); }
+.sch-texte.sch-sur-alerte { fill: var(--ecran-fond); }
+.sch-alerte-trait { fill: none; stroke: var(--ecran-vaisseau); stroke-width: 3; stroke-linecap: round; }
+.sch-ok { fill: var(--ecran-alien); }
+.sch-sur-ok { fill: none; stroke: var(--ecran-fond); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.sch-etoile { fill: var(--ecran-texte); opacity: 0.6; }
+.sch-texte.sch-question { fill: var(--ecran-tir); }
+.sch-trait.sch-plafond { stroke: var(--ecran-vaisseau); stroke-dasharray: 5 3; stroke-width: 2.5; }
+.sch-barre { fill: var(--ecran-alien); }
+.sch-bouclier { fill: none; stroke: var(--ecran-boite); stroke-width: 3; }
+.sch-horloge { fill: none; stroke: var(--ecran-texte); stroke-width: 2.5; }
+.sch-panneau { fill: none; stroke: var(--ecran-texte); stroke-width: 2; }
+.sch-trait.sch-axe { stroke-width: 1.5; opacity: 0.6; }
+.sch-trait.sch-courbe { stroke: var(--ecran-vaisseau); stroke-width: 3; }
+.sch-trait.sch-defile { stroke: var(--ecran-texte); opacity: 0.5; stroke-dasharray: 3 3; }
+.sch-hautparleur { fill: var(--ecran-texte); }
+.sch-trait.sch-puissance { stroke: var(--ecran-tir); stroke-width: 2.5; }
+.sch-trait.sch-couronne { stroke: var(--ecran-tir); fill: var(--ecran-tir); }
+.sch-podium { fill: var(--ecran-alien); }
+.sch-live { fill: var(--ecran-vaisseau); }
+.carte-titre { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 21px; line-height: 1.2; }
+.carte-verdict { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 44px; line-height: 1; }
+.test-ok .carte-verdict { color: var(--accent-text); }
+.test-bug .carte-verdict, .test-pasfun .carte-verdict { color: var(--danger); }
+.carte-bas { margin-top: auto; border-top: 2px solid var(--line-soft); padding-top: 8px; }
+.carte-etiquette { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.carte-cible { font-weight: 700; font-size: 15px; }
+.carte-effet { font-size: 14px; line-height: 1.35; }
+
 /* --- Le tableau de bord --------------------------------------------------- */
 
 .tableau {
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 8px;
   overflow-y: auto; min-height: 0;
 }
 .tableau-entete { padding: 2px 4px 4px; }
-.tableau-studio { font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 20px; }
-[data-theme="sombre"] .tableau-studio { font-family: "Inter", sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 16px; }
-.tableau-projet { font-size: 13px; color: var(--text-muted); }
-.tableau-projet::before { content: "« "; }
-.tableau-projet::after { content: " »"; }
+/* Le studio : la pastille sarcelle à contour (ancienne pastille « Studio »). */
+.tableau-studio {
+  display: inline-block;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent-text);
+  border: 2px solid var(--accent); border-radius: 999px; padding: 2px 10px;
+}
+
+/* Le jeu vidéo : son logo, et son MVP juste dessous */
+.bloc-jeu { padding: 10px 14px 9px; }
+.logo-jeu { display: block; height: 66px; width: auto; max-width: 100%; }
+.logo-bandeau { fill: var(--ink); }
+.logo-contour { fill: var(--ink); }
+.logo-lettre-1 { fill: var(--sur-encre); stroke: var(--sur-encre); }
+.logo-lettre-2 { fill: var(--sun); stroke: var(--sun); }
+/* Un trait de la même couleur bouche les jointures entre pixels voisins. */
+.logo-jeu path:not(.logo-contour):not(.logo-etincelle) { stroke-width: 0.7; stroke-linejoin: miter; }
+.logo-coque { stroke: var(--accent); } .logo-cockpit { stroke: var(--agent); } .logo-ailes, .logo-flamme { stroke: var(--sun); }
+.logo-etincelle { stroke-width: 3; stroke-linecap: square; }
+.logo-etincelle-a { stroke: var(--agent); }
+.logo-etincelle-b { stroke: var(--sun); }
+.logo-coque { fill: var(--accent); }
+.logo-cockpit { fill: var(--agent); }
+.logo-ailes { fill: var(--sun); }
+.logo-flamme { fill: var(--sun); animation: scintille 0.8s ease-in-out infinite; }
+.bloc-jeu .bloc-mvp { margin-top: 6px; border-radius: 10px; padding: 7px 10px; background: var(--surface-2); }
 
 .bloc {
-  background: var(--surface); border-radius: 16px; padding: 12px 14px;
+  background: var(--surface); border-radius: 16px; padding: 7px 14px;
   box-shadow: var(--ombre); border: 1px solid var(--border);
 }
+.rangee { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .bloc-titre {
   margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--text-muted);
 }
 .bloc-aide { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .grand-chiffre {
-  font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 38px; line-height: 1.05;
+  font-family: "Bricolage Grotesque", "Inter", sans-serif; font-weight: 800; font-size: 32px; line-height: 1.05;
   font-variant-numeric: tabular-nums;
 }
 [data-theme="sombre"] .grand-chiffre { font-family: "Inter", sans-serif; font-weight: 900; }
-.bloc-joueurs .grand-chiffre { color: var(--sun-text); }
-.bloc-joueurs .grand-chiffre::before {
-  content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 10px; vertical-align: 0.12em;
+.bloc-gamers .grand-chiffre { color: var(--sun-text); }
+.bloc-gamers .grand-chiffre::before {
+  content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: 0.12em;
   border-radius: 50%; background: var(--sun); box-shadow: 0 0 0 3px var(--halo-soleil);
 }
 .grand-chiffre.score { color: var(--accent-text); }
@@ -348,7 +623,7 @@ html, body {
 .note-valeur { font-weight: 800; font-size: 20px; }
 .note-valeur::after { content: " / 5"; font-size: 13px; font-weight: 600; color: var(--text-muted); }
 
-.tokens-grille { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+.tokens-grille { display: grid; grid-template-columns: repeat(10, 16px); gap: 6px 8px; }
 .token {
   aspect-ratio: 1; background: var(--agent);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -356,20 +631,44 @@ html, body {
 }
 .token.depense { background: var(--line-soft); opacity: 0.6; }
 
-.bloc-mvp { position: relative; }
+.heures-ligne { display: flex; align-items: center; gap: 8px; margin: 1px 0; }
+.heures-visage {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface-2); border: 2px solid var(--line);
+  image-rendering: crisp-edges; image-rendering: pixelated;
+}
+.heures-role { flex: 1; font-size: 13px; font-weight: 600; line-height: 1.15; }
+.heures-personne { display: block; font-size: 11.5px; font-weight: 500; color: var(--text-muted); }
+.heures-jetons { display: flex; gap: 5px; }
+.heure {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--sun); border: 2px solid var(--ink);
+  transition: all 0.3s;
+}
+.heure.depensee { background: transparent; border: 2px dashed var(--line-soft); }
+
 .mvp-texte { font-size: 13px; font-weight: 600; color: var(--text-muted); padding-left: 30px; position: relative; }
 .mvp-texte::before {
   content: ""; position: absolute; left: 0; top: 50%; translate: 0 -50%;
   width: 20px; height: 20px; border-radius: 50%; border: 2px dashed var(--line-soft);
 }
-.bloc-mvp.publie { background: var(--accent); }
-.bloc-mvp.publie .bloc-titre, .bloc-mvp.publie .mvp-texte { color: var(--sur-accent); }
+.bloc-jeu .bloc-mvp.publie { background: var(--accent); }
+.bloc-mvp.publie .mvp-texte { color: var(--sur-accent); }
 .bloc-mvp.publie .mvp-texte::before {
   content: "✓"; border: none; background: var(--sur-accent); color: var(--accent);
   display: grid; place-items: center; font-size: 13px; font-weight: 900;
 }
 
-.anneaux { display: flex; justify-content: space-between; }
+.boucles-entete {
+  display: flex; align-items: center; gap: 10px; margin-right: 10px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--ombre);
+  border-radius: 14px; padding: 4px 12px;
+}
+.boucles-titre { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.boucles-entete .anneau-rond { width: 22px; height: 22px; font-size: 11px; border-width: 2.5px; }
+.boucles-entete .anneau { gap: 1px; }
+.boucles-entete .anneau-nom { font-size: 10px; }
+.anneaux { display: flex; justify-content: space-between; gap: 8px; }
 .anneau { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .anneau-rond {
   width: 30px; height: 30px; border-radius: 50%;
@@ -396,6 +695,21 @@ html, body {
 .piste { flex: 1; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
 .piste-remplie { width: 0; height: 100%; background: var(--accent); }
 .lecture-note { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+/* K6, le maître de jeu, dans la barre du bas */
+.guide { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.guide-k6 { height: 46px; width: auto; flex: none; filter: drop-shadow(0 2px 3px rgba(13, 35, 41, 0.2)); }
+.guide-bulle {
+  position: relative; display: flex; flex-direction: column; gap: 1px; min-width: 0;
+  background: var(--surface-2); border-radius: 12px; padding: 6px 14px;
+}
+.guide-bulle::before {
+  content: ""; position: absolute; left: -8px; top: 50%; translate: 0 -50%;
+  border: 8px solid transparent; border-left: 0; border-right-color: var(--surface-2);
+}
+.guide-nom { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sun-text); }
+.guide-texte { font-size: 14px; font-weight: 600; }
+.lecture-controles { display: flex; align-items: center; gap: 8px; flex: none; }
 
 /* --- Écrans étroits et mouvement réduit ----------------------------------- */
 

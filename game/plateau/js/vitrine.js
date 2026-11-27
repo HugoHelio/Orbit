@@ -7,30 +7,39 @@ window.VITRINE = {
   temps: "build",
   stationActive: "build",
 
-  // Jetons Heure déjà utilisés, par rôle (sur 3).
-  heuresUtilisees: { chef: 2, designer: 1, programmeur: 1 },
-  // Où ces jetons sont posés (nombre de jetons par station).
-  heuresPosees: { prompt: 2, build: 1, backlog: 1 },
+  // Les jetons Heure posés sur les stations, et à qui ils appartiennent (un nom par heure).
+  // Les heures restantes au pilotage s'en déduisent (3 par personne).
+  heuresPosees: { prompt: ["chef", "designer"], feedback: ["chef"], build: ["programmeur"] },
 
-  // Les vaisseaux posés sur l'orbite : fonctionnalité, station, efforts faits.
+  // Les tickets posés sur l'orbite : fonctionnalité, station, efforts faits et par qui
+  // ("pix" = payé 1 token, "humain" = payé 1 heure).
   // cartesTest : les cartes Test cachées sous les efforts faits par PIX.
   vaisseaux: [
-    { f: "F14", station: "backlog" },
-    { f: "F12", station: "backlog" },
-    { f: "F10", station: "backlog" },
-    { f: "F18", station: "prompt" },
-    { f: "F17", station: "build", effortsFaits: 2, cartesTest: ["cachee", "cachee"] },
-    { f: "F15", station: "test", effortsFaits: 1, cartesTest: ["ok"] }
+    { f: "F18", station: "prompt", efforts: [] },
+    { f: "F17", station: "build", efforts: ["pix", "pix"], cartesTest: ["cachee", "cachee"] },
+    { f: "F14", station: "test", efforts: ["pix", "humain"], cartesTest: ["ok"] },
+    { f: "F10", station: "release", efforts: ["humain", "humain"] }
   ],
 
+  // Les fonctionnalités hors du cycle (GDD 0.19) :
+  // publiées au cycle 0 (le MVP), choisies dans le Backlog, encore à choisir dans les Idées,
+  // et les idées de gamers encore cachées (elles apparaissent quand un feedback trié les cite).
+  publiees: ["F02", "F06", "F07", "F09", "F13"],
+  backlog: ["F05", "F12", "F03"],
+  idees: ["F01", "F04", "F16", "F19", "F20"],
+  ideesCachees: ["F08", "F11", "F15"],
+
+  // Les cartes Feedback qui attendent d'être triées (file Feedback → Backlog), la plus ancienne d'abord.
+  fileFeedback: ["FB15", "FB05", "FB09"],
+
   // Remplissage des files d'attente.
-  files: { "prompt-build": 1, "build-test": 2, "feedback-backlog": 3 },
+  files: { "prompt-build": 1, "build-test": 2 },
 
   // Agents : qui travaille, et sa bulle.
   agents: { pix: { actif: true, bulle: true }, scan: { actif: false, bulle: false } },
 
   // Le tableau de bord.
-  joueurs: 250,
+  gamers: 250,
   note: 3,
   score: 750,
   tokensRestants: 17,
