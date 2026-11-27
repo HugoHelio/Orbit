@@ -29,7 +29,9 @@ REGLES = dict(
     humain_max=1, humain_c0=2, pix_cap=3,
     humain_c4=2,          # GDD 0.21 : « le sprint final », 2 jetons Prod au dernier cycle
     feedback_prod=True,
-    review_par_P=True,    # GDD 0.22 : la code review revient au programmeur (garant du code), pas au responsable   # GDD 0.21 : le travail demandé par un feedback est un effort (il prend le jeton Prod)
+    review_par_P=True,    # GDD 0.22 : la code review revient au programmeur (garant du code), pas au responsable
+    heures=3,             # jetons (heures) par joueur et par cycle
+    effort_humain=1,      # piste : heures pour un effort humain (2 = « produire prend 2 heures », sans jeton Prod)
     note_depart=3.0, note_min=1.0, note_max=5.0,
     fb_note=True,         # simplification : tout feedback traité rapporte de la note (au lieu d'étoiles)
     pasfun_moins1=True,   # simplification : un Pas fun publié coûte 1 étoile (au lieu de la moitié)
@@ -150,7 +152,7 @@ class Partie:
     def cycle(self, c):
         p, R, D = self.p, self.R, DUREES
         self.temps = D["vera"] + D["planif"] + (D["decouverte_c0"] if c == 0 else 0) + D["retro"]
-        pa = {"CP": 3, "D": 3, "P": 3}
+        pa = {"CP": R["heures"], "D": R["heures"], "P": R["heures"]}
         pixcap = 4 if c == 2 else R["pix_cap"]
         hmax = R["humain_c0"] if c == 0 else (R["humain_c4"] if c == 4 else R["humain_max"])
         faits = {"D": 0, "P": 0}
@@ -182,9 +184,9 @@ class Partie:
         # 2. corrections connues et travail demandé par les gamers
         for f in self.f.values():
             self.corriger(pa, f)
-            while f["travail"] and pa[f["resp"]] > 0 and (not R["feedback_prod"] or faits[f["resp"]] < hmax):
+            while f["travail"] and pa[f["resp"]] >= R["effort_humain"] and (not R["feedback_prod"] or faits[f["resp"]] < hmax):
                 faits[f["resp"]] += 1
-                if self.agit(pa, f["resp"]):
+                if self.agit(pa, f["resp"], R["effort_humain"]):
                     f["travail"] -= 1; self.temps += D["bloc_humain"]
                     if f.get("bonus_att"):
                         f["bonus"] += f["bonus_att"]; f["bonus_att"] = 0
@@ -194,9 +196,9 @@ class Partie:
         # 3a. les humains produisent (1 bloc, 2 au cycle 0) sur leurs fonctionnalités
         for f in ordre:
             while (not self.done(f) and f["id"] not in en_pix and faits[f["resp"]] < hmax
-                   and pa[f["resp"]] - res[f["resp"]] > 0):
+                   and pa[f["resp"]] - res[f["resp"]] >= R["effort_humain"]):
                 faits[f["resp"]] += 1
-                if self.agit(pa, f["resp"]):
+                if self.agit(pa, f["resp"], R["effort_humain"]):
                     f["blocks"].append(dict(by="H", c="none", k=True, s=True))
                     self.temps += D["bloc_humain"]; self.log["blocs_humains"] += 1
         # 3b. briefs pour PIX

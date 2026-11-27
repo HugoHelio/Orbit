@@ -126,6 +126,36 @@ Trois changements testés l'un après l'autre (1 500 parties par profil, même g
 
 Effet neutre (0 à +1,5 %) : le programmeur a souvent des heures libres quand PIX produit, et le designer garde les siennes pour le playtest. Le classement ne change pas.
 
+## Étude v4 : et si tous les jetons étaient égaux ? (27 novembre 2026, question de l'utilisateur)
+
+**La question :** le jeton ⚒ Prod (une seule action de production par cycle) est-il compris par les joueurs ? Peut-on le supprimer : 3 jetons égaux, chaque action (prompt, code, code review, playtest, correction, tri) coûte 1 heure ?
+
+Quatre variantes (1 500 parties par profil, même graine). On ajoute un profil test, **« Sans PIX »** : l'équipe experte qui fait tout à la main, sans agent. Si elle gagne, la leçon du jeu (« l'IA déplace le goulot vers la vérification ») disparaît.
+- **A** : les règles 0.22 (jeton Prod : 1 effort humain par cycle, 2 au cycle 0 et au cycle 4) ;
+- **B** : 3 jetons égaux, sans limite (un humain peut produire 3 efforts par cycle) ;
+- **C** : 3 jetons égaux, mais **un effort humain coûte 2 heures** ;
+- **D** : **4 jetons égaux par cycle, un effort humain coûte 2 heures**, tout le reste 1 heure. Pas de jeton Prod, pas d'exception au cycle 0 ni au cycle 4.
+
+| Profil | A : jeton Prod (0.22) | B : jetons égaux | C : égaux, effort = 2 h | D : 4 h, effort = 2 h |
+|---|---|---|---|---|
+| Les fonceurs | 1 711 | 2 448 | 1 430 | 1 993 |
+| Les élèves sérieux | 3 523 | 4 521 | 2 604 | 3 977 |
+| Les perfectionnistes | 3 496 | 4 281 | 2 520 | 3 558 |
+| Le chef de projet débordé | 1 797 | 2 288 | 1 541 | 1 913 |
+| Les artistes | 2 673 | 3 429 | 2 011 | 2 837 |
+| L'équipe experte | 3 958 | 4 610 | 2 853 | 4 148 |
+| **Sans PIX (tout à la main)** | **2 426** | **4 275** | 1 733 | **3 338** |
+| Part des efforts faits par PIX | 45 à 61 % | 32 à 43 % | 55 à 69 % | 49 à 55 % |
+| MVP au cycle 0 (équipe experte) | 100 % | 100 % | **0 %** | 100 % |
+
+**Ce qu'on en retient :**
+- **B casse la leçon.** Les humains deviennent aussi productifs que PIX : l'équipe « Sans PIX » fait presque aussi bien que l'équipe experte (4 275 contre 4 610) et mieux que les perfectionnistes. Les agents ne servent presque plus (un tiers des efforts). C'est ce que la première étude avait déjà montré, et la raison de la limite d'un effort humain par cycle.
+- **C garde la leçon mais casse le cycle 0** : avec 3 heures, chaque humain ne produit qu'un effort, et les 5 Must (6 efforts) ne tiennent plus dans le cycle. Personne n'a de MVP au cycle 0.
+- **D fonctionne** : scores proches des règles 0.22 (+1 à +16 %), même classement, PIX fait toujours la moitié des efforts, MVP au cycle 0 comme aujourd'hui, même durée de partie (environ 2 heures de jeu simulées). La leçon reste, un peu moins forte : « Sans PIX » perd 20 % face à l'équipe experte (contre 39 % avec le jeton Prod).
+- Avec D, la règle se dit en une phrase : **« 4 heures par cycle. Produire un effort prend 2 heures ; tout le reste prend 1 heure. »** Plus de jeton Prod, plus d'élan du lancement ni de sprint final : le cycle 0 marche tout seul (2 efforts par humain + 3 de PIX = 7, pour 6 efforts de Must).
+
+*Le simulateur garde les deux options (`heures`, `effort_humain`) ; les règles par défaut restent celles du GDD 0.22 tant que la décision n'est pas prise.*
+
 ## Historique : la version 1 de l'étude
 
 La première étude utilisait des robots à stratégie fixe et a conduit à 4 réglages :
